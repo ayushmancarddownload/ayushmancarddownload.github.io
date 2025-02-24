@@ -1,0 +1,1 @@
+function toggleFullscreen(){const e=document.getElementById("gameContainer"),t=document.getElementById("gameFrame");document.fullscreenElement?(document.exitFullscreen(),t.style.width="100%",t.style.height="450px"):(e.requestFullscreen(),t.style.width="100vw",t.style.height="100vh")}
