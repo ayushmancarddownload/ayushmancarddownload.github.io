@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../img/favicon.png"> 
+  <meta http-equiv="content-language" content="en">
+  <meta name="distribution" content="Global">
+  <meta http-equiv="audience" content="General">
+  <title>Bubbles Cool - Gaming Never Stops Here!</title>
+  <meta name="description" content="Play thousands of free online games on GameZone! 🚀 No downloads, no interruptions—just pure fun. Explore and enjoy your favorite games now!">
+  <meta name="keywords" content="Bubbles Cool, play Bubbles Cool online, Bubbles Cool unblocked, free Bubbles Cool game, online gaming">
+  <meta name="robots" content="index, follow">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet"> 
+  <script src="../js/analytics.js"></script>
+  <script src="../js/gmm.js"></script>
+  <script src="../js/nkad.js"></script>
+  <!-- CSS File Link -->
+  <link rel="stylesheet" href="../css/snap.css">
+  <link rel="stylesheet" href="../css/custom.css"> 
+	   
+</head>
+<body onload="loadGame()" style="background: url('../img/bg-img.jpg'); background-size: cover;">
+  <header>
+	<a href="/">  
+    <div class="website-name">Bubbles Cool</div></a>
+      <nav class="top-navigation">
+    <a href="../cat/all-games.html">All Games</a>
+    <a href="../cat/new.html">New</a>
+    <a href="../cat/popular.html">Popular</a>
+  </nav>
+  </header>
+
+
+
+  <main>
+   <h1>Bubbles Cool</h1>
+
+    <div class="game-container" id="gameContainer">
+	    <div id="loading"><span class="loader">Loading</span></div>
+        <iframe id="gameFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+         
+        <button class="fullscreen-btn" onclick="toggleFullscreen()">Go Fullscreen</button>
+    </div>
+<div id="qrcode-container">
+     <div id="qrcode-text">Play on Mobile</div> 
+        <div id="qrcode"></div>
+        <div id="qrcode-subtext">Scan Me</div> 
+    </div>
+    <div class="game-details">
+      <p>
+        Play instantly in fullscreen browser, no downloads. Explore and enjoy various gaming experiences now!
+      </p>
+    </div>
+
+    <section class="recommendations">
+      <h3>Other Games You Might Like</h3>
+      <div class="games-grid">
+        <div class="game-card">
+    <a href="../mowing-mazes.html">
+       <img src="https://games-maza.pages.dev/mowing-mazes.jpg" alt="Mowing Mazes" />
+       <p>Mowing Mazes</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../mummys-path-deluxe.html">
+       <img src="https://games-maza.pages.dev/mummys-path-deluxe.jpg" alt="Mummys Path Deluxe" />
+       <p>Mummys Path Deluxe</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../murder.html">
+       <img src="https://games-maza.pages.dev/murder.jpg" alt="Murder" />
+       <p>Murder</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../my-pony-my-little-race.html">
+       <img src="https://games-maza.pages.dev/my-pony-my-little-race.jpg" alt="My Pony My Little Race" />
+       <p>My Pony My Little Race</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../mystical-birdlink.html">
+       <img src="https://games-maza.pages.dev/mystical-birdlink.jpg" alt="Mystical Birdlink" />
+       <p>Mystical Birdlink</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../n-gon.html">
+       <img src="https://games-maza.pages.dev/n-gon.jpg" alt="N Gon" />
+       <p>N Gon</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../narrow-one.html">
+       <img src="https://games-maza.pages.dev/narrow-one.jpg" alt="Narrow One" />
+       <p>Narrow One</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../nightpointio.html">
+       <img src="https://games-maza.pages.dev/nightpointio.jpg" alt="Nightpointio" />
+       <p>Nightpointio</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../noob-drive.html">
+       <img src="https://games-maza.pages.dev/noob-drive.jpg" alt="Noob Drive" />
+       <p>Noob Drive</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../noob-hook.html">
+       <img src="https://games-maza.pages.dev/noob-hook.jpg" alt="Noob Hook" />
+       <p>Noob Hook</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../nugget-royale.html">
+       <img src="https://games-maza.pages.dev/nugget-royale.jpg" alt="Nugget Royale" />
+       <p>Nugget Royale</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../odd-bot-out.html">
+       <img src="https://games-maza.pages.dev/odd-bot-out.jpg" alt="Odd Bot Out" />
+       <p>Odd Bot Out</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../off-road-rain-cargo-simulator.html">
+       <img src="https://games-maza.pages.dev/off-road-rain-cargo-simulator.jpg" alt="Off Road Rain Cargo Simulator" />
+       <p>Off Road Rain Cargo Simulator</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../offroader-v5.html">
+       <img src="https://games-maza.pages.dev/offroader-v5.jpg" alt="Offroader V5" />
+       <p>Offroader V5</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../one-button-bounce.html">
+       <img src="https://games-maza.pages.dev/one-button-bounce.jpg" alt="One Button Bounce" />
+       <p>One Button Bounce</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../one-hundred-castles-solitaire.html">
+       <img src="https://games-maza.pages.dev/one-hundred-castles-solitaire.jpg" alt="One Hundred Castles Solitaire" />
+       <p>One Hundred Castles Solitaire</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../onet-fruit-classic.html">
+       <img src="https://games-maza.pages.dev/onet-fruit-classic.jpg" alt="Onet Fruit Classic" />
+       <p>Onet Fruit Classic</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../onion-boy.html">
+       <img src="https://games-maza.pages.dev/onion-boy.jpg" alt="Onion Boy" />
+       <p>Onion Boy</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../ooze-odyssey.html">
+       <img src="https://games-maza.pages.dev/ooze-odyssey.jpg" alt="Ooze Odyssey" />
+       <p>Ooze Odyssey</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../orange.html">
+       <img src="https://games-maza.pages.dev/orange.jpg" alt="Orange" />
+       <p>Orange</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../orbital-survival.html">
+       <img src="https://games-maza.pages.dev/orbital-survival.jpg" alt="Orbital Survival" />
+       <p>Orbital Survival</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../ovo-dimensions.html">
+       <img src="https://games-maza.pages.dev/ovo-dimensions.jpg" alt="Ovo Dimensions" />
+       <p>Ovo Dimensions</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../ovo.html">
+       <img src="https://games-maza.pages.dev/ovo.jpg" alt="Ovo" />
+       <p>Ovo</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../pack-a-bag.html">
+       <img src="https://games-maza.pages.dev/pack-a-bag.jpg" alt="Pack A Bag" />
+       <p>Pack A Bag</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../paint-strike.html">
+       <img src="https://games-maza.pages.dev/paint-strike.jpg" alt="Paint Strike" />
+       <p>Paint Strike</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../panda-bubble-shooter.html">
+       <img src="https://games-maza.pages.dev/panda-bubble-shooter.jpg" alt="Panda Bubble Shooter" />
+       <p>Panda Bubble Shooter</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../panda-simulator-3d.html">
+       <img src="https://games-maza.pages.dev/panda-simulator-3d.jpg" alt="Panda Simulator 3d" />
+       <p>Panda Simulator 3d</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../papa-louie-when-pizzas-attack.html">
+       <img src="https://games-maza.pages.dev/papa-louie-when-pizzas-attack.jpg" alt="Papa Louie When Pizzas Attack" />
+       <p>Papa Louie When Pizzas Attack</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../papas-cheeseria.html">
+       <img src="https://games-maza.pages.dev/papas-cheeseria.jpg" alt="Papas Cheeseria" />
+       <p>Papas Cheeseria</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../papas-donuteria.html">
+       <img src="https://games-maza.pages.dev/papas-donuteria.jpg" alt="Papas Donuteria" />
+       <p>Papas Donuteria</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../papas-hotdoggeria.html">
+       <img src="https://games-maza.pages.dev/papas-hotdoggeria.jpg" alt="Papas Hotdoggeria" />
+       <p>Papas Hotdoggeria</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../papas-pancakeria.html">
+       <img src="https://games-maza.pages.dev/papas-pancakeria.jpg" alt="Papas Pancakeria" />
+       <p>Papas Pancakeria</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../papas-pizzeria.html">
+       <img src="https://games-maza.pages.dev/papas-pizzeria.jpg" alt="Papas Pizzeria" />
+       <p>Papas Pizzeria</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../papas-taco-mia.html">
+       <img src="https://games-maza.pages.dev/papas-taco-mia.jpg" alt="Papas Taco Mia" />
+       <p>Papas Taco Mia</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../paper-fighter-3d.html">
+       <img src="https://games-maza.pages.dev/paper-fighter-3d.jpg" alt="Paper Fighter 3d" />
+       <p>Paper Fighter 3d</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../paper-io-2.html">
+       <img src="https://games-maza.pages.dev/paper-io-2.jpg" alt="Paper Io 2" />
+       <p>Paper Io 2</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../paper-minecraft.html">
+       <img src="https://games-maza.pages.dev/paper-minecraft.jpg" alt="Paper Minecraft" />
+       <p>Paper Minecraft</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../parking-fury-2.html">
+       <img src="https://games-maza.pages.dev/parking-fury-2.jpg" alt="Parking Fury 2" />
+       <p>Parking Fury 2</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../parking-fury-3d-beach-city.html">
+       <img src="https://games-maza.pages.dev/parking-fury-3d-beach-city.jpg" alt="Parking Fury 3d Beach City" />
+       <p>Parking Fury 3d Beach City</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../parking-fury-3d-bounty-hunter.html">
+       <img src="https://games-maza.pages.dev/parking-fury-3d-bounty-hunter.jpg" alt="Parking Fury 3d Bounty Hunter" />
+       <p>Parking Fury 3d Bounty Hunter</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../parking-fury-3d-night-thief.html">
+       <img src="https://games-maza.pages.dev/parking-fury-3d-night-thief.jpg" alt="Parking Fury 3d Night Thief" />
+       <p>Parking Fury 3d Night Thief</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../parking-fury-3d.html">
+       <img src="https://games-maza.pages.dev/parking-fury-3d.jpg" alt="Parking Fury 3d" />
+       <p>Parking Fury 3d</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../parking-fury.html">
+       <img src="https://games-maza.pages.dev/parking-fury.jpg" alt="Parking Fury" />
+       <p>Parking Fury</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../parkour-block-3d.html">
+       <img src="https://games-maza.pages.dev/parkour-block-3d.jpg" alt="Parkour Block 3d" />
+       <p>Parkour Block 3d</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../parkour-race.html">
+       <img src="https://games-maza.pages.dev/parkour-race.jpg" alt="Parkour Race" />
+       <p>Parkour Race</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../penalty-kick-online.html">
+       <img src="https://games-maza.pages.dev/penalty-kick-online.jpg" alt="Penalty Kick Online" />
+       <p>Penalty Kick Online</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../penalty-rivals.html">
+       <img src="https://games-maza.pages.dev/penalty-rivals.jpg" alt="Penalty Rivals" />
+       <p>Penalty Rivals</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../penalty-shooters-2.html">
+       <img src="https://games-maza.pages.dev/penalty-shooters-2.jpg" alt="Penalty Shooters 2" />
+       <p>Penalty Shooters 2</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../peppa-pig-basketball.html">
+       <img src="https://games-maza.pages.dev/peppa-pig-basketball.jpg" alt="Peppa Pig Basketball" />
+       <p>Peppa Pig Basketball</p>
+    </a>
+</div>
+        <!-- Add more game cards as needed -->
+      </div>
+
+	    
+    </section>
+	  <center><a href="../cat/all-games.html"><button  class="Btn">More Games</button></a></center>
+  </main>
+	
+ <!-- Scroll to Top Button -->
+  <button id="scrollToTopBtn" title="Go to top">↑</button>
+	
+  <footer>
+     <a href="../pages/about.html">About</a>
+    <a href="../pages/privacy-policy.html">Privacy Policy</a>
+    <a href="../pages/terms.html">Terms & Conditions</a>
+    <a href="../pages/contact.html">Contact Us</a>
+    <a href="../pages/dmca.html">DMCA</a>
+  </footer>
+	
+<!-- JavaScript File Link -->
+<script src="../js/qr-gm.js"></script>
+<script src="../js/flscrn-gm.js"></script>
+<script src="../js/if-gm.js"></script>
+<script src="../js/snap.js"></script> 
+<script src="../js/gm.js"></script>
+<script src="../js/dropdown.js"></script>
+<script src="../js/scroll2top.js"></script>
+<script src="../js/loading.js"></script>
+</body>
+</html>
