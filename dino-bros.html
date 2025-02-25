@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../img/favicon.png"> 
+  <meta http-equiv="content-language" content="en">
+  <meta name="distribution" content="Global">
+  <meta http-equiv="audience" content="General">
+  <title>Dino Bros - Gaming Never Stops Here!</title>
+  <meta name="description" content="Play thousands of free online games on GameZone! 🚀 No downloads, no interruptions—just pure fun. Explore and enjoy your favorite games now!">
+  <meta name="keywords" content="Dino Bros, play Dino Bros online, Dino Bros unblocked, free Dino Bros game, online gaming">
+  <meta name="robots" content="index, follow">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet"> 
+  <script src="../js/analytics.js"></script>
+  <script src="../js/gmm.js"></script>
+  <script src="../js/nkad.js"></script>
+  <!-- CSS File Link -->
+  <link rel="stylesheet" href="../css/snap.css">
+  <link rel="stylesheet" href="../css/custom.css"> 
+	   
+</head>
+<body onload="loadGame()" style="background: url('../img/bg-img.jpg'); background-size: cover;">
+  <header>
+	<a href="/">  
+    <div class="website-name">Dino Bros</div></a>
+      <nav class="top-navigation">
+    <a href="../cat/all-games.html">All Games</a>
+    <a href="../cat/new.html">New</a>
+    <a href="../cat/popular.html">Popular</a>
+  </nav>
+  </header>
+
+
+
+  <main>
+   <h1>Dino Bros</h1>
+
+    <div class="game-container" id="gameContainer">
+	    <div id="loading"><span class="loader">Loading</span></div>
+        <iframe id="gameFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+         
+        <button class="fullscreen-btn" onclick="toggleFullscreen()">Go Fullscreen</button>
+    </div>
+<div id="qrcode-container">
+     <div id="qrcode-text">Play on Mobile</div> 
+        <div id="qrcode"></div>
+        <div id="qrcode-subtext">Scan Me</div> 
+    </div>
+    <div class="game-details">
+      <p>
+        Play instantly in fullscreen browser, no downloads. Explore and enjoy various gaming experiences now!
+      </p>
+    </div>
+
+    <section class="recommendations">
+      <h3>Other Games You Might Like</h3>
+      <div class="games-grid">
+        <div class="game-card">
+    <a href="../getaway-shootout.html">
+       <img src="https://games-maza.pages.dev/getaway-shootout.jpg" alt="Getaway Shootout" />
+       <p>Getaway Shootout</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../gladiator-true-story.html">
+       <img src="https://games-maza.pages.dev/gladiator-true-story.jpg" alt="Gladiator True Story" />
+       <p>Gladiator True Story</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../glam-girl-dress-up-and-makeover.html">
+       <img src="https://games-maza.pages.dev/glam-girl-dress-up-and-makeover.jpg" alt="Glam Girl Dress Up And Makeover" />
+       <p>Glam Girl Dress Up And Makeover</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../go-kart-go-ultra.html">
+       <img src="https://games-maza.pages.dev/go-kart-go-ultra.jpg" alt="Go Kart Go Ultra" />
+       <p>Go Kart Go Ultra</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../goat-vs-zombies.html">
+       <img src="https://games-maza.pages.dev/goat-vs-zombies.jpg" alt="Goat Vs Zombies" />
+       <p>Goat Vs Zombies</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../gobble.html">
+       <img src="https://games-maza.pages.dev/gobble.jpg" alt="Gobble" />
+       <p>Gobble</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../gobdun.html">
+       <img src="https://games-maza.pages.dev/gobdun.jpg" alt="Gobdun" />
+       <p>Gobdun</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../gold-digger-frvr.html">
+       <img src="https://games-maza.pages.dev/gold-digger-frvr.jpg" alt="Gold Digger Frvr" />
+       <p>Gold Digger Frvr</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../golf-champions.html">
+       <img src="https://games-maza.pages.dev/golf-champions.jpg" alt="Golf Champions" />
+       <p>Golf Champions</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../golfinity.html">
+       <img src="https://games-maza.pages.dev/golfinity.jpg" alt="Golfinity" />
+       <p>Golfinity</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../google-feud.html">
+       <img src="https://games-maza.pages.dev/google-feud.jpg" alt="Google Feud" />
+       <p>Google Feud</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../goose-game.html">
+       <img src="https://games-maza.pages.dev/goose-game.jpg" alt="Goose Game" />
+       <p>Goose Game</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../grand-prix-hero.html">
+       <img src="https://games-maza.pages.dev/grand-prix-hero.jpg" alt="Grand Prix Hero" />
+       <p>Grand Prix Hero</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../grindcraft.html">
+       <img src="https://games-maza.pages.dev/grindcraft.jpg" alt="Grindcraft" />
+       <p>Grindcraft</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../grow-up-the-cats.html">
+       <img src="https://games-maza.pages.dev/grow-up-the-cats.jpg" alt="Grow Up The Cats" />
+       <p>Grow Up The Cats</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../growmi.html">
+       <img src="https://games-maza.pages.dev/growmi.jpg" alt="Growmi" />
+       <p>Growmi</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../gun-mayhem-2.html">
+       <img src="https://games-maza.pages.dev/gun-mayhem-2.jpg" alt="Gun Mayhem 2" />
+       <p>Gun Mayhem 2</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../gun-mayhem-3.html">
+       <img src="https://games-maza.pages.dev/gun-mayhem-3.jpg" alt="Gun Mayhem 3" />
+       <p>Gun Mayhem 3</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../gun-mayhem.html">
+       <img src="https://games-maza.pages.dev/gun-mayhem.jpg" alt="Gun Mayhem" />
+       <p>Gun Mayhem</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../gunspin.html">
+       <img src="https://games-maza.pages.dev/gunspin.jpg" alt="Gunspin" />
+       <p>Gunspin</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../hammer-2-reloaded.html">
+       <img src="https://games-maza.pages.dev/hammer-2-reloaded.jpg" alt="Hammer 2 Reloaded" />
+       <p>Hammer 2 Reloaded</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../hangman.html">
+       <img src="https://games-maza.pages.dev/hangman.jpg" alt="Hangman" />
+       <p>Hangman</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../head-soccer-2023.html">
+       <img src="https://games-maza.pages.dev/head-soccer-2023.jpg" alt="Head Soccer 2023" />
+       <p>Head Soccer 2023</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../heads-arena-soccer-all-stars.html">
+       <img src="https://games-maza.pages.dev/heads-arena-soccer-all-stars.jpg" alt="Heads Arena Soccer All Stars" />
+       <p>Heads Arena Soccer All Stars</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../heart-star.html">
+       <img src="https://games-maza.pages.dev/heart-star.jpg" alt="Heart Star" />
+       <p>Heart Star</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../hide-and-smash.html">
+       <img src="https://games-maza.pages.dev/hide-and-smash.jpg" alt="Hide And Smash" />
+       <p>Hide And Smash</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../highway-bike-simulator.html">
+       <img src="https://games-maza.pages.dev/highway-bike-simulator.jpg" alt="Highway Bike Simulator" />
+       <p>Highway Bike Simulator</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../highway-racer-3d.html">
+       <img src="https://games-maza.pages.dev/highway-racer-3d.jpg" alt="Highway Racer 3d" />
+       <p>Highway Racer 3d</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../highway-rider-extreme.html">
+       <img src="https://games-maza.pages.dev/highway-rider-extreme.jpg" alt="Highway Rider Extreme" />
+       <p>Highway Rider Extreme</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../highway-traffic.html">
+       <img src="https://games-maza.pages.dev/highway-traffic.jpg" alt="Highway Traffic" />
+       <p>Highway Traffic</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../hills-of-steel.html">
+       <img src="https://games-maza.pages.dev/hills-of-steel.jpg" alt="Hills Of Steel" />
+       <p>Hills Of Steel</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../hipster-vs-rockers.html">
+       <img src="https://games-maza.pages.dev/hipster-vs-rockers.jpg" alt="Hipster Vs Rockers" />
+       <p>Hipster Vs Rockers</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../hop-chop.html">
+       <img src="https://games-maza.pages.dev/hop-chop.jpg" alt="Hop Chop" />
+       <p>Hop Chop</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../hop-warp.html">
+       <img src="https://games-maza.pages.dev/hop-warp.jpg" alt="Hop Warp" />
+       <p>Hop Warp</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../hoppenhelm.html">
+       <img src="https://games-maza.pages.dev/hoppenhelm.jpg" alt="Hoppenhelm" />
+       <p>Hoppenhelm</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../horse-shoeing.html">
+       <img src="https://games-maza.pages.dev/horse-shoeing.jpg" alt="Horse Shoeing" />
+       <p>Horse Shoeing</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../horse-simulator-3d.html">
+       <img src="https://games-maza.pages.dev/horse-simulator-3d.jpg" alt="Horse Simulator 3d" />
+       <p>Horse Simulator 3d</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../house-of-hazards.html">
+       <img src="https://games-maza.pages.dev/house-of-hazards.jpg" alt="House Of Hazards" />
+       <p>House Of Hazards</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../hover-racer-drive.html">
+       <img src="https://games-maza.pages.dev/hover-racer-drive.jpg" alt="Hover Racer Drive" />
+       <p>Hover Racer Drive</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../hover-racer.html">
+       <img src="https://games-maza.pages.dev/hover-racer.jpg" alt="Hover Racer" />
+       <p>Hover Racer</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../hypersnake.html">
+       <img src="https://games-maza.pages.dev/hypersnake.jpg" alt="Hypersnake" />
+       <p>Hypersnake</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../ice-cream-please.html">
+       <img src="https://games-maza.pages.dev/ice-cream-please.jpg" alt="Ice Cream Please" />
+       <p>Ice Cream Please</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../icy-purple-head-3.html">
+       <img src="https://games-maza.pages.dev/icy-purple-head-3.jpg" alt="Icy Purple Head 3" />
+       <p>Icy Purple Head 3</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../idle-ants.html">
+       <img src="https://games-maza.pages.dev/idle-ants.jpg" alt="Idle Ants" />
+       <p>Idle Ants</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../idle-digging-tycoon.html">
+       <img src="https://games-maza.pages.dev/idle-digging-tycoon.jpg" alt="Idle Digging Tycoon" />
+       <p>Idle Digging Tycoon</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../idle-gold-miner.html">
+       <img src="https://games-maza.pages.dev/idle-gold-miner.jpg" alt="Idle Gold Miner" />
+       <p>Idle Gold Miner</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../idle-lumber-inc.html">
+       <img src="https://games-maza.pages.dev/idle-lumber-inc.jpg" alt="Idle Lumber Inc" />
+       <p>Idle Lumber Inc</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../idle-miner.html">
+       <img src="https://games-maza.pages.dev/idle-miner.jpg" alt="Idle Miner" />
+       <p>Idle Miner</p>
+    </a>
+</div>
+<div class="game-card">
+    <a href="../idle-mining-empire.html">
+       <img src="https://games-maza.pages.dev/idle-mining-empire.jpg" alt="Idle Mining Empire" />
+       <p>Idle Mining Empire</p>
+    </a>
+</div>
+        <!-- Add more game cards as needed -->
+      </div>
+
+	    
+    </section>
+	  <center><a href="../cat/all-games.html"><button  class="Btn">More Games</button></a></center>
+  </main>
+	
+ <!-- Scroll to Top Button -->
+  <button id="scrollToTopBtn" title="Go to top">↑</button>
+	
+  <footer>
+     <a href="../pages/about.html">About</a>
+    <a href="../pages/privacy-policy.html">Privacy Policy</a>
+    <a href="../pages/terms.html">Terms & Conditions</a>
+    <a href="../pages/contact.html">Contact Us</a>
+    <a href="../pages/dmca.html">DMCA</a>
+  </footer>
+	
+<!-- JavaScript File Link -->
+<script src="../js/qr-gm.js"></script>
+<script src="../js/flscrn-gm.js"></script>
+<script src="../js/if-gm.js"></script>
+<script src="../js/snap.js"></script> 
+<script src="../js/gm.js"></script>
+<script src="../js/dropdown.js"></script>
+<script src="../js/scroll2top.js"></script>
+<script src="../js/loading.js"></script>
+</body>
+</html>
