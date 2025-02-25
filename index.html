@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="img/favicon.png"> 
+  <meta http-equiv="content-language" content="en">
+  <meta name="distribution" content="Global">
+  <meta http-equiv="audience" content="General">
+  <title>GameZone</title>
+  <meta name="description" content="Play [Game Name] online for free. Enjoy an unblocked version of [Game Name] with full-screen mode and no downloads required.">
+  <meta name="keywords" content="[Game Name], play [Game Name] online, [Game Name] unblocked, free [Game Name] game, online gaming">
+  <meta name="robots" content="index, follow"> 	
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <script src="js/analytics.js"></script>
+  <!-- CSS File Link -->
+  <link rel="stylesheet" href="../css/snap.css"> 
+  <link rel="stylesheet" href="../css/custom.css"> 
+	
+     
+</head>
+<body onload="loadGame()">
+  <header>
+    <a href="/">   
+    <div class="website-name">GameZone</div></a>
+      <nav class="top-navigation">
+    <a href="/cat/all-games.html">All Games</a>
+    <a href="/cat/new.html">New</a>
+    <a href="/cat/popular.html">Popular</a>
+  </nav>
+  </header>
+
+  <section class="banner-ad">
+    Your Ad Here — Contact Us to Advertise!
+  </section>
+
+  <main>
+   <h1>Enjoy Your Game!</h1>
+
+    <div class="game-container" id="gameContainer">
+	    <div id="loading"><span class="loader">Loading</span></div>
+        <iframe id="gameFrame" src="https://classroom6x.gitlab.io/bottle-flip/" allow="autoplay"></iframe>
+         
+        <button class="fullscreen-btn" onclick="toggleFullscreen()">Go Fullscreen</button>
+    </div>
+<div id="qrcode-container">
+     <div id="qrcode-text">Play on Mobile</div> 
+        <div id="qrcode"></div>
+        <div id="qrcode-subtext">Scan Me</div> 
+    </div>
+    <div class="game-details">
+      <h2>Game Title: Fast Racer</h2>
+      <p>
+        Immerse yourself in the world of speed and adventure! Fast Racer is an
+        epic racing game that tests your reflexes and rewards precision. Get
+        ready to challenge the leaderboard and become the ultimate racer!
+      </p>
+    </div>
+
+    <section class="recommendations">
+      <h3>Other Games You Might Like</h3>
+      <div class="games-grid">
+	
+        <div class="game-card">
+	 <a title="Drift Boss" href="/play/drift-boss.html">   
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 1</p>
+	 </a>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 2</p>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 3</p>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 4</p>
+	</div>	
+	 <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 1</p>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 2</p>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 3</p>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 4</p>
+	</div>
+	 <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 1</p>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 2</p>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 3</p>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 4</p>
+	</div>	
+	 <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 1</p>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 2</p>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 3</p>
+        </div>
+        <div class="game-card">
+          <img src="https://minibattles.github.io/imgs/the-impossible-quiz.png" alt="Game Logo" />
+          <p>Game Title 4</p>	
+        </div>
+       
+      </div>
+    </section>
+  </main>
+	
+ <!-- Scroll to Top Button -->
+  <button id="scrollToTopBtn" title="Go to top">↑</button>
+	
+  <footer>
+    <a href="/pages/about.html">About</a>
+    <a href="/pages/privacy-policy.html">Privacy Policy</a>
+    <a href="/pages/terms.html">Terms & Conditions</a>
+    <a href="/pages/contact.html">Contact Us</a>
+    <a href="/pages/dmca.html">DMCA</a>
+  </footer>
+
+<!-- JavaScript File Link -->
+<script src="../js/qr-gm.js"></script>
+<script src="../js/flscrn-gm.js"></script>
+<script src="../js/if-gm.js"></script>
+<script src="../js/snap.js"></script> 
+<script src="../js/gm.js"></script>
+<script src="../js/dropdown.js"></script>
+<script src="../js/scroll2top.js"></script>
+<script src="js/loading.js"></script>
+</body>
+</html>
