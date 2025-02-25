@@ -4,7 +4,7 @@ const branch = "main";                     // 🔹 Aapka branch (main ya master)
 
 const versionFilePath = "/version.json";   // 🔹 Version file ka path
 
-// ✅ GitHub API se latest commit ID fetch karna
+// ✅ Function: GitHub API se latest commit hash fetch karna
 async function getLatestCommit() {
     try {
         let response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits/${branch}`);
@@ -16,17 +16,56 @@ async function getLatestCommit() {
     }
 }
 
-// ✅ Version.json file update karna
-async function updateVersionFile() {
-    let latestVersion = await getLatestCommit();
-    if (!latestVersion) return;
-
-    let newVersionData = JSON.stringify({ version: latestVersion }, null, 2);
-
-    // GitHub API ke through version.json update karna (manual process ke bina)
-    console.log("✅ New version detected:", latestVersion);
-    console.log("📌 Now manually update 'version.json' in GitHub repository.");
+// ✅ Function: Version.json file se latest version lena
+async function getStoredVersion() {
+    try {
+        let response = await fetch(versionFilePath + "?t=" + new Date().getTime());  // Cache bypass ke liye query param
+        let data = await response.json();
+        return data.version;
+    } catch (error) {
+        console.error("❌ Version.json fetch failed!", error);
+        return null;
+    }
 }
 
-// ✅ Auto-update function call karein
-updateVersionFile();
+// ✅ Function: Cache busting implement karna
+function updateCache(version) {
+    console.log("🔄 Updating cache with version:", version);
+
+    // CSS aur JS files ko reload karna
+    document.querySelectorAll("link[rel='stylesheet']").forEach(link => {
+        link.href = link.href.split("?")[0] + "?v=" + version;
+    });
+
+    document.querySelectorAll("script").forEach(script => {
+        if (script.src) {
+            script.src = script.src.split("?")[0] + "?v=" + version;
+        }
+    });
+
+    // Images ko bhi refresh karna
+    document.querySelectorAll("img").forEach(img => {
+        img.src = img.src.split("?")[0] + "?v=" + version;
+    });
+}
+
+// ✅ Function: Check if version has changed
+async function checkForUpdates() {
+    let latestVersion = await getLatestCommit();
+    let storedVersion = await getStoredVersion();
+
+    console.log("📌 Latest Version:", latestVersion);
+    console.log("📌 Stored Version:", storedVersion);
+
+    if (latestVersion && storedVersion && latestVersion !== storedVersion) {
+        console.log("🚀 New update detected! Reloading...");
+        updateCache(latestVersion);
+        localStorage.setItem("site-version", latestVersion);
+        setTimeout(() => location.reload(), 1000);  // Auto-refresh after 1 sec
+    } else {
+        console.log("✅ Site is up to date.");
+    }
+}
+
+// ✅ Auto-run script on page load
+checkForUpdates();
