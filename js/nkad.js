@@ -53,17 +53,21 @@ function updateCache(version) {
 async function checkForUpdates() {
     let latestVersion = await getLatestCommit();
     let storedVersion = await getStoredVersion();
+    let savedVersion = localStorage.getItem("site-version");
 
     console.log("📌 Latest Version:", latestVersion);
     console.log("📌 Stored Version:", storedVersion);
+    console.log("📌 Saved Version (localStorage):", savedVersion);
 
-    if (latestVersion && storedVersion && latestVersion !== storedVersion) {
-        console.log("🚀 New update detected! Reloading...");
-        updateCache(latestVersion);
-        localStorage.setItem("site-version", latestVersion);
-        setTimeout(() => location.reload(), 1000);  // Auto-refresh after 1 sec
-    } else {
-        console.log("✅ Site is up to date.");
+    if (latestVersion && storedVersion) {
+        if (latestVersion !== savedVersion) {
+            console.log("🚀 New update detected! Reloading...");
+            updateCache(latestVersion);
+            localStorage.setItem("site-version", latestVersion);
+            setTimeout(() => location.reload(), 1000);  // Auto-refresh after 1 sec
+        } else {
+            console.log("✅ Site is up to date.");
+        }
     }
 }
 
