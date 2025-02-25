@@ -59,15 +59,26 @@ async function checkForUpdates() {
     console.log("📌 Stored Version:", storedVersion);
     console.log("📌 Saved Version (localStorage):", savedVersion);
 
-    if (latestVersion && storedVersion) {
-        if (latestVersion !== savedVersion) {
-            console.log("🚀 New update detected! Reloading...");
-            updateCache(latestVersion);
-            localStorage.setItem("site-version", latestVersion);
-            setTimeout(() => location.reload(), 1000);  // Auto-refresh after 1 sec
-        } else {
-            console.log("✅ Site is up to date.");
-        }
+    if (!latestVersion || !storedVersion) {
+        console.log("⚠️ Could not fetch version data. Skipping update check.");
+        return;
+    }
+
+    // ✅ Agar pehli baar load ho raha hai, to latest version ko localStorage me save karein
+    if (!savedVersion) {
+        localStorage.setItem("site-version", latestVersion);
+        console.log("🔹 First-time visit. Setting version in localStorage:", latestVersion);
+        return;
+    }
+
+    // ✅ Agar version change ho gaya hai, to tabhi update karein aur refresh karein
+    if (latestVersion !== savedVersion) {
+        console.log("🚀 New update detected! Reloading...");
+        updateCache(latestVersion);
+        localStorage.setItem("site-version", latestVersion);
+        setTimeout(() => location.reload(), 1000);  // Auto-refresh after 1 sec
+    } else {
+        console.log("✅ Site is up to date.");
     }
 }
 
