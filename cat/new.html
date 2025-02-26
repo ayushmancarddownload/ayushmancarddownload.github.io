@@ -28,9 +28,6 @@
     <a href="/cat/new.html">New</a>
     <a href="/cat/popular.html">Popular</a>
   </nav>
-
-	<!-- Search Box -->
-  <input type="text" id="searchBox" placeholder="Search games..." onkeyup="searchGames()">
   </header>
 
 
@@ -4777,24 +4774,7 @@
     <a href="../pages/contact.html">Contact Us</a>
     <a href="../pages/dmca.html">DMCA</a>
   </footer>
-	<script>
-function searchGames() {
-  let input = document.getElementById("searchBox").value.toLowerCase();
-  let gameCards = document.querySelectorAll(".game-card");
-
-  gameCards.forEach(function(card) {
-    let title = card.querySelector("p") ? card.querySelector("p").innerText.toLowerCase() : "";
-    
-    if (title.includes(input)) {
-      card.style.display = "block"; // Show matching games
-    } else {
-      card.style.display = "none"; // Hide non-matching games
-    }
-  });
-}
-</script>
-
-
+	
 <!-- JavaScript File Link -->
 <script src="../js/qr-gm.js"></script>
 <script src="../js/flscrn-gm.js"></script>
