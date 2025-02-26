@@ -4783,16 +4783,17 @@ function searchGames() {
   let gameCards = document.querySelectorAll(".game-card");
 
   gameCards.forEach(function(card) {
-    let title = card.querySelector("h2").innerText.toLowerCase();
+    let title = card.querySelector("h2") ? card.querySelector("h2").innerText.toLowerCase() : "";
     
     if (title.includes(input)) {
-      card.style.display = "block"; // Show matching game
+      card.style.display = "block"; // Show matching games
     } else {
-      card.style.display = "none"; // Hide non-matching game
+      card.style.display = "none"; // Hide non-matching games
     }
   });
 }
 </script>
+
 
 <!-- JavaScript File Link -->
 <script src="../js/qr-gm.js"></script>
