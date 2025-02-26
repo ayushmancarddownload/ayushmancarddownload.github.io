@@ -4783,7 +4783,7 @@ function searchGames() {
   let gameCards = document.querySelectorAll(".game-card");
 
   gameCards.forEach(function(card) {
-    let title = card.querySelector("h2") ? card.querySelector("h2").innerText.toLowerCase() : "";
+    let title = card.querySelector("p") ? card.querySelector("p").innerText.toLowerCase() : "";
     
     if (title.includes(input)) {
       card.style.display = "block"; // Show matching games
