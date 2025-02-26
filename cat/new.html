@@ -29,11 +29,8 @@
     <a href="/cat/popular.html">Popular</a>
   </nav>
 
-	   <!-- Search Box -->
-  <form action="/search.html" method="GET" class="search-form">
-    <input type="text" name="q" placeholder="Search games..." required>
-    <button type="submit">🔍</button>
-  </form>
+	<!-- Search Box -->
+  <input type="text" id="searchBox" placeholder="Search games..." onkeyup="searchGames()">
   </header>
 
 
@@ -4780,7 +4777,23 @@
     <a href="../pages/contact.html">Contact Us</a>
     <a href="../pages/dmca.html">DMCA</a>
   </footer>
-	
+	<script>
+function searchGames() {
+  let input = document.getElementById("searchBox").value.toLowerCase();
+  let gameCards = document.querySelectorAll(".game-card");
+
+  gameCards.forEach(function(card) {
+    let title = card.querySelector("h2").innerText.toLowerCase();
+    
+    if (title.includes(input)) {
+      card.style.display = "block"; // Show matching game
+    } else {
+      card.style.display = "none"; // Hide non-matching game
+    }
+  });
+}
+</script>
+
 <!-- JavaScript File Link -->
 <script src="../js/qr-gm.js"></script>
 <script src="../js/flscrn-gm.js"></script>
