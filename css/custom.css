@@ -12,6 +12,31 @@
       scroll-behavior: smooth;
     }
 
+
+
+.search-form {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.search-form input {
+  border: none;
+  padding: 8px 12px;
+  outline: none;
+  width: 180px;
+}
+
+.search-form button {
+  border: none;
+  background: #ff9800;
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
 /* From Uiverse.io by 1osm */ 
 /* Button 1 */
 .Btn {
