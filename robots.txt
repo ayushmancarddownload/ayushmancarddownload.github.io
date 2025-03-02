@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ayushmancarddownload.github.io/sitemap.xml
