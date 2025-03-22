@@ -51,6 +51,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Har 10 second me data GA4 me bheje
     setInterval(() => {
         sendToGA();
-    }, 5000);
+    }, 500);
 });
 </script>
