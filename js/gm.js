@@ -1,1 +1,0 @@
-document.addEventListener("contextmenu",(function(e){e.preventDefault()})),document.addEventListener("keydown",(function(e){("F12"===e.key||e.ctrlKey&&e.shiftKey&&"I"===e.key||e.ctrlKey&&e.shiftKey&&"J"===e.key||e.ctrlKey&&"U"===e.key)&&e.preventDefault()}));

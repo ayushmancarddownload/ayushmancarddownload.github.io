@@ -1,1 +1,0 @@
-document.addEventListener("DOMContentLoaded",(function(){const e=document.querySelector(".dropbtn"),t=document.querySelector(".dropdown-content");e.addEventListener("click",(function(){"block"===t.style.display?t.style.display="none":t.style.display="block"})),document.addEventListener("click",(function(e){e.target.matches(".dropbtn")||(t.style.display="none")}))}));
