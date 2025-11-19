@@ -1,26 +1,10 @@
-name: Auto IndexNow Submit
-
-on:
-  push:
-    branches:
-      - main
-      - master
-
-jobs:
-  submit-indexnow:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
     - name: Generate URL list (all HTML files + sitemap)
       run: |
         SITE="https://ayushmancarddownload.github.io"
         echo "[" > urls.json
 
-        # Add all HTML pages
-        find . -type f \( -iname "*.html" -o -iname "*.htm" \) | while read file; do
+        # Corrected: case-insensitive HTML/HTM detection
+        find . -type f \( -iname '*.html' -o -iname '*.htm' \) | while read file; do
           CLEAN=$(echo "$file" | sed 's|^\./||')
           echo "\"$SITE/$CLEAN\"," >> urls.json
         done
@@ -33,16 +17,3 @@ jobs:
         # Remove last comma
         sed -i '$ s/,$//' urls.json
         echo "]" >> urls.json
-
-    - name: Submit to IndexNow
-      run: |
-        API_KEY="039c6529eea94ac8a53a30c3a1b6a17d"
-        HOST="ayushmancarddownload.github.io"
-
-        curl -X POST "https://www.bing.com/indexnow" \
-        -H "Content-Type: application/json" \
-        -d "{
-          \"host\": \"$HOST\",
-          \"key\": \"$API_KEY\",
-          \"urlList\": $(cat urls.json)
-        }"
