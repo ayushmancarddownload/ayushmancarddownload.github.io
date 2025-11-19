@@ -14,26 +14,35 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Generate URL list
+    - name: Generate URL list (all HTML files + sitemap)
       run: |
-        SITE_URL="https://ayushmancarddownload.github.io"
+        SITE="https://ayushmancarddownload.github.io"
         echo "[" > urls.json
-        find . -name "*.html" | while read file; do
-          CLEAN=$(echo "$file" | sed 's|./||')
-          echo "\"$SITE_URL/$CLEAN\"," >> urls.json
+
+        # Add all HTML pages
+        find . -type f -name "*.html" | while read file; do
+          CLEAN=$(echo "$file" | sed 's|^\./||')
+          echo "\"$SITE/$CLEAN\"," >> urls.json
         done
+
+        # Add sitemap.xml if present
+        if [ -f "./sitemap.xml" ]; then
+          echo "\"$SITE/sitemap.xml\"," >> urls.json
+        fi
+
+        # Remove last comma
         sed -i '$ s/,$//' urls.json
         echo "]" >> urls.json
 
-    - name: Send to IndexNow
+    - name: Submit to IndexNow
       run: |
         API_KEY="039c6529eea94ac8a53a30c3a1b6a17d"
-        SITE_URL="ayushmancarddownload.github.io"
+        HOST="ayushmancarddownload.github.io"
 
         curl -X POST "https://www.bing.com/indexnow" \
         -H "Content-Type: application/json" \
         -d "{
-          \"host\": \"$SITE_URL\",
+          \"host\": \"$HOST\",
           \"key\": \"$API_KEY\",
           \"urlList\": $(cat urls.json)
         }"
