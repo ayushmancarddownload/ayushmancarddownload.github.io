@@ -1,20 +1,39 @@
-name: "IndexNow"
+name: Auto IndexNow Submit
+
 on:
-  schedule:
-  # Scheduled in UTC.
-  - cron:  '0 0,12 * * *'
-  
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
 
 jobs:
-  check-and-submit:
+  submit-indexnow:
     runs-on: ubuntu-latest
+
     steps:
-      - name: indexnow-action
-        uses: bojieyang/indexnow-action@v2
-        with:
-          sitemap-location: "https://ayushmancarddownload.github.io/sitemap.xml"
-          since: 1
-          since-unit: "day"
-          key: ${{ secrets.039c6529eea94ac8a53a30c3a1b6a17d }}
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Generate URL list
+      run: |
+        SITE_URL="https://ayushmancarddownload.github.io"
+        echo "[" > urls.json
+        find . -name "*.html" | while read file; do
+          CLEAN=$(echo "$file" | sed 's|./||')
+          echo "\"$SITE_URL/$CLEAN\"," >> urls.json
+        done
+        sed -i '$ s/,$//' urls.json
+        echo "]" >> urls.json
+
+    - name: Send to IndexNow
+      run: |
+        API_KEY="039c6529eea94ac8a53a30c3a1b6a17d"
+        SITE_URL="ayushmancarddownload.github.io"
+
+        curl -X POST "https://www.bing.com/indexnow" \
+        -H "Content-Type: application/json" \
+        -d "{
+          \"host\": \"$SITE_URL\",
+          \"key\": \"$API_KEY\",
+          \"urlList\": $(cat urls.json)
+        }"
