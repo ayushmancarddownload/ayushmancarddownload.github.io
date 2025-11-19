@@ -20,7 +20,7 @@ jobs:
         echo "[" > urls.json
 
         # Add all HTML pages
-        find . -type f -name "*.html" | while read file; do
+        find . -type f \( -iname "*.html" -o -iname "*.htm" \) | while read file; do
           CLEAN=$(echo "$file" | sed 's|^\./||')
           echo "\"$SITE/$CLEAN\"," >> urls.json
         done
