@@ -1,0 +1,20 @@
+name: "IndexNow"
+on:
+  schedule:
+  # Scheduled in UTC.
+  - cron:  '0 0,12 * * *'
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  check-and-submit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: indexnow-action
+        uses: bojieyang/indexnow-action@v2
+        with:
+          sitemap-location: "https://ayushmancarddownload.github.io/sitemap.xml"
+          since: 1
+          since-unit: "day"
+          key: ${{ secrets.039c6529eea94ac8a53a30c3a1b6a17d }}
