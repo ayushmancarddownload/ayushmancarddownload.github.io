@@ -1,3 +1,38 @@
+var ua = navigator.userAgent;
+var isIE = ua.match("MSIE");
+var bTouch = (ua.indexOf("(iP")==-1 && ua.indexOf("Android")==-1 && ua.indexOf("BlackBerry")==-1 && ua.indexOf("HTC")==-1 && ua.indexOf("PlayBook")==-1 && ua.indexOf("webOS")==-1 && ua.indexOf("IEMobile")==-1 && ua.indexOf("Silk")==-1)?false:true;
+var bT = 0; // emulate keys pressed
+var bTlast = 0;
+var Dir = "left";
+let restartBtn = document.getElementById("restart-btn");
+let playBtn = document.getElementById("play-btn");
+
+var extension_link = "https://doodlejump.io/";
+
+restartBtn.addEventListener("click", ()=>{
+  reset();
+})
+playBtn.addEventListener("click", ()=>{
+  init();
+})
+
+
+window.addEventListener('keydown', (e) => {  
+  if (e.keyCode === 32 && e.target === document.body) {  
+    e.preventDefault();  
+  }  
+});
+
+
+		if ( !Array.prototype.forEach ) {
+		  Array.prototype.forEach = function(fn, scope) {
+		    for(var i = 0, len = this.length; i < len; ++i) {
+		      fn.call(scope, this[i], i, this);
+		    }
+		  }
+		}
+
+
 // RequestAnimFrame: a browser API for getting smooth animations
 window.requestAnimFrame = (function() {
   return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
@@ -117,9 +152,7 @@ function Platform() {
   this.cy = 0;
   this.cwidth = 105;
   this.cheight = 31;
-  
-  // G-98DP5VKS42
-  
+
   //Function to draw it
   this.draw = function() {
     try {
@@ -236,6 +269,7 @@ function init() {
   //Player related calculations and functions
 
   function playerCalc() {
+    if(bTouch)dir = Dir;
     if (dir == "left") {
       player.dir = "left";
       if (player.vy < -7 && player.vy > -15) player.dir = "left_land";
@@ -447,6 +481,12 @@ function init() {
       hideScore();
       player.isDead = "lol";
 
+      var tweet = document.getElementById("tweetBtn");
+      tweet.href='http://twitter.com/share?url='+extension_link+'&text=I just scored ' +score+ ' points in the HTML5 Doodle Jump game!&count=horiztonal&via=w3technic&related=solitarydesigns';
+    
+      var facebook = document.getElementById("fbBtn");
+      facebook.href='http://facebook.com/sharer.php?s=100&amp;p[url]='+extension_link+'&p[title]=I just scored ' +score+ ' points in the HTML5 Doodle Jump game!&p[summary]=Can you beat me in this awesome recreation of Doodle Jump created in HTML5?';
+
     }
   }
 
@@ -534,6 +574,7 @@ function hideScore() {
 }
 
 function playerJump() {
+    
   player.y += player.vy;
   player.vy += gravity;
 
@@ -543,7 +584,7 @@ function playerJump() {
     (player.y + player.height > 475) && 
     (player.y + player.height < 500))
     player.jump();
-
+if(bTouch)dir = Dir;
   if (dir == "left") {
     player.dir = "left";
     if (player.vy < -7 && player.vy > -15) player.dir = "left_land";
