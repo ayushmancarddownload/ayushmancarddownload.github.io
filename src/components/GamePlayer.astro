@@ -5,18 +5,36 @@ import type { Game } from "../lib/types";
 interface Props { game: Game }
 const { game } = Astro.props;
 ---
-<div class="player-wrap" id="player-wrap" data-title={game.title}>
-  <!-- Game loads right away in the background; the dark cover on top of it
-       keeps it dim/non-interactive until "Play Now" is pressed. -->
-  <iframe
-    id="game-iframe"
-    src={game.playUrl}
-    title={game.title}
-    allow="fullscreen; autoplay; gamepad; xr-spatial-tracking"
-    allowfullscreen
+<div class="player-wrap" id="player-wrap" data-play-url={game.playUrl} data-title={game.title}>
+  <!-- Static fallback poster, always present in case there's no preview
+       video or it hasn't loaded yet. -->
+  <Image
+    class="bg-poster"
+    src={game.thumbnail}
+    alt={`${game.title} unblocked — play free online`}
+    width={960}
+    height={540}
     loading="eager"
-    tabindex="-1"
-  ></iframe>
+    fetchpriority="high"
+    decoding="async"
+  />
+
+  {/* Muted, looping preview clip autoplays dimmed in the background. The
+      actual game (iframe, several MB of its own JS/assets) is only
+      requested once "Play Now" is clicked — this video is lightweight
+      and just sets the mood while waiting. */}
+  {game.previewVideo && (
+    <video
+      class="bg-video"
+      id="bg-video"
+      muted
+      loop
+      autoplay
+      playsinline
+      preload="none"
+      data-preview-src={game.previewVideo}
+    ></video>
+  )}
 
   <button class="player-cover" id="play-cover" aria-label={`Play ${game.title}`}>
     <span class="cover-thumb">
@@ -42,24 +60,55 @@ const { game } = Astro.props;
 </div>
 
 <script>
+  // Click-to-play: the actual game iframe (often several MB of its own JS/
+  // assets) is never requested until the player is clicked — keeps LCP/TBT
+  // low on every page this component is used on (home + game pages). Only
+  // the lightweight muted preview video autoplays dimmed in the background.
   function initPlayer(root: ParentNode = document) {
     const wrap = root.querySelector<HTMLElement>("#player-wrap");
     const cover = root.querySelector<HTMLButtonElement>("#play-cover");
     const fsBtn = root.querySelector<HTMLButtonElement>("#fullscreen-btn");
-    const iframe = root.querySelector<HTMLIFrameElement>("#game-iframe");
+    const video = root.querySelector<HTMLVideoElement>("#bg-video");
     if (!wrap || wrap.dataset.playerReady) return;
     wrap.dataset.playerReady = "1";
 
-    function activate() {
-      wrap!.classList.add("is-active");
-      iframe?.removeAttribute("tabindex");
+    // Start the background preview video as soon as the browser is idle,
+    // so it never competes with the LCP image or main-thread work.
+    const startVideo = () => {
+      if (!video) return;
+      const src = video.dataset.previewSrc;
+      if (src && !video.src) video.src = src;
+      video.play().catch(() => {});
+    };
+    if ("requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(startVideo, { timeout: 3000 });
+    } else {
+      setTimeout(startVideo, 1200);
     }
 
-    cover?.addEventListener("click", activate);
+    function ensureIframe(): HTMLIFrameElement {
+      let iframe = wrap!.querySelector("iframe");
+      if (!iframe) {
+        const url = wrap!.dataset.playUrl;
+        const title = wrap!.dataset.title ?? "Game";
+        iframe = document.createElement("iframe");
+        iframe.src = url ?? "";
+        iframe.title = title;
+        iframe.allow = "fullscreen; autoplay; gamepad; xr-spatial-tracking";
+        iframe.setAttribute("allowfullscreen", "true");
+        iframe.loading = "eager";
+        video?.pause();
+        cover?.remove();
+        wrap!.appendChild(iframe);
+      }
+      return iframe;
+    }
+
+    cover?.addEventListener("click", () => ensureIframe());
 
     fsBtn?.addEventListener("click", () => {
-      activate();
-      if (iframe?.requestFullscreen) {
+      const iframe = ensureIframe();
+      if (iframe.requestFullscreen) {
         iframe.requestFullscreen().catch(() => {});
       } else if ((wrap as any).webkitRequestFullscreen) {
         (wrap as any).webkitRequestFullscreen();
@@ -76,15 +125,29 @@ const { game } = Astro.props;
     width: 100%;
     height: 100%;
     border: 0;
-    /* Blocked from receiving clicks/taps until "Play Now" is pressed —
-       the cover sits visually on top of it anyway, but this also stops
-       accidental interaction while it's dimmed. */
-    pointer-events: none;
   }
-  .player-wrap.is-active iframe { pointer-events: auto; }
 
-  /* Dark tint over the live game underneath — this is what makes the
-     iframe content behind read as "dimmed" instead of fully hidden. */
+  .bg-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .bg-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .bg-video[src] { opacity: 1; }
+
+  /* Dark tint over the poster/preview video underneath — this is what
+     makes the background read as dimmed instead of fully hidden. */
   .player-cover {
     position: absolute;
     inset: 0;
@@ -102,11 +165,6 @@ const { game } = Astro.props;
     cursor: pointer;
     background: rgba(6, 7, 14, 0.58);
     transition: opacity 0.25s ease, visibility 0.25s ease;
-  }
-  .player-wrap.is-active .player-cover {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
   }
 
   .cover-thumb {
