@@ -118,8 +118,10 @@ const faqSchema = {
           )}
         </section>
 
-        <GameGrid title="New Games" games={newGames} />
-        <GameGrid title="Popular Games" games={popularGames} />
+        <div class="home-content">
+          <GameGrid title="New Games" games={newGames} />
+          <GameGrid title="Popular Games" games={popularGames} />
+        </div>
 
         <section class="faq" aria-labelledby="faq-title">
           <h2 class="section-title" id="faq-title">Moto X3M Unblocked — FAQ</h2>
@@ -136,9 +138,8 @@ const faqSchema = {
 </BaseLayout>
 
 <style>
-  /* Hero text + FAQ now sit in the same centered, narrower column as the
-     player above them — only the game grids stay full width, since a
-     grid of cards looks better spanning the wide container. */
+  /* Hero text, game grids and FAQ all share the same centered, narrower
+     column as the player above them — nothing stretches edge-to-edge. */
   .game-hero {
     padding-top: 4px;
     max-width: 860px;
@@ -151,6 +152,10 @@ const faqSchema = {
     text-align: center;
   }
   .game-meta { text-align: center; }
+  .home-content {
+    max-width: 860px;
+    margin: 0 auto;
+  }
   .faq {
     margin-top: 8px;
     max-width: 860px;
