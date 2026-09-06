@@ -240,14 +240,12 @@ body.sidebar-open { overflow: hidden; }
   background: linear-gradient(160deg, #1c2032 0%, #10121c 100%);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-/* Small centered "frame" for the thumbnail/preview video. Shrinking it
-   down (instead of stretching full-bleed with object-fit:cover) is what
-   fixes the blur/quality loss — low-res preview clips no longer get
-   upscaled across the whole card. */
+/* Thumbnail/preview video now fills the entire card edge-to-edge instead
+   of sitting as a small centered inset frame. */
 .thumb-media {
   position: absolute;
-  inset: 9%;
-  border-radius: 10px;
+  inset: 0;
+  border-radius: var(--radius);
   overflow: hidden;
   background: #0d0f18;
 }
@@ -256,7 +254,7 @@ body.sidebar-open { overflow: hidden; }
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 /* Fallback for thumbnails used outside GameCard (e.g. the game page's
    "More Games" sidebar list) that aren't wrapped in .thumb-media. */
