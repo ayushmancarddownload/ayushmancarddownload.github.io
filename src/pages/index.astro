@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
 import GamePlayer from "../components/GamePlayer.astro";
-import GameGridPaginated from "../components/GameGridPaginated.astro";
+import GameGrid from "../components/GameGrid.astro";
 import { getGameById, getAllGames, getSeededRandomGames } from "../lib/gamesApi";
 
 // The homepage is now a single dedicated landing page for Moto X3M, not a
@@ -13,13 +13,11 @@ const MAIN_GAME_ID = "1001";
 const allGames = await getAllGames();
 const game = (await getGameById(MAIN_GAME_ID)) ?? allGames[0];
 
-// Full shuffled pools (not capped) — GameGridPaginated renders the first 20
-// as real HTML and reveals the rest via "Load More Games". Two different
-// seeds -> "New Games" and "Popular Games" get different (but each
-// individually STABLE) orderings. See getSeededRandomGames() for why this
-// beats plain Math.random() on a statically-built site.
-const newGames = await getSeededRandomGames("new:home", game.id);
-const popularGames = await getSeededRandomGames("popular:home", game.id);
+// Two different seeds -> two different, but each individually STABLE,
+// "more games" rails on the homepage. See getSeededRandomGames() for why
+// this beats plain Math.random() on a statically-built site.
+const newGames = await getSeededRandomGames("new:home", game.id, 12);
+const popularGames = await getSeededRandomGames("popular:home", game.id, 12);
 
 const pageTitle = "Moto X3M Unblocked — Play Free Online, No Download, Works At School";
 const pageDescription =
@@ -118,8 +116,8 @@ const faqSchema = {
           )}
         </section>
 
-        <GameGridPaginated title="New Games" games={newGames} />
-        <GameGridPaginated title="Popular Games" games={popularGames} />
+        <GameGrid title="New Games" games={newGames} />
+        <GameGrid title="Popular Games" games={popularGames} />
 
         <section class="faq" aria-labelledby="faq-title">
           <h2 class="section-title" id="faq-title">Moto X3M Unblocked — FAQ</h2>

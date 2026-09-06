@@ -156,17 +156,12 @@ function seededShuffle<T>(items: T[], seed: string): T[] {
 }
 
 /**
- * Deterministically-random subset (or, with no limit, the FULL shuffled
- * pool) of games for a "More Games" style rail.
+ * Deterministically-random subset of games for a "More Games" style rail.
  * @param seed     Unique per page, e.g. `"more:" + game.id` or `"new:home"`.
  * @param excludeId Game id to leave out (usually the game the page is about).
- * @param limit    Max games to return. Omit to get the whole shuffled pool
- *                 (used by the "Load More Games" UI, which renders the
- *                 first 20 statically and reveals the rest on click).
  */
-export async function getSeededRandomGames(seed: string, excludeId?: string, limit?: number): Promise<Game[]> {
+export async function getSeededRandomGames(seed: string, excludeId?: string, limit = 12): Promise<Game[]> {
   const games = await getAllGames();
   const pool = excludeId ? games.filter((g) => g.id !== excludeId) : games;
-  const shuffled = seededShuffle(pool, seed);
-  return limit ? shuffled.slice(0, limit) : shuffled;
+  return seededShuffle(pool, seed).slice(0, limit);
 }
