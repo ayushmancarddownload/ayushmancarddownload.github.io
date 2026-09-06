@@ -15,7 +15,11 @@ export async function getStaticPaths() {
 const { category } = Astro.props as { category: string };
 const games = await getGamesByCategory(category);
 ---
-<BaseLayout title={`${category} Games — PlayHub`} description={`Play the best free ${category} games online.`}>
+<BaseLayout
+  title={`${category} Games Unblocked — Moto X3M Unblocked`}
+  description={`Play the best free ${category} games online, unblocked at school and at work.`}
+  canonicalPath={`/category/${category.toLowerCase()}`}
+>
   <div class="layout">
     <Sidebar activeCategory={category} />
     <main class="main">

@@ -27,6 +27,9 @@ export default defineConfig({
     // Example: domains: ["yourgamehost.com", "cdn.yourgamehost.com"]
     domains: [
       "yourgamehost.com",
+      "img.gamemonetize.com",
+      "html5.gamemonetize.com",
+      "videos.gamemonetize.com",
     ],
   },
   build: {

@@ -1,36 +1,160 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
-import HeroBanner from "../components/HeroBanner.astro";
+import GamePlayer from "../components/GamePlayer.astro";
 import GameGrid from "../components/GameGrid.astro";
-import { getAllGames, getFeaturedGames, getAllCategories } from "../lib/gamesApi";
+import { getGameById, getAllGames, getSeededRandomGames } from "../lib/gamesApi";
+
+// The homepage is now a single dedicated landing page for Moto X3M, not a
+// generic "featured games" front page. Change MAIN_GAME_ID if you ever swap
+// which game this domain is built around.
+const MAIN_GAME_ID = "1001";
 
 const allGames = await getAllGames();
-const featured = await getFeaturedGames(1);
-const heroGame = featured[0] ?? allGames[0];
-const categories = await getAllCategories();
+const game = (await getGameById(MAIN_GAME_ID)) ?? allGames[0];
 
-// Build one row per category, like CrazyGames' homepage sections.
-const rows = categories
-  .map((cat) => ({
-    category: cat,
-    games: allGames.filter((g) => g.category === cat).slice(0, 12),
-  }))
-  .filter((row) => row.games.length > 0);
+// Two different seeds -> two different, but each individually STABLE,
+// "more games" rails on the homepage. See getSeededRandomGames() for why
+// this beats plain Math.random() on a statically-built site.
+const newGames = await getSeededRandomGames("new:home", game.id, 12);
+const popularGames = await getSeededRandomGames("popular:home", game.id, 12);
+
+const pageTitle = "Moto X3M Unblocked — Play Free Online, No Download, Works At School";
+const pageDescription =
+  "Play Moto X3M unblocked for free in your browser. No downloads, no login, no Flash — race, flip and land tricks on 22 explosive levels, unblocked at school and at work.";
+
+const faqs = [
+  {
+    q: "Is Moto X3M unblocked free to play?",
+    a: "Yes. Moto X3M unblocked is completely free to play in your browser on this page — no purchase, subscription or account is required.",
+  },
+  {
+    q: "Can I play Moto X3M unblocked at school or at work?",
+    a: "Yes. This page loads the game directly in your browser without Flash, so it plays on school and office networks where many other game sites are filtered.",
+  },
+  {
+    q: "Do I need to download or install anything?",
+    a: "No. Moto X3M unblocked runs instantly in-browser. Just click Play — nothing is installed on your device.",
+  },
+  {
+    q: "How do I play Moto X3M in fullscreen?",
+    a: "Click the Fullscreen button on the player above. You can exit fullscreen at any time with the Esc key.",
+  },
+  {
+    q: "What are the controls for Moto X3M?",
+    a: "Use the Up/Down arrow keys (or W/S) to accelerate and brake, and the Left/Right arrow keys to lean your bike forward or backward in the air for tricks.",
+  },
+];
+
+const videoGameSchema = {
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  name: game.title,
+  url: Astro.site ? new URL("/", Astro.site).toString() : "/",
+  image: game.thumbnail,
+  description: pageDescription,
+  genre: game.category,
+  applicationCategory: "Game",
+  operatingSystem: "Any (Web Browser)",
+  playMode: "SinglePlayer",
+  ...(game.rating
+    ? {
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: game.rating,
+          bestRating: 5,
+          ratingCount: game.plays ? Math.max(50, Math.round(game.plays / 5000)) : 100,
+        },
+      }
+    : {}),
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
 ---
-<BaseLayout title="PlayHub — Free Online Games, No Download">
+<BaseLayout title={pageTitle} description={pageDescription} canonicalPath="/" ogImage={game.thumbnail}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(videoGameSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
   <div class="layout">
     <Sidebar />
     <main class="main">
       <div class="container">
-        {heroGame && <HeroBanner game={heroGame} />}
+        <section class="game-hero">
+          <GamePlayer game={game} />
 
-        <GameGrid title="Featured" games={allGames.slice(0, 12)} priorityFirst />
+          <h1 class="game-hero-title">Moto X3M Unblocked</h1>
+          <p class="game-meta">
+            {game.category}
+            {game.rating ? ` · ★ ${game.rating.toFixed(1)}` : ""}
+            {game.plays ? ` · ${game.plays.toLocaleString()} plays` : ""}
+            {" · Unblocked at school & work"}
+          </p>
 
-        {rows.map((row) => (
-          <GameGrid title={row.category} games={row.games} />
-        ))}
+          <p style="color:var(--text-muted);max-width:75ch;">
+            <strong>Moto X3M unblocked</strong> is a physics-based motorbike stunt racer you can play free,
+            right here in your browser — no downloads, no sign-up, and no Flash plugin needed. Race across
+            explosive obstacle courses, pull off backflips in mid-air, and chase your best time across every
+            level. Because it loads straight from this page, Moto X3M stays playable even on school and
+            office networks that block other gaming sites.
+          </p>
+
+          {game.instructions && (
+            <>
+              <h2 class="section-title" style="margin-top:16px;">How to play Moto X3M unblocked</h2>
+              <p style="color:var(--text-muted);">{game.instructions}</p>
+            </>
+          )}
+        </section>
+
+        <GameGrid title="New Games" games={newGames} />
+        <GameGrid title="Popular Games" games={popularGames} />
+
+        <section class="faq" aria-labelledby="faq-title">
+          <h2 class="section-title" id="faq-title">Moto X3M Unblocked — FAQ</h2>
+          {faqs.map((f) => (
+            <details class="faq-item">
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </section>
       </div>
     </main>
   </div>
 </BaseLayout>
+
+<style>
+  .game-hero { padding-top: 4px; }
+  .game-hero-title {
+    margin: 16px 0 4px;
+    font-size: 1.9rem;
+    letter-spacing: -0.02em;
+  }
+  .faq { margin-top: 8px; }
+  .faq-item {
+    background: var(--bg-card);
+    border: 1px solid #262a3a;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+  }
+  .faq-item summary {
+    cursor: pointer;
+    font-weight: 700;
+    list-style: none;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before { content: "+ "; color: var(--accent-2); }
+  .faq-item[open] summary::before { content: "− "; }
+  .faq-item p { color: var(--text-muted); margin: 8px 0 0; }
+</style>

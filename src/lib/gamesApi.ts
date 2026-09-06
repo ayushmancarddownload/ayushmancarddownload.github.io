@@ -103,3 +103,65 @@ export async function getRelatedGames(currentId: string, category: string, limit
   const others = games.filter((g) => g.id !== currentId && g.category !== category);
   return [...sameCategory, ...others].slice(0, limit);
 }
+
+/**
+ * ---------------------------------------------------------------------------
+ * SEEDED "RANDOM" GAMES — makes every page's "More Games" / "New Games" /
+ * "Popular Games" rail different from every other page, WITHOUT ever
+ * changing on rebuild or on refresh.
+ * ---------------------------------------------------------------------------
+ * Google treats a games-portal site as thin/duplicate content when every
+ * page shows the exact same "more games" block. Real Math.random() would
+ * fix that visually but is a worse idea here: on a static build the order
+ * would be identical for every visitor anyway (baked in at build time) and
+ * would only reshuffle on the NEXT deploy — so crawlers could see the list
+ * change out from under a URL for no user-facing reason, which is exactly
+ * the kind of instability you don't want on a page you're trying to rank.
+ *
+ * Instead we hash a "seed" string (e.g. the page's own game id + a purpose
+ * tag like "new" or "popular") into a deterministic PRNG. Same seed always
+ * -> same shuffle. Different seed (different page) -> different shuffle.
+ * So /  , /game/1001, /game/1002 etc. each get their own fixed-but-unique
+ * ordering forever, until you add/remove games from games.json.
+ */
+function hashSeed(seed: string): number {
+  let h = 1779033703 ^ seed.length;
+  for (let i = 0; i < seed.length; i++) {
+    h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  return h >>> 0;
+}
+
+// mulberry32 — tiny deterministic PRNG, good enough for shuffling a list.
+function mulberry32(seed: number) {
+  let a = seed;
+  return function () {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function seededShuffle<T>(items: T[], seed: string): T[] {
+  const rand = mulberry32(hashSeed(seed));
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/**
+ * Deterministically-random subset of games for a "More Games" style rail.
+ * @param seed     Unique per page, e.g. `"more:" + game.id` or `"new:home"`.
+ * @param excludeId Game id to leave out (usually the game the page is about).
+ */
+export async function getSeededRandomGames(seed: string, excludeId?: string, limit = 12): Promise<Game[]> {
+  const games = await getAllGames();
+  const pool = excludeId ? games.filter((g) => g.id !== excludeId) : games;
+  return seededShuffle(pool, seed).slice(0, limit);
+}

@@ -2,8 +2,9 @@
 import { Image } from "astro:assets";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Sidebar from "../../components/Sidebar.astro";
+import GamePlayer from "../../components/GamePlayer.astro";
 import GameGrid from "../../components/GameGrid.astro";
-import { getAllGames, getGameById, getRelatedGames } from "../../lib/gamesApi";
+import { getAllGames, getGameById, getSeededRandomGames } from "../../lib/gamesApi";
 
 export async function getStaticPaths() {
   const games = await getAllGames();
@@ -17,38 +18,57 @@ if (!game) {
   return Astro.redirect("/404");
 }
 
-const related = await getRelatedGames(game.id, game.category, 12);
+// Seeded on THIS game's own id, so every /game/<id> page gets its own fixed
+// selection/order of "more games" — no two game pages look like duplicate
+// content to search engines, and the list never changes between visits.
+const related = await getSeededRandomGames(`related:${game.id}`, game.id, 12);
+const sidebarRelated = await getSeededRandomGames(`sidebar:${game.id}`, game.id, 6);
+
+const pageTitle = `${game.title} Unblocked — Play Free Online`;
+const pageDescription = `Play ${game.title} unblocked for free in your browser — no download, no login, works at school and at work. ${game.description}`;
+
+const videoGameSchema = {
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  name: game.title,
+  url: Astro.site ? new URL(`/game/${game.id}`, Astro.site).toString() : `/game/${game.id}`,
+  image: game.thumbnail,
+  description: pageDescription,
+  genre: game.category,
+  applicationCategory: "Game",
+  operatingSystem: "Any (Web Browser)",
+  playMode: "SinglePlayer",
+  ...(game.rating
+    ? {
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: game.rating,
+          bestRating: 5,
+          ratingCount: game.plays ? Math.max(50, Math.round(game.plays / 5000)) : 100,
+        },
+      }
+    : {}),
+};
 ---
-<BaseLayout title={`${game.title} — Play Free Online | PlayHub`} description={game.description}>
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalPath={`/game/${game.id}`}
+  ogImage={game.thumbnail}
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(videoGameSchema)} />
+  </Fragment>
+
   <div class="layout">
     <Sidebar activeCategory={game.category} />
     <main class="main">
       <div class="container">
         <div class="game-detail-layout">
           <div>
-            <!--
-              Click-to-play pattern: the heavy game iframe (often several MB
-              of its own JS/assets) is NOT requested on page load. We only
-              inject the <iframe src> after the user clicks Play. This is the
-              single biggest lever for good LCP/TBT scores on a games site,
-              and it's exactly what CrazyGames itself does.
-            -->
-            <div class="player-wrap" id="player-wrap" data-play-url={game.playUrl} data-title={game.title}>
-              <button class="player-cover" id="play-cover" aria-label={`Play ${game.title}`}>
-                <Image
-                  src={game.thumbnail}
-                  alt={game.title}
-                  width={960}
-                  height={540}
-                  loading="eager"
-                  fetchpriority="high"
-                  decoding="async"
-                />
-                <span class="play-btn"><span>▶</span></span>
-              </button>
-            </div>
+            <GamePlayer game={game} />
 
-            <h1 style="margin:16px 0 4px;">{game.title}</h1>
+            <h1 style="margin:16px 0 4px;">{game.title} Unblocked</h1>
             <p class="game-meta">
               {game.category}
               {game.rating ? ` · ★ ${game.rating.toFixed(1)}` : ""}
@@ -66,7 +86,7 @@ const related = await getRelatedGames(game.id, game.category, 12);
           <aside>
             <h2 class="section-title" style="margin-top:0;">More Games</h2>
             <div class="related-rail">
-              {related.slice(0, 6).map((g) => (
+              {sidebarRelated.map((g) => (
                 <a href={`/game/${g.id}`} class="game-card" style="display:flex;flex-direction:row;gap:10px;align-items:center;">
                   <div class="thumb-wrap" style="width:96px;flex-shrink:0;">
                     <Image src={g.thumbnail} alt={g.title} width={96} height={72} loading="lazy" decoding="async" />
@@ -83,22 +103,3 @@ const related = await getRelatedGames(game.id, game.category, 12);
     </main>
   </div>
 </BaseLayout>
-
-<script>
-  const cover = document.getElementById("play-cover");
-  const wrap = document.getElementById("player-wrap");
-  cover?.addEventListener("click", () => {
-    if (!wrap) return;
-    const url = wrap.dataset.playUrl;
-    const title = wrap.dataset.title ?? "Game";
-    if (!url) return;
-    const iframe = document.createElement("iframe");
-    iframe.src = url;
-    iframe.title = title;
-    iframe.allow = "fullscreen; autoplay; gamepad; xr-spatial-tracking";
-    iframe.setAttribute("allowfullscreen", "true");
-    iframe.loading = "eager";
-    cover.remove();
-    wrap.appendChild(iframe);
-  });
-</script>

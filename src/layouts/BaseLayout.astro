@@ -6,8 +6,19 @@ import "../styles/global.css";
 interface Props {
   title: string;
   description?: string;
+  /** Path used to build the canonical/og:url tag, e.g. "/" or "/game/1001". Defaults to the current URL. */
+  canonicalPath?: string;
+  /** Absolute image URL for social sharing previews. */
+  ogImage?: string;
 }
-const { title, description = "Play free instant browser games — no download required." } = Astro.props;
+const {
+  title,
+  description = "Play Moto X3M Unblocked free online — no download, no login, works at school and at work.",
+  canonicalPath,
+  ogImage,
+} = Astro.props;
+
+const canonicalURL = new URL(canonicalPath ?? Astro.url.pathname, Astro.site ?? Astro.url.origin);
 ---
 <!doctype html>
 <html lang="en">
@@ -16,6 +27,14 @@ const { title, description = "Play free instant browser games — no download re
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
 
     <!-- Preconnect to the host where YOU host your games/thumbnails/videos,
          so those requests start warming up DNS+TLS immediately instead of
@@ -26,6 +45,9 @@ const { title, description = "Play free instant browser games — no download re
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#0f1114" />
+
+    <!-- Per-page structured data (VideoGame / FAQPage JSON-LD etc.) -->
+    <slot name="head" />
   </head>
   <body>
     <Header />

@@ -1,0 +1,89 @@
+---
+import { Image } from "astro:assets";
+import type { Game } from "../lib/types";
+
+interface Props { game: Game }
+const { game } = Astro.props;
+---
+<div class="player-wrap" id="player-wrap" data-play-url={game.playUrl} data-title={game.title}>
+  <button class="player-cover" id="play-cover" aria-label={`Play ${game.title}`}>
+    <Image
+      src={game.thumbnail}
+      alt={`${game.title} unblocked — play free online`}
+      width={960}
+      height={540}
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+    <span class="play-btn"><span>▶</span></span>
+  </button>
+  <button class="fullscreen-btn" id="fullscreen-btn" type="button" aria-label={`Play ${game.title} fullscreen`}>
+    ⛶ Fullscreen
+  </button>
+</div>
+
+<script>
+  // Click-to-play: the actual game iframe (often several MB of its own JS/
+  // assets) is never requested until the player is clicked — keeps LCP/TBT
+  // low on every page this component is used on (home + game pages).
+  function initPlayer(root: ParentNode = document) {
+    const wrap = root.querySelector<HTMLElement>("#player-wrap");
+    const cover = root.querySelector<HTMLButtonElement>("#play-cover");
+    const fsBtn = root.querySelector<HTMLButtonElement>("#fullscreen-btn");
+    if (!wrap || wrap.dataset.playerReady) return;
+    wrap.dataset.playerReady = "1";
+
+    function ensureIframe(): HTMLIFrameElement {
+      let iframe = wrap!.querySelector("iframe");
+      if (!iframe) {
+        const url = wrap!.dataset.playUrl;
+        const title = wrap!.dataset.title ?? "Game";
+        iframe = document.createElement("iframe");
+        iframe.src = url ?? "";
+        iframe.title = title;
+        iframe.allow = "fullscreen; autoplay; gamepad; xr-spatial-tracking";
+        iframe.setAttribute("allowfullscreen", "true");
+        iframe.loading = "eager";
+        cover?.remove();
+        wrap!.appendChild(iframe);
+      }
+      return iframe;
+    }
+
+    cover?.addEventListener("click", () => ensureIframe());
+
+    fsBtn?.addEventListener("click", () => {
+      const iframe = ensureIframe();
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen().catch(() => {});
+      } else if ((wrap as any).webkitRequestFullscreen) {
+        (wrap as any).webkitRequestFullscreen();
+      }
+    });
+  }
+  initPlayer();
+</script>
+
+<style>
+  .fullscreen-btn {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(11, 12, 20, 0.72);
+    color: var(--text);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .fullscreen-btn:hover { background: var(--accent); color: #0b0c14; transform: translateY(-1px); }
+</style>
