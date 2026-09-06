@@ -7,7 +7,7 @@ interface Props {
 const { activeCategory } = Astro.props;
 const categories = await getAllCategories();
 ---
-<aside class="sidebar" aria-label="Game categories">
+<aside class="sidebar" id="site-sidebar" aria-label="Game categories">
   <p class="sidebar-title">Categories</p>
   <a href="/" class="sidebar-link" aria-current={!activeCategory ? "page" : undefined}>
     ⭐ Home
