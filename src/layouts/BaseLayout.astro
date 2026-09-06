@@ -1,0 +1,35 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = "Play free instant browser games — no download required." } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Preconnect to the host where YOU host your games/thumbnails/videos,
+         so those requests start warming up DNS+TLS immediately instead of
+         waiting for the browser to discover them mid-render.
+         Replace with your actual external hosting domain. -->
+    <link rel="preconnect" href="https://yourgamehost.com" crossorigin />
+    <link rel="dns-prefetch" href="https://yourgamehost.com" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#0f1114" />
+  </head>
+  <body>
+    <Header />
+    <slot />
+    <Footer />
+  </body>
+</html>

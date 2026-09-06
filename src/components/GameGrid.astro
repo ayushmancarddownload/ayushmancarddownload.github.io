@@ -1,0 +1,56 @@
+---
+import GameCard from "./GameCard.astro";
+import type { Game } from "../lib/types";
+
+interface Props {
+  games: Game[];
+  title?: string;
+  priorityFirst?: boolean;
+}
+const { games, title, priorityFirst = false } = Astro.props;
+---
+{title && <h2 class="section-title">{title}</h2>}
+<div class="game-grid">
+  {games.map((game, i) => (
+    <GameCard game={game} priority={priorityFirst && i === 0} />
+  ))}
+</div>
+
+<script>
+  // One delegated listener for the whole page instead of per-card listeners.
+  // Video src is only set (and the network request only fires) on first hover/
+  // focus/touch, so zero extra bytes are downloaded for cards nobody interacts with.
+  function attachPreviewHandlers(root: Document | HTMLElement) {
+    root.addEventListener("mouseenter", onEnter, true);
+    root.addEventListener("focusin", onEnter, true);
+    root.addEventListener("mouseleave", onLeave, true);
+    root.addEventListener(
+      "touchstart",
+      (e) => onEnter(e as unknown as Event),
+      { passive: true, capture: true }
+    );
+  }
+
+  function findVideo(target: EventTarget | null): HTMLVideoElement | null {
+    if (!(target instanceof Element)) return null;
+    const card = target.closest("[data-game-card]");
+    return card ? card.querySelector("video[data-preview-src]") : null;
+  }
+
+  function onEnter(e: Event) {
+    const video = findVideo(e.target);
+    if (!video) return;
+    const src = video.dataset.previewSrc;
+    if (src && !video.src) video.src = src;
+    video.play().catch(() => {});
+  }
+
+  function onLeave(e: Event) {
+    const video = findVideo(e.target);
+    if (!video) return;
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  attachPreviewHandlers(document);
+</script>

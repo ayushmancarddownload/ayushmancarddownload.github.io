@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Sidebar from "../../components/Sidebar.astro";
+import GameGrid from "../../components/GameGrid.astro";
+import { getAllCategories, getGamesByCategory } from "../../lib/gamesApi";
+
+export async function getStaticPaths() {
+  const categories = await getAllCategories();
+  return categories.map((cat) => ({
+    params: { slug: cat.toLowerCase() },
+    props: { category: cat },
+  }));
+}
+
+const { category } = Astro.props as { category: string };
+const games = await getGamesByCategory(category);
+---
+<BaseLayout title={`${category} Games — PlayHub`} description={`Play the best free ${category} games online.`}>
+  <div class="layout">
+    <Sidebar activeCategory={category} />
+    <main class="main">
+      <div class="container">
+        <GameGrid title={`${category} Games`} games={games} priorityFirst />
+      </div>
+    </main>
+  </div>
+</BaseLayout>

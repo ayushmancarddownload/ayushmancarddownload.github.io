@@ -1,0 +1,39 @@
+---
+import { Image } from "astro:assets";
+import type { Game } from "../lib/types";
+
+interface Props {
+  game: Game;
+  /** Set true only for the very first card above the fold so it can be the LCP element */
+  priority?: boolean;
+}
+const { game, priority = false } = Astro.props;
+---
+<a href={`/game/${game.id}`} class="game-card" data-game-card>
+  <div class="thumb-wrap">
+    <Image
+      src={game.thumbnail}
+      alt={game.title}
+      width={300}
+      height={225}
+      loading={priority ? "eager" : "lazy"}
+      fetchpriority={priority ? "high" : "auto"}
+      decoding="async"
+    />
+    {game.previewVideo && (
+      <video
+        muted
+        loop
+        playsinline
+        preload="none"
+        data-preview-src={game.previewVideo}
+        aria-hidden="true"
+      ></video>
+    )}
+  </div>
+  <p class="game-title">{game.title}</p>
+  <p class="game-meta">
+    {game.category}
+    {game.rating ? ` · ★ ${game.rating.toFixed(1)}` : ""}
+  </p>
+</a>

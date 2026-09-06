@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Sidebar from "../components/Sidebar.astro";
+import HeroBanner from "../components/HeroBanner.astro";
+import GameGrid from "../components/GameGrid.astro";
+import { getAllGames, getFeaturedGames, getAllCategories } from "../lib/gamesApi";
+
+const allGames = await getAllGames();
+const featured = await getFeaturedGames(1);
+const heroGame = featured[0] ?? allGames[0];
+const categories = await getAllCategories();
+
+// Build one row per category, like CrazyGames' homepage sections.
+const rows = categories
+  .map((cat) => ({
+    category: cat,
+    games: allGames.filter((g) => g.category === cat).slice(0, 12),
+  }))
+  .filter((row) => row.games.length > 0);
+---
+<BaseLayout title="PlayHub — Free Online Games, No Download">
+  <div class="layout">
+    <Sidebar />
+    <main class="main">
+      <div class="container">
+        {heroGame && <HeroBanner game={heroGame} />}
+
+        <GameGrid title="Featured" games={allGames.slice(0, 12)} priorityFirst />
+
+        {rows.map((row) => (
+          <GameGrid title={row.category} games={row.games} />
+        ))}
+      </div>
+    </main>
+  </div>
+</BaseLayout>
