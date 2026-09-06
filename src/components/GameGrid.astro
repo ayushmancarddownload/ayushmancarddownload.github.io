@@ -17,39 +17,41 @@ const { games, title, priorityFirst = false } = Astro.props;
 </div>
 
 <script>
-  // Preview videos now autoplay as soon as their card scrolls into view
-  // (background autoplay), instead of needing a hover/tap first. Video src
-  // is still only set the first time a card becomes visible, so cards
-  // nobody scrolls to never download their preview clip.
-  function attachAutoplay(root: Document | HTMLElement) {
-    if (!("IntersectionObserver" in window)) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const card = entry.target as HTMLElement;
-          const video = card.querySelector<HTMLVideoElement>("video[data-preview-src]");
-          if (!video) continue;
-
-          if (entry.isIntersecting) {
-            const src = video.dataset.previewSrc;
-            if (src && !video.src) video.src = src;
-            video.play().catch(() => {});
-            card.classList.add("is-playing");
-          } else {
-            video.pause();
-            video.currentTime = 0;
-            card.classList.remove("is-playing");
-          }
-        }
-      },
-      { rootMargin: "100px 0px", threshold: 0.3 }
+  // Hover/focus/touch-only preview: video src is only set (and the network
+  // request only fires) the first time someone hovers/focuses/taps a card,
+  // so zero extra bytes are downloaded for cards nobody interacts with.
+  // (Autoplay-on-scroll lives only on the main game player, not here.)
+  function attachPreviewHandlers(root: Document | HTMLElement) {
+    root.addEventListener("mouseenter", onEnter, true);
+    root.addEventListener("focusin", onEnter, true);
+    root.addEventListener("mouseleave", onLeave, true);
+    root.addEventListener(
+      "touchstart",
+      (e) => onEnter(e as unknown as Event),
+      { passive: true, capture: true }
     );
-
-    root.querySelectorAll<HTMLElement>("[data-game-card]").forEach((card) => {
-      if (card.querySelector("video[data-preview-src]")) observer.observe(card);
-    });
   }
 
-  attachAutoplay(document);
+  function findVideo(target: EventTarget | null): HTMLVideoElement | null {
+    if (!(target instanceof Element)) return null;
+    const card = target.closest("[data-game-card]");
+    return card ? card.querySelector("video[data-preview-src]") : null;
+  }
+
+  function onEnter(e: Event) {
+    const video = findVideo(e.target);
+    if (!video) return;
+    const src = video.dataset.previewSrc;
+    if (src && !video.src) video.src = src;
+    video.play().catch(() => {});
+  }
+
+  function onLeave(e: Event) {
+    const video = findVideo(e.target);
+    if (!video) return;
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  attachPreviewHandlers(document);
 </script>
