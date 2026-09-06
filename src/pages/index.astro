@@ -136,13 +136,27 @@ const faqSchema = {
 </BaseLayout>
 
 <style>
-  .game-hero { padding-top: 4px; }
+  /* Hero text + FAQ now sit in the same centered, narrower column as the
+     player above them — only the game grids stay full width, since a
+     grid of cards looks better spanning the wide container. */
+  .game-hero {
+    padding-top: 4px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
   .game-hero-title {
     margin: 16px 0 4px;
     font-size: 1.9rem;
     letter-spacing: -0.02em;
+    text-align: center;
   }
-  .faq { margin-top: 8px; }
+  .game-meta { text-align: center; }
+  .faq {
+    margin-top: 8px;
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+  }
   .faq-item {
     background: var(--bg-card);
     border: 1px solid #262a3a;
