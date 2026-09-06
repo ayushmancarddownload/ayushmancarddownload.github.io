@@ -39,12 +39,14 @@ import Sidebar from "../components/Sidebar.astro";
     grid.innerHTML = results
       .map(
         (g) => `
-      <a href="/game/${g.id}" class="game-card">
+      <a href="/game/${g.id}" class="game-card" data-game-card>
         <div class="thumb-wrap">
           <img src="${g.thumbnail}" alt="${g.title}" loading="lazy" decoding="async" width="300" height="225" />
+          <div class="card-overlay">
+            <p class="card-title">${g.title}</p>
+            <p class="card-meta">${g.category}</p>
+          </div>
         </div>
-        <p class="game-title">${g.title}</p>
-        <p class="game-meta">${g.category}</p>
       </a>`
       )
       .join("");

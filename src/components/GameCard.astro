@@ -9,7 +9,7 @@ interface Props {
 }
 const { game, priority = false } = Astro.props;
 ---
-<a href={`/game/${game.id}`} class="game-card" data-game-card>
+<a href={`/game/${game.id}`} class="game-card" data-game-card aria-label={game.title}>
   <div class="thumb-wrap">
     <Image
       src={game.thumbnail}
@@ -30,10 +30,17 @@ const { game, priority = false } = Astro.props;
         aria-hidden="true"
       ></video>
     )}
+    <!--
+      Title/meta only render on hover/focus (see .card-overlay in global.css).
+      Pure CSS opacity/transform transition — no JS, no extra network
+      requests, so this costs nothing towards load performance.
+    -->
+    <div class="card-overlay">
+      <p class="card-title">{game.title}</p>
+      <p class="card-meta">
+        {game.category}
+        {game.rating ? ` · ★ ${game.rating.toFixed(1)}` : ""}
+      </p>
+    </div>
   </div>
-  <p class="game-title">{game.title}</p>
-  <p class="game-meta">
-    {game.category}
-    {game.rating ? ` · ★ ${game.rating.toFixed(1)}` : ""}
-  </p>
 </a>

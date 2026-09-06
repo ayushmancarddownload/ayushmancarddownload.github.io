@@ -99,10 +99,17 @@ site with Astro and publishes `dist/` to GitHub Pages on every push to `main`.
 Setup steps:
 1. Push this project to the `ayushmancarddownload/ayushmancarddownload.github.io` repo.
 2. In the repo → **Settings → Pages → Build and deployment → Source**, select
-   **GitHub Actions**.
+   **GitHub Actions** (NOT "Deploy from a branch" — leaving it on the branch
+   option makes GitHub auto-run its own Jekyll build instead of our
+   workflow, which will fail trying to parse `.astro` files as Jekyll
+   pages/front-matter).
 3. Push to `main` — the **Deploy to GitHub Pages** workflow runs
    automatically and publishes to `https://ayushmancarddownload.github.io`
    (no `base` path needed — this is the special root user-pages repo).
+
+A `public/.nojekyll` file is also included as a safety net so GitHub never
+tries to run Jekyll over the build output even if the branch-deploy method
+is ever used instead.
 
 You can also deploy the same `dist/` output to Vercel, Netlify, or
 Cloudflare Pages instead if you prefer — the workflow only targets GitHub
