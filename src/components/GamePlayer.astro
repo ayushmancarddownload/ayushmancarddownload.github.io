@@ -5,86 +5,61 @@ import type { Game } from "../lib/types";
 interface Props { game: Game }
 const { game } = Astro.props;
 ---
-<div class="player-wrap" id="player-wrap" data-play-url={game.playUrl} data-title={game.title}>
+<div class="player-wrap" id="player-wrap" data-title={game.title}>
+  <!-- Game loads right away in the background; the dark cover on top of it
+       keeps it dim/non-interactive until "Play Now" is pressed. -->
+  <iframe
+    id="game-iframe"
+    src={game.playUrl}
+    title={game.title}
+    allow="fullscreen; autoplay; gamepad; xr-spatial-tracking"
+    allowfullscreen
+    loading="eager"
+    tabindex="-1"
+  ></iframe>
+
   <button class="player-cover" id="play-cover" aria-label={`Play ${game.title}`}>
-    <div class="player-cover-media">
+    <span class="cover-thumb">
       <Image
-        class="player-cover-thumb"
         src={game.thumbnail}
         alt={`${game.title} unblocked — play free online`}
-        width={480}
-        height={360}
+        width={220}
+        height={140}
         loading="eager"
         fetchpriority="high"
         decoding="async"
       />
-      {game.previewVideo && (
-        <video
-          class="player-cover-video"
-          id="player-cover-video"
-          muted
-          loop
-          autoplay
-          playsinline
-          preload="auto"
-          src={game.previewVideo}
-          aria-hidden="true"
-        ></video>
-      )}
-    </div>
-    <span class="play-btn"><span>▶</span></span>
+    </span>
+    <span class="play-now-btn">
+      <span class="play-now-icon">▶</span>
+      Play Now
+    </span>
   </button>
+
   <button class="fullscreen-btn" id="fullscreen-btn" type="button" aria-label={`Play ${game.title} fullscreen`}>
     ⛶ Fullscreen
   </button>
 </div>
 
-<button class="back-to-game" id="back-to-game" type="button">
-  <span>▶</span> Back to Game
-</button>
-
 <script>
-  // Click-to-play: the actual game iframe (often several MB of its own JS/
-  // assets) is never requested until the player is clicked — keeps LCP/TBT
-  // low on every page this component is used on (home + game pages). The
-  // small preview VIDEO above (muted, autoplay) is a separate, tiny asset
-  // and is unaffected by this — it's the only place on the site that
-  // autoplays, everywhere else (grid cards) preview video is hover-only.
   function initPlayer(root: ParentNode = document) {
     const wrap = root.querySelector<HTMLElement>("#player-wrap");
     const cover = root.querySelector<HTMLButtonElement>("#play-cover");
     const fsBtn = root.querySelector<HTMLButtonElement>("#fullscreen-btn");
-    const coverVideo = root.querySelector<HTMLVideoElement>("#player-cover-video");
+    const iframe = root.querySelector<HTMLIFrameElement>("#game-iframe");
     if (!wrap || wrap.dataset.playerReady) return;
     wrap.dataset.playerReady = "1";
 
-    // Fade the preview video in only once it's actually decoded/playing,
-    // so the sharp centered thumbnail is what's visible while it loads.
-    coverVideo?.addEventListener("playing", () => coverVideo.classList.add("is-ready"), { once: true });
-
-    function ensureIframe(): HTMLIFrameElement {
-      let iframe = wrap!.querySelector("iframe");
-      if (!iframe) {
-        const url = wrap!.dataset.playUrl;
-        const title = wrap!.dataset.title ?? "Game";
-        iframe = document.createElement("iframe");
-        iframe.src = url ?? "";
-        iframe.title = title;
-        iframe.allow = "fullscreen; autoplay; gamepad; xr-spatial-tracking";
-        iframe.setAttribute("allowfullscreen", "true");
-        iframe.loading = "eager";
-        coverVideo?.pause();
-        cover?.remove();
-        wrap!.appendChild(iframe);
-      }
-      return iframe;
+    function activate() {
+      wrap!.classList.add("is-active");
+      iframe?.removeAttribute("tabindex");
     }
 
-    cover?.addEventListener("click", () => ensureIframe());
+    cover?.addEventListener("click", activate);
 
     fsBtn?.addEventListener("click", () => {
-      const iframe = ensureIframe();
-      if (iframe.requestFullscreen) {
+      activate();
+      if (iframe?.requestFullscreen) {
         iframe.requestFullscreen().catch(() => {});
       } else if ((wrap as any).webkitRequestFullscreen) {
         (wrap as any).webkitRequestFullscreen();
@@ -92,72 +67,87 @@ const { game } = Astro.props;
     });
   }
   initPlayer();
-
-  // "Back to Game" floating button: hidden while the player is on screen,
-  // fades in once the user scrolls it out of view, and jumps back up to it
-  // on click. One IntersectionObserver, no scroll-event listener needed.
-  function initBackToGame(root: ParentNode = document) {
-    const wrap = root.querySelector<HTMLElement>("#player-wrap");
-    const btn = root.querySelector<HTMLButtonElement>("#back-to-game");
-    if (!wrap || !btn || btn.dataset.ready) return;
-    btn.dataset.ready = "1";
-
-    const observer = new IntersectionObserver(
-      ([entry]) => btn.classList.toggle("is-visible", !entry.isIntersecting),
-      { rootMargin: "-72px 0px 0px 0px" }
-    );
-    observer.observe(wrap);
-
-    btn.addEventListener("click", () => {
-      wrap.scrollIntoView({ behavior: "smooth", block: "center" });
-    });
-  }
-  initBackToGame();
 </script>
 
 <style>
-  .player-cover-media {
+  .player-wrap iframe {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    /* Blocked from receiving clicks/taps until "Play Now" is pressed —
+       the cover sits visually on top of it anyway, but this also stops
+       accidental interaction while it's dimmed. */
+    pointer-events: none;
+  }
+  .player-wrap.is-active iframe { pointer-events: auto; }
+
+  /* Dark tint over the live game underneath — this is what makes the
+     iframe content behind read as "dimmed" instead of fully hidden. */
+  .player-cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 18px;
+    padding: 0 16px;
+    /* nudges the thumbnail+button group down from dead-center */
+    padding-top: 7%;
+    border: none;
+    cursor: pointer;
+    background: rgba(6, 7, 14, 0.58);
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+  .player-wrap.is-active .player-cover {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .cover-thumb {
+    display: block;
+    width: 32%;
+    max-width: 220px;
+    min-width: 110px;
+    aspect-ratio: 16 / 10;
+    border-radius: 12px;
     overflow: hidden;
-    background: radial-gradient(120% 120% at 50% 25%, #1c2032 0%, #06070c 100%);
+    box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.75);
+    border: 2px solid rgba(255, 255, 255, 0.14);
   }
-  /* Centered + capped-width thumbnail instead of a full-bleed stretch —
-     this is what fixes the blur/quality loss on small source thumbnails. */
-  .player-cover-thumb {
-    position: relative;
-    z-index: 1;
-    width: 46%;
-    max-width: 420px;
-    min-width: 180px;
-    height: auto;
-    object-fit: contain;
-    border-radius: 14px;
-    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.75);
-  }
-  /* The ONLY autoplaying video on the whole site — the main player only.
-     Fills the box properly since it's a real video asset, not a stretched
-     static image, so it doesn't get the blur treatment the thumbnail needs. */
-  .player-cover-video {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
+  .cover-thumb :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0;
-    transition: opacity 0.4s ease;
   }
-  .player-cover-video.is-ready { opacity: 1; }
+
+  .play-now-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 999px;
+    background: var(--gradient);
+    color: #0b0c14;
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    box-shadow: 0 8px 22px -4px rgba(139, 92, 246, 0.6);
+    transition: transform 0.15s ease;
+  }
+  .play-now-icon { font-size: 0.85em; }
+  .player-cover:hover .play-now-btn { transform: scale(1.06); }
 
   .fullscreen-btn {
     position: absolute;
     right: 10px;
     bottom: 10px;
-    z-index: 3;
+    z-index: 2;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -174,35 +164,8 @@ const { game } = Astro.props;
   }
   .fullscreen-btn:hover { background: var(--accent); color: #0b0c14; transform: translateY(-1px); }
 
-  /* Floating "Back to Game" pill — fixed, hidden until the player scrolls
-     out of view, so it never blocks content while the player is visible. */
-  .back-to-game {
-    position: fixed;
-    left: 50%;
-    bottom: 20px;
-    z-index: 70;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 22px;
-    border-radius: 999px;
-    border: none;
-    background: var(--gradient);
-    color: #0b0c14;
-    font-weight: 800;
-    font-size: 0.88rem;
-    cursor: pointer;
-    box-shadow: var(--glow);
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, 14px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+  @media (max-width: 480px) {
+    .cover-thumb { width: 42%; min-width: 96px; }
+    .play-now-btn { padding: 10px 22px; font-size: 0.9rem; }
   }
-  .back-to-game.is-visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translate(-50%, 0);
-  }
-  .back-to-game:hover { transform: translate(-50%, -2px); }
-  .back-to-game span { font-size: 0.75rem; }
 </style>

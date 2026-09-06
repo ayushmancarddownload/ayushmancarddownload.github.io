@@ -25,6 +25,14 @@ html, body {
   color: var(--text);
   font-family: var(--font);
   -webkit-font-smoothing: antialiased;
+  /* The off-canvas sidebar drawer sits at left:0 with a translateX(-100%)
+     to hide it — some mobile browsers still count that translated box
+     toward the page's scrollable width, which shows up as extra blank
+     space on the right that only appears once you scroll/swipe. Clipping
+     horizontal overflow at the root stops that without touching the
+     drawer's own open/close animation. */
+  overflow-x: hidden;
+  width: 100%;
 }
 
 img, video { max-width: 100%; display: block; }
@@ -229,10 +237,29 @@ body.sidebar-open { overflow: hidden; }
   aspect-ratio: 4 / 3; /* reserves space -> prevents layout shift (CLS) */
   overflow: hidden;
   border-radius: var(--radius);
-  background: #1c2032;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background: linear-gradient(160deg, #1c2032 0%, #10121c 100%);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.game-card img, .game-card video,
+/* Small centered "frame" for the thumbnail/preview video. Shrinking it
+   down (instead of stretching full-bleed with object-fit:cover) is what
+   fixes the blur/quality loss — low-res preview clips no longer get
+   upscaled across the whole card. */
+.thumb-media {
+  position: absolute;
+  inset: 9%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0d0f18;
+}
+.thumb-media img, .thumb-media video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+/* Fallback for thumbnails used outside GameCard (e.g. the game page's
+   "More Games" sidebar list) that aren't wrapped in .thumb-media. */
 .thumb-wrap > img, .thumb-wrap > video {
   position: absolute;
   inset: 0;
@@ -240,8 +267,10 @@ body.sidebar-open { overflow: hidden; }
   height: 100%;
   object-fit: cover;
 }
-.game-card video { opacity: 0; transition: opacity 0.2s ease; }
-.game-card:hover video, .game-card:focus-visible video { opacity: 1; }
+.game-card video { opacity: 0; transition: opacity 0.25s ease; }
+.game-card.is-playing video,
+.game-card:hover video,
+.game-card:focus-visible video { opacity: 1; }
 
 /* Hover/focus: lift the card + glow ring — transform/box-shadow only,
    so this is GPU-accelerated and never triggers layout (cheap for CWV). */
@@ -341,37 +370,8 @@ body.sidebar-open { overflow: hidden; }
   height: 100%;
   border: 0;
 }
-.player-cover {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  border: none;
-  padding: 0;
-}
-.player-cover img { display: block; }
-.play-btn {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.play-btn span {
-  width: 74px;
-  height: 74px;
-  border-radius: 50%;
-  background: var(--gradient);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.6rem;
-  color: #0b0c14;
-  box-shadow: 0 8px 22px -4px rgba(139, 92, 246, 0.6);
-  transition: transform 0.15s ease;
-}
-.player-cover:hover .play-btn span { transform: scale(1.08); }
+/* .player-cover / .play-now-btn styling now lives scoped inside
+   GamePlayer.astro, since that component owns the play overlay markup. */
 
 .game-detail-layout {
   display: grid;
