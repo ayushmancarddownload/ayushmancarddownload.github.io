@@ -11,25 +11,27 @@ const { game, priority = false } = Astro.props;
 ---
 <a href={`/game/${game.id}`} class="game-card" data-game-card aria-label={game.title}>
   <div class="thumb-wrap">
-    <Image
-      src={game.thumbnail}
-      alt={game.title}
-      width={300}
-      height={225}
-      loading={priority ? "eager" : "lazy"}
-      fetchpriority={priority ? "high" : "auto"}
-      decoding="async"
-    />
-    {game.previewVideo && (
-      <video
-        muted
-        loop
-        playsinline
-        preload="none"
-        data-preview-src={game.previewVideo}
-        aria-hidden="true"
-      ></video>
-    )}
+    <div class="thumb-media">
+      <Image
+        src={game.thumbnail}
+        alt={game.title}
+        width={300}
+        height={225}
+        loading={priority ? "eager" : "lazy"}
+        fetchpriority={priority ? "high" : "auto"}
+        decoding="async"
+      />
+      {game.previewVideo && (
+        <video
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          data-preview-src={game.previewVideo}
+          aria-hidden="true"
+        ></video>
+      )}
+    </div>
     <!--
       Title/meta only render on hover/focus (see .card-overlay in global.css).
       Pure CSS opacity/transform transition — no JS, no extra network

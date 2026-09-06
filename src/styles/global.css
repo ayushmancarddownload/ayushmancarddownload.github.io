@@ -50,6 +50,7 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid #23263380;
   padding: 0 16px;
   backdrop-filter: blur(8px);
+  box-shadow: 0 2px 14px -6px rgba(0, 0, 0, 0.5);
 }
 .logo {
   font-weight: 800;
@@ -65,10 +66,11 @@ a { color: inherit; text-decoration: none; }
   color: transparent;
 }
 
-/* Hamburger menu button — hidden on desktop, shown only on mobile (see
-   media query below). Pure CSS bars, no icon font/SVG request needed. */
+/* Hamburger menu button — always visible. The sidebar is an overlay drawer
+   on every screen size now, opened/closed only via this button (or the
+   backdrop/Escape key), so content never gets pushed left/right by it. */
 .menu-toggle {
-  display: none;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 5px;
@@ -76,10 +78,13 @@ a { color: inherit; text-decoration: none; }
   height: 36px;
   padding: 0;
   border: none;
+  border-radius: 8px;
   background: transparent;
   cursor: pointer;
   flex-shrink: 0;
+  transition: background 0.15s ease;
 }
+.menu-toggle:hover { background: var(--bg-card); }
 .menu-toggle span {
   display: block;
   width: 100%;
@@ -118,8 +123,9 @@ body.sidebar-open .sidebar-backdrop { opacity: 1; pointer-events: auto; }
   font-size: 0.9rem;
   transition: border-color 0.15s ease;
 }
-.search-form input:focus { outline: none; border-color: var(--accent); }
-.header-actions { margin-left: auto; display: flex; gap: 10px; }
+.search-form input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18); }
+
+/* Still used by HeroBanner's "Play Now" and the 404 page's "Back to Home". */
 .btn {
   padding: 8px 18px;
   border-radius: 999px;
@@ -132,17 +138,37 @@ body.sidebar-open .sidebar-backdrop { opacity: 1; pointer-events: auto; }
 .btn-primary { background: var(--gradient); color: #0b0c14; }
 .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--glow); }
 
-/* ---------- Layout: sidebar + content ---------- */
+/* ---------- Layout: content always centered, sidebar is an overlay drawer ---------- */
 .layout {
-  display: grid;
-  grid-template-columns: var(--sidebar-w) 1fr;
+  display: block;
   min-height: calc(100dvh - var(--header-h));
 }
+
+/* Sidebar is a fixed overlay drawer on EVERY screen size — it never takes up
+   its own column, so the homepage/game page content is always centered
+   instead of shifting left/right. Opened/closed only via the header's
+   menu button (see Header.astro script), the backdrop, or Escape. */
 .sidebar {
-  border-right: 1px solid #23263380;
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  bottom: 0;
+  z-index: 60;
+  width: min(82vw, 280px);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: var(--bg-elevated);
+  border-right: 1px solid #23263380;
   padding: 16px 8px;
+  box-shadow: 12px 0 30px -10px rgba(0, 0, 0, 0.5);
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
 }
+body.sidebar-open .sidebar { transform: translateX(0); }
+body.sidebar-open { overflow: hidden; }
+
 .sidebar-title {
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -158,15 +184,25 @@ body.sidebar-open .sidebar-backdrop { opacity: 1; pointer-events: auto; }
   border-radius: 8px;
   color: var(--text);
   font-size: 0.9rem;
+  white-space: normal;
+  flex-shrink: 0;
   transition: background 0.15s ease, color 0.15s ease;
 }
 .sidebar-link:hover { background: var(--bg-card); }
 .sidebar-link[aria-current="page"] {
   background: var(--bg-card);
   color: var(--accent-2);
+  box-shadow: inset 3px 0 0 var(--accent-2);
 }
 
 .main { padding: 20px 16px 60px; }
+
+/* Homepage's main game player: capped width + auto margins so it reads as
+   a smaller, centered stage instead of a full-bleed iframe edge-to-edge. */
+.home-player {
+  max-width: 860px;
+  margin: 0 auto 10px;
+}
 
 /* ---------- Game grid & cards ---------- */
 .section-title {
@@ -193,18 +229,40 @@ body.sidebar-open .sidebar-backdrop { opacity: 1; pointer-events: auto; }
   aspect-ratio: 4 / 3; /* reserves space -> prevents layout shift (CLS) */
   overflow: hidden;
   border-radius: var(--radius);
-  background: #1c2032;
+  background: linear-gradient(160deg, #1c2032 0%, #10121c 100%);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.game-card img, .game-card video {
+/* Small centered "frame" for the thumbnail/preview video. Shrinking it
+   down (instead of stretching full-bleed with object-fit:cover) is what
+   fixes the blur/quality loss — low-res preview clips no longer get
+   upscaled across the whole card. */
+.thumb-media {
+  position: absolute;
+  inset: 9%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0d0f18;
+}
+.thumb-media img, .thumb-media video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+/* Fallback for thumbnails used outside GameCard (e.g. the game page's
+   "More Games" sidebar list) that aren't wrapped in .thumb-media. */
+.thumb-wrap > img, .thumb-wrap > video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.game-card video { opacity: 0; transition: opacity 0.2s ease; }
-.game-card:hover video, .game-card:focus-visible video { opacity: 1; }
+.game-card video { opacity: 0; transition: opacity 0.25s ease; }
+.game-card.is-playing video,
+.game-card:hover video,
+.game-card:focus-visible video { opacity: 1; }
 
 /* Hover/focus: lift the card + glow ring — transform/box-shadow only,
    so this is GPU-accelerated and never triggers layout (cheap for CWV). */
@@ -361,36 +419,10 @@ footer.site-footer {
   .game-detail-layout { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 860px) {
-  .menu-toggle { display: flex; }
-  .layout { grid-template-columns: 1fr; }
-  .sidebar {
-    position: fixed;
-    top: var(--header-h);
-    left: 0;
-    bottom: 0;
-    z-index: 60;
-    width: min(78vw, 300px);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    overflow-x: hidden;
-    border-right: 1px solid #23263380;
-    border-bottom: none;
-    box-shadow: 12px 0 30px -10px rgba(0, 0, 0, 0.5);
-    transform: translateX(-100%);
-    transition: transform 0.25s ease;
-  }
-  body.sidebar-open .sidebar { transform: translateX(0); }
-  body.sidebar-open { overflow: hidden; }
-  .sidebar-title { display: block; }
-  .sidebar-link { white-space: normal; flex-shrink: 0; }
-}
-
 @media (max-width: 640px) {
   .logo { font-size: 1.05rem; }
   .search-form { max-width: none; }
-  .header-actions .btn span.full-label { display: none; }
+  .sidebar { width: min(85vw, 280px); }
   .game-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
   .hero-card { aspect-ratio: 4 / 3; }
   .hero-card h1 { font-size: 1.2rem; }
