@@ -1,10 +1,10 @@
 :root {
-  /* Fresh dark theme: deep indigo base + violet -> cyan gradient accent */
-  --bg: #0b0c14;
-  --bg-elevated: #12141f;
-  --bg-card: #171a26;
-  --text: #f5f6fb;
-  --text-muted: #9296ab;
+  /* Light bluish-dark theme: navy/slate base + violet -> cyan gradient accent */
+  --bg: #101a2c;
+  --bg-elevated: #16233a;
+  --bg-card: #1c2c47;
+  --text: #eef2ff;
+  --text-muted: #93a2c0;
   --accent: #8b5cf6;
   --accent-2: #22d3ee;
   --accent-3: #f472b6;
@@ -65,10 +65,11 @@ a { color: inherit; text-decoration: none; }
   color: transparent;
 }
 
-/* Hamburger menu button — hidden on desktop, shown only on mobile (see
-   media query below). Pure CSS bars, no icon font/SVG request needed. */
+/* Menu button — now visible on BOTH desktop and mobile. On mobile it opens
+   an overlay drawer; on desktop it collapses/expands the sidebar column
+   (see body.sidebar-toggled rules below and in the responsive section). */
 .menu-toggle {
-  display: none;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 5px;
@@ -88,11 +89,21 @@ a { color: inherit; text-decoration: none; }
   background: var(--text);
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
-body.sidebar-open .menu-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-body.sidebar-open .menu-toggle span:nth-child(2) { opacity: 0; }
-body.sidebar-open .menu-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+body.sidebar-toggled .menu-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+body.sidebar-toggled .menu-toggle span:nth-child(2) { opacity: 0; }
+body.sidebar-toggled .menu-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Dark backdrop behind the mobile drawer; click to close. */
+/* Desktop: sidebar is visible by default; toggling HIDES it so the game
+   grid can use the full page width. (Mobile has the opposite default —
+   see the max-width: 860px block further down.) */
+@media (min-width: 861px) {
+  body.sidebar-toggled .sidebar { display: none; }
+  body.sidebar-toggled .layout { grid-template-columns: 1fr; }
+}
+
+/* Dark backdrop behind the mobile drawer; click to close. Scoped to mobile
+   in the max-width:860px block below — desktop's sidebar-toggled just
+   hides/shows the column, no dimming overlay needed there. */
 .sidebar-backdrop {
   position: fixed;
   inset: 0;
@@ -102,7 +113,6 @@ body.sidebar-open .menu-toggle span:nth-child(3) { transform: translateY(-7px) r
   transition: opacity 0.2s ease;
   z-index: 55;
 }
-body.sidebar-open .sidebar-backdrop { opacity: 1; pointer-events: auto; }
 .search-form {
   flex: 1;
   max-width: 520px;
@@ -119,7 +129,6 @@ body.sidebar-open .sidebar-backdrop { opacity: 1; pointer-events: auto; }
   transition: border-color 0.15s ease;
 }
 .search-form input:focus { outline: none; border-color: var(--accent); }
-.header-actions { margin-left: auto; display: flex; gap: 10px; }
 .btn {
   padding: 8px 18px;
   border-radius: 999px;
@@ -362,7 +371,6 @@ footer.site-footer {
 }
 
 @media (max-width: 860px) {
-  .menu-toggle { display: flex; }
   .layout { grid-template-columns: 1fr; }
   .sidebar {
     position: fixed;
@@ -381,8 +389,9 @@ footer.site-footer {
     transform: translateX(-100%);
     transition: transform 0.25s ease;
   }
-  body.sidebar-open .sidebar { transform: translateX(0); }
-  body.sidebar-open { overflow: hidden; }
+  body.sidebar-toggled .sidebar { transform: translateX(0); }
+  body.sidebar-toggled { overflow: hidden; }
+  body.sidebar-toggled .sidebar-backdrop { opacity: 1; pointer-events: auto; }
   .sidebar-title { display: block; }
   .sidebar-link { white-space: normal; flex-shrink: 0; }
 }
@@ -390,7 +399,6 @@ footer.site-footer {
 @media (max-width: 640px) {
   .logo { font-size: 1.05rem; }
   .search-form { max-width: none; }
-  .header-actions .btn span.full-label { display: none; }
   .game-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
   .hero-card { aspect-ratio: 4 / 3; }
   .hero-card h1 { font-size: 1.2rem; }

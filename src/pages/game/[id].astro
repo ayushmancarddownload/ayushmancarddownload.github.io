@@ -3,7 +3,7 @@ import { Image } from "astro:assets";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Sidebar from "../../components/Sidebar.astro";
 import GamePlayer from "../../components/GamePlayer.astro";
-import GameGrid from "../../components/GameGrid.astro";
+import GameGridPaginated from "../../components/GameGridPaginated.astro";
 import { getAllGames, getGameById, getSeededRandomGames } from "../../lib/gamesApi";
 
 export async function getStaticPaths() {
@@ -21,7 +21,9 @@ if (!game) {
 // Seeded on THIS game's own id, so every /game/<id> page gets its own fixed
 // selection/order of "more games" — no two game pages look like duplicate
 // content to search engines, and the list never changes between visits.
-const related = await getSeededRandomGames(`related:${game.id}`, game.id, 12);
+// Full pool here (not capped) so GameGridPaginated can show 20 up front and
+// reveal the rest via "Load More Games".
+const related = await getSeededRandomGames(`related:${game.id}`, game.id);
 const sidebarRelated = await getSeededRandomGames(`sidebar:${game.id}`, game.id, 6);
 
 const pageTitle = `${game.title} Unblocked — Play Free Online`;
@@ -98,7 +100,7 @@ const videoGameSchema = {
           </aside>
         </div>
 
-        <GameGrid title="You might also like" games={related} />
+        <GameGridPaginated title="You might also like" games={related} />
       </div>
     </main>
   </div>

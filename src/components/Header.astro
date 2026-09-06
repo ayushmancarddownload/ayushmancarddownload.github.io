@@ -20,38 +20,45 @@
       autocomplete="off"
     />
   </form>
-  <div class="header-actions">
-    <button class="btn btn-primary"><span class="full-label">Sign In</span></button>
-  </div>
 </header>
 <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
 <script>
-  // Tiny, dependency-free mobile menu toggle. Runs on every page (Header is
-  // in BaseLayout), targets the Sidebar component by id.
+  // Single menu button, works on BOTH breakpoints:
+  // - Mobile (≤860px): sidebar is hidden by default; toggling SHOWS it as an
+  //   overlay drawer.
+  // - Desktop (>860px): sidebar is visible by default; toggling HIDES it so
+  //   the game grid can use the full width.
+  // Same "sidebar-toggled" class either way — global.css gives it opposite
+  // meaning per breakpoint, so this one script/button handles both.
   const toggle = document.getElementById("menu-toggle");
   const backdrop = document.getElementById("sidebar-backdrop");
 
-  function setOpen(open: boolean) {
-    document.body.classList.toggle("sidebar-open", open);
-    toggle?.setAttribute("aria-expanded", String(open));
+  function isMobile() {
+    return window.matchMedia("(max-width: 860px)").matches;
+  }
+
+  function setToggled(on: boolean) {
+    document.body.classList.toggle("sidebar-toggled", on);
+    toggle?.setAttribute("aria-expanded", String(isMobile() ? on : !on));
   }
 
   toggle?.addEventListener("click", () => {
-    setOpen(!document.body.classList.contains("sidebar-open"));
+    setToggled(!document.body.classList.contains("sidebar-toggled"));
   });
 
-  backdrop?.addEventListener("click", () => setOpen(false));
+  backdrop?.addEventListener("click", () => setToggled(false));
 
-  // Close the drawer after tapping any category link inside it.
+  // Auto-close the drawer after tapping a category link — mobile only;
+  // on desktop the sidebar should stay put after navigating.
   document.addEventListener("click", (e) => {
-    if (e.target instanceof Element && e.target.closest("#site-sidebar a")) {
-      setOpen(false);
+    if (isMobile() && e.target instanceof Element && e.target.closest("#site-sidebar a")) {
+      setToggled(false);
     }
   });
 
-  // Close on Escape for keyboard users.
+  // Escape closes the mobile drawer.
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") setOpen(false);
+    if (e.key === "Escape" && isMobile()) setToggled(false);
   });
 </script>
