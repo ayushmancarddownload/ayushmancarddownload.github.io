@@ -197,13 +197,16 @@
   function getFavorites() { return safeGet(LS.favorites, []); }
   function isFavorite(slug) { return getFavorites().some(function (f) { return f.slug === slug; }); }
 
-  function toggleFavorite(data) {
+  function toggleFavorite(data, sourceEl) {
     var list = getFavorites();
     var idx = list.findIndex(function (f) { return f.slug === data.slug; });
-    if (idx === -1) list.unshift(data); else list.splice(idx, 1);
+    var wasAdded = idx === -1;
+    if (wasAdded) list.unshift(data); else list.splice(idx, 1);
     safeSet(LS.favorites, list.slice(0, 60));
     refreshFavoriteButtons();
     renderFavoritesRow();
+    renderHeaderFavPanel();
+    if (wasAdded && sourceEl) flyToHeaderFav(sourceEl);
   }
 
   function refreshFavoriteButtons() {
@@ -219,6 +222,36 @@
     });
   }
 
+  /* Flies a heart emoji from the clicked save button to the header favorites icon */
+  function flyToHeaderFav(sourceEl) {
+    var target = document.getElementById('headerFavBtn');
+    if (!target || !sourceEl) return;
+    var from = sourceEl.getBoundingClientRect();
+    var to = target.getBoundingClientRect();
+
+    var flyer = document.createElement('span');
+    flyer.className = 'fav-fly-emoji';
+    flyer.textContent = '💗';
+    flyer.style.left = (from.left + from.width / 2 - 12) + 'px';
+    flyer.style.top = (from.top + from.height / 2 - 12) + 'px';
+    flyer.style.transform = 'translate(0, 0) scale(1)';
+    flyer.style.opacity = '1';
+    document.body.appendChild(flyer);
+
+    requestAnimationFrame(function () {
+      var dx = (to.left + to.width / 2 - 12) - (from.left + from.width / 2 - 12);
+      var dy = (to.top + to.height / 2 - 12) - (from.top + from.height / 2 - 12);
+      flyer.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(0.35)';
+      flyer.style.opacity = '0.15';
+    });
+
+    setTimeout(function () {
+      flyer.remove();
+      target.classList.add('fav-bump');
+      setTimeout(function () { target.classList.remove('fav-bump'); }, 400);
+    }, 620);
+  }
+
   function initFavorites() {
     document.addEventListener('click', function (e) {
       var btn = e.target.closest('[data-fav-toggle]');
@@ -229,10 +262,11 @@
         title: btn.getAttribute('data-title'),
         thumbnail: btn.getAttribute('data-thumbnail'),
         category: btn.getAttribute('data-category') || ''
-      });
+      }, btn);
     });
     refreshFavoriteButtons();
     renderFavoritesRow();
+    initHeaderFavPanel();
   }
 
   function renderFavoritesRow() {
@@ -242,6 +276,50 @@
     var list = getFavorites();
     row.innerHTML = list.map(chipHtml).join('');
     if (empty) empty.style.display = list.length ? 'none' : 'block';
+  }
+
+  /* ---------------- Header favorites icon + dropdown popup ---------------- */
+  function renderHeaderFavPanel() {
+    var icon = document.getElementById('headerFavIcon');
+    var countBadge = document.getElementById('headerFavCount');
+    var list = document.getElementById('favPanelList');
+    var empty = document.getElementById('favPanelEmpty');
+    if (!icon || !list || !empty || !countBadge) return;
+
+    var favs = getFavorites();
+    icon.textContent = favs.length ? '💗' : '🤍';
+    countBadge.textContent = String(favs.length);
+    countBadge.classList.toggle('hidden', favs.length === 0);
+
+    empty.style.display = favs.length ? 'none' : 'block';
+    list.innerHTML = favs.slice(0, 6).map(function (g) {
+      var img = g.thumbnail ? '<img class="fav-panel-thumb" src="' + g.thumbnail + '" alt="' + g.title + '" loading="lazy" decoding="async" width="44" height="44">' : '<div class="fav-panel-thumb"></div>';
+      return '<a class="fav-panel-item" href="/games/' + g.slug + '/">' + img + '<span class="fav-panel-item-title">' + g.title + '</span></a>';
+    }).join('');
+  }
+
+  function initHeaderFavPanel() {
+    var btn = document.getElementById('headerFavBtn');
+    var panel = document.getElementById('favPanel');
+    if (!btn || !panel) return;
+    renderHeaderFavPanel();
+
+    function closePanel() {
+      panel.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isHidden = panel.classList.contains('hidden');
+      panel.classList.toggle('hidden', !isHidden);
+      btn.setAttribute('aria-expanded', String(isHidden));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && e.target !== btn) closePanel();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closePanel();
+    });
   }
 
   /* ---------------- Recently played ---------------- */

@@ -110,6 +110,60 @@ html.dark .streak-day-dot { background: #1e293b; }
 .streak-day.today .streak-day-dot { box-shadow: 0 0 0 2px var(--pink); }
 .streak-panel-note { font-size: 0.7rem; opacity: 0.6; line-height: 1.4; }
 
+/* Header favorites button + tooltip + popup */
+.fav-wrapper { position: relative; }
+.header-fav-btn {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.2rem; height: 2.2rem; border-radius: 999px;
+  background: #f1f5f9; border: 1px solid var(--border-color);
+  font-size: 1.05rem; cursor: pointer; font-family: inherit;
+}
+html.dark .header-fav-btn { background: #1e293b; }
+.header-fav-btn[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute; top: calc(100% + 0.5rem); left: 50%; transform: translateX(-50%);
+  background: #111827; color: #fff; font-size: 0.65rem; font-weight: 700;
+  padding: 0.3rem 0.55rem; border-radius: 0.4rem; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity 0.15s ease; z-index: 60;
+}
+.header-fav-btn:hover[data-tooltip]::after { opacity: 1; }
+.fav-count {
+  position: absolute; top: -0.3rem; right: -0.3rem;
+  background: var(--pink); color: #fff; font-size: 0.6rem; font-weight: 900;
+  min-width: 1.05rem; height: 1.05rem; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center; padding: 0 0.2rem;
+}
+.header-fav-btn.fav-bump { animation: favBump 0.4s ease; }
+@keyframes favBump {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.fav-panel {
+  position: absolute; top: calc(100% + 0.6rem); right: 0; z-index: 50;
+  width: 280px; max-height: 340px; overflow-y: auto;
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  border-radius: 1rem; padding: 1rem; box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+}
+.fav-panel.hidden { display: none; }
+.fav-panel-title { font-size: 0.85rem; font-weight: 900; margin-bottom: 0.6rem; }
+.fav-panel-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.fav-panel-item { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--text-color); padding: 0.35rem; border-radius: 0.65rem; }
+.fav-panel-item:hover { background: #f1f5f9; }
+html.dark .fav-panel-item:hover { background: #1e293b; }
+.fav-panel-thumb { width: 44px; height: 44px; border-radius: 0.6rem; object-fit: cover; border: 1px solid var(--border-color); flex-shrink: 0; }
+.fav-panel-item-title { font-size: 0.75rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fav-panel-viewall { display: block; text-align: center; margin-top: 0.75rem; font-size: 0.75rem; font-weight: 800; color: var(--pink); }
+
+/* Flying heart animation (save button -> header favorites icon) */
+.fav-fly-emoji {
+  position: fixed; z-index: 9999; font-size: 1.3rem; pointer-events: none;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s ease;
+  will-change: transform, opacity;
+}
+
 /* Search box */
 .search-wrapper { position: relative; flex: 1 1 220px; max-width: 420px; }
 .search-input {
