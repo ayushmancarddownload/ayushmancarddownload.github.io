@@ -275,17 +275,66 @@
 
   /* ---------------- Daily play streak ---------------- */
   function initStreak() {
-    var el = document.getElementById('streakBadge');
-    if (!el) return;
+    var btn = document.getElementById('streakBadge');
+    var panel = document.getElementById('streakPanel');
+    var panelCount = document.getElementById('streakPanelCount');
+    var panelDays = document.getElementById('streakPanelDays');
+    if (!btn) return;
+
     var today = new Date().toISOString().slice(0, 10);
-    var data = safeGet(LS.streak, { last: null, count: 0 });
+    var data = safeGet(LS.streak, { last: null, count: 0, days: [] });
+    if (!Array.isArray(data.days)) data.days = [];
+
     if (data.last !== today) {
       var yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
       data.count = data.last === yesterday ? data.count + 1 : 1;
       data.last = today;
+      data.days.push(today);
+      data.days = data.days.slice(-30); // keep last 30 days of history
       safeSet(LS.streak, data);
     }
-    el.textContent = '🔥 ' + data.count + '-day streak';
+
+    btn.textContent = '🔥 ' + data.count + '-day streak';
+
+    if (!panel || !panelCount || !panelDays) return;
+    panelCount.textContent = '🔥 ' + data.count + '-day streak';
+
+    // Build a rolling 7-day view ending today.
+    panelDays.innerHTML = '';
+    var dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    for (var i = 6; i >= 0; i--) {
+      var d = new Date(Date.now() - i * 86400000);
+      var iso = d.toISOString().slice(0, 10);
+      var played = data.days.indexOf(iso) !== -1;
+      var isToday = iso === today;
+      var wrap = document.createElement('div');
+      wrap.className = 'streak-day' + (played ? ' played' : '') + (isToday ? ' today' : '');
+      var dot = document.createElement('span');
+      dot.className = 'streak-day-dot';
+      dot.textContent = played ? '🔥' : '·';
+      var label = document.createElement('span');
+      label.textContent = dayLabels[d.getDay()];
+      wrap.appendChild(dot);
+      wrap.appendChild(label);
+      panelDays.appendChild(wrap);
+    }
+
+    function closePanel() {
+      panel.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isHidden = panel.classList.contains('hidden');
+      panel.classList.toggle('hidden', !isHidden);
+      btn.setAttribute('aria-expanded', String(isHidden));
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel.contains(e.target) && e.target !== btn) closePanel();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closePanel();
+    });
   }
 
   /* ---------------- Star ratings (local, per game) ---------------- */

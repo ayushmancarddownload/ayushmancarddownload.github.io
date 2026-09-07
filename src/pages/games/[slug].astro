@@ -126,6 +126,8 @@ const jsonLd = [
       </div>
     </section>
 
+    <RecentlyPlayedRow />
+
     <!-- ================= ABOUT THIS GAME (unique content per page = SEO) ================= -->
     <section class="games-section">
       <div class="section-header">
@@ -134,8 +136,6 @@ const jsonLd = [
       <p style="line-height:1.7; opacity:0.9; max-width:820px;">{game.description} Play it instantly in your browser for free on KawaiiPlay — no downloads, no installs, just click "PLAY NOW" and jump straight into the {game.category} action. Enjoyed it? Save it to your favorites so it's one tap away next time.</p>
     </section>
 
-    <GameGrid games={related} title="Related Games" icon="🎯" id="related-grid" initialVisible={12} bigEvery={4} />
-
-    <RecentlyPlayedRow />
+    <GameGrid games={related} title="Related Games" icon="🎯" id="related-grid" initialVisible={12} />
   </main>
 </BaseLayout>

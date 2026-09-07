@@ -1,14 +1,13 @@
 ---
 export interface Props {
   game: any;
-  big?: boolean;
   hidden?: boolean;
 }
-const { game, big = false, hidden = false } = Astro.props;
+const { game, hidden = false } = Astro.props;
 ---
 <a
   href={`/games/${game.slug}/`}
-  class={`game-card ${big ? 'big-card' : 'small-card'} ${hidden ? 'card-hidden' : ''}`}
+  class={`game-card small-card ${hidden ? 'card-hidden' : ''}`}
   style={`background: ${game.bg};`}
   data-search-item
   data-title={game.title}
@@ -25,7 +24,6 @@ const { game, big = false, hidden = false } = Astro.props;
     loading="lazy"
     decoding="async"
   />
-  <div class={`card-center-icon ${big ? 'big-icon' : ''}`}>{game.icon}</div>
   <video class="hover-video" loop muted playsinline preload="none" data-src={game.video}></video>
 
   <button
@@ -39,18 +37,8 @@ const { game, big = false, hidden = false } = Astro.props;
     onclick="event.preventDefault();"
   >🤍</button>
 
-  {big ? (
-    <div class="card-bottom-info">
-      <div>
-        <span class="card-title-big">{game.title}</span>
-        <span class="card-category">{game.category}</span>
-      </div>
-      <span class="btn-card-play">PLAY</span>
-    </div>
-  ) : (
-    <div class="card-bottom-info compact">
-      <span class="card-title-small">{game.title}</span>
-      <span class="btn-card-play-sm">PLAY</span>
-    </div>
-  )}
+  <div class="card-bottom-info compact">
+    <span class="card-title-small">{game.title}</span>
+    <span class="btn-card-play-sm">PLAY</span>
+  </div>
 </a>

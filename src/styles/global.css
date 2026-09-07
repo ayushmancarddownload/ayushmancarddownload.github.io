@@ -79,13 +79,36 @@ html.dark .icon-btn { background: #1e293b; color: #cbd5e1; }
 html.dark .theme-btn { background: #1e293b; color: #facc15; }
 
 /* Streak badge */
+.streak-wrapper { position: relative; }
 .streak-badge {
   display: inline-flex; align-items: center; gap: 0.3rem;
   background: linear-gradient(to right, rgba(255,101,132,0.15), rgba(140,122,230,0.15));
   border: 1px solid var(--border-color); color: var(--text-color);
   padding: 0.4rem 0.7rem; border-radius: 999px; font-size: 0.75rem; font-weight: 800;
-  white-space: nowrap;
+  white-space: nowrap; font-family: inherit; cursor: pointer;
 }
+.streak-panel {
+  position: absolute; top: calc(100% + 0.6rem); right: 0; z-index: 50;
+  width: 260px; background: var(--card-bg); border: 1px solid var(--border-color);
+  border-radius: 1rem; padding: 1rem; box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+}
+.streak-panel.hidden { display: none; }
+.streak-panel-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; opacity: 0.6; margin-bottom: 0.35rem; }
+.streak-panel-count { font-size: 1.1rem; font-weight: 900; margin-bottom: 0.75rem; }
+.streak-days { display: flex; gap: 0.35rem; justify-content: space-between; margin-bottom: 0.75rem; }
+.streak-day {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  font-size: 0.65rem; font-weight: 700; opacity: 0.55;
+}
+.streak-day-dot {
+  width: 26px; height: 26px; border-radius: 999px; display: flex; align-items: center; justify-content: center;
+  background: #f1f5f9; border: 1px solid var(--border-color); font-size: 0.8rem;
+}
+html.dark .streak-day-dot { background: #1e293b; }
+.streak-day.played { opacity: 1; }
+.streak-day.played .streak-day-dot { background: var(--pink); border-color: var(--pink); }
+.streak-day.today .streak-day-dot { box-shadow: 0 0 0 2px var(--pink); }
+.streak-panel-note { font-size: 0.7rem; opacity: 0.6; line-height: 1.4; }
 
 /* Search box */
 .search-wrapper { position: relative; flex: 1 1 220px; max-width: 420px; }
@@ -203,15 +226,9 @@ html.dark .nav-item:hover { background: rgba(255,255,255,0.05); }
 }
 .game-card:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--pink); }
 .small-card { aspect-ratio: 16 / 11; }
-.big-card { grid-column: span 2; aspect-ratio: 16 / 9; }
-@media (min-width: 640px) { .big-card { grid-column: span 3; } }
-@media (min-width: 1024px) { .big-card { grid-column: span 3; } }
 
 .card-badge { position: absolute; top: 0.6rem; left: 0.6rem; z-index: 10; background: var(--pink); color: white; font-size: 0.65rem; font-weight: 900; padding: 0.2rem 0.55rem; border-radius: 999px; }
 .card-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.55; }
-.card-center-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; transition: transform 0.3s; text-shadow: 0 2px 12px rgba(0,0,0,0.6); }
-.big-icon { font-size: 2.75rem; }
-.game-card:hover .card-center-icon { transform: scale(1.15); }
 .hover-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
 .game-card:hover .hover-video { opacity: 1; }
 .card-fav-btn {

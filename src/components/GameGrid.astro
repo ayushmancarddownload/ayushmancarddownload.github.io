@@ -7,7 +7,6 @@ export interface Props {
   icon?: string;
   id?: string;
   initialVisible?: number; // how many cards render "open" before Load More
-  bigEvery?: number;       // every Nth card renders as a big card (0 = never)
 }
 
 const {
@@ -16,7 +15,6 @@ const {
   icon = '⭐',
   id = 'games-grid',
   initialVisible = 18,
-  bigEvery = 0,
 } = Astro.props;
 ---
 
@@ -33,7 +31,7 @@ const {
 
   <div id={id} class="games-grid">
     {games.map((game, i) => (
-      <GameCard game={game} big={bigEvery > 0 && (i + 1) % bigEvery === 0} hidden={i >= initialVisible} />
+      <GameCard game={game} hidden={i >= initialVisible} />
     ))}
   </div>
 
