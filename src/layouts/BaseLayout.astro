@@ -57,7 +57,8 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
   <link rel="preconnect" href="https://picsum.photos" />
   <link rel="dns-prefetch" href="https://videos.crazygames.com" />
   <link rel="dns-prefetch" href="https://commondatastorage.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" /></noscript>
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="sitemap" href="/sitemap-index.xml" />
@@ -137,6 +138,7 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
             <p id="streakPanelCount" class="streak-panel-count">🔥 0-day streak</p>
             <div id="streakPanelDays" class="streak-days"></div>
             <p class="streak-panel-note">Play any game once a day to keep your streak alive.</p>
+            <p class="streak-panel-bookmark">💡 Press <kbd>Ctrl</kbd> + <kbd>D</kbd> to bookmark us!</p>
           </div>
         </div>
         <div class="fav-wrapper">
@@ -174,7 +176,7 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
           ))}
         </div>
       </div>
-      <div class="footer-card">
+      <div class="footer-card footer-card-center">
         <h3>SITE INFO</h3>
         <div class="footer-links">
           <a href="/about-us/">About Us</a>
@@ -186,7 +188,7 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
           <a href="/dmca/">DMCA</a>
         </div>
       </div>
-      <div class="footer-card">
+      <div class="footer-card footer-card-center">
         <h3>OUR PARTNER NETWORKS & BACKLINKS</h3>
         <div class="backlinks">
           <a href="https://example.com/crazy-games" target="_blank" rel="noopener dofollow">CrazyGames Portal</a>

@@ -109,6 +109,13 @@ html.dark .streak-day-dot { background: #1e293b; }
 .streak-day.played .streak-day-dot { background: var(--pink); border-color: var(--pink); }
 .streak-day.today .streak-day-dot { box-shadow: 0 0 0 2px var(--pink); }
 .streak-panel-note { font-size: 0.7rem; opacity: 0.6; line-height: 1.4; }
+.streak-panel-bookmark { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed var(--border-color); font-size: 0.72rem; font-weight: 700; }
+.streak-panel-bookmark kbd {
+  display: inline-block; font-family: inherit; font-size: 0.65rem; font-weight: 900;
+  background: #f1f5f9; border: 1px solid var(--border-color); border-radius: 0.3rem;
+  padding: 0.05rem 0.35rem; margin: 0 0.1rem;
+}
+html.dark .streak-panel-bookmark kbd { background: #1e293b; }
 
 /* Header favorites button + tooltip + popup */
 .fav-wrapper { position: relative; }
@@ -207,16 +214,6 @@ html.dark .nav-item:hover { background: rgba(255,255,255,0.05); }
 .breadcrumbs a { color: inherit; text-decoration: none; }
 .breadcrumbs a:hover { color: var(--pink); }
 .breadcrumbs .sep { opacity: 0.4; }
-
-/* ---------- Category pills ---------- */
-.category-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.75rem; }
-.category-pill {
-  text-decoration: none; font-size: 0.78rem; font-weight: 800; padding: 0.4rem 0.9rem;
-  border-radius: 999px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color);
-  transition: transform 0.15s, border-color 0.15s;
-}
-.category-pill:hover { border-color: var(--pink); color: var(--pink); transform: translateY(-2px); }
-.category-pill.active { background: linear-gradient(to right, var(--pink), var(--purple)); color: #fff; border-color: transparent; }
 
 /* ---------- Featured Game Hero ---------- */
 .main-content { padding: 1.5rem 1rem; }
@@ -339,6 +336,8 @@ html.dark .footer-card { background: rgba(0,0,0,0.3); }
 .backlinks a, .footer-links a { color: inherit; text-decoration: none; }
 .backlinks a:hover, .footer-links a:hover { color: var(--pink); }
 .footer-bottom { text-align: center; font-size: 0.75rem; opacity: 0.6; }
+.footer-card-center { text-align: center; }
+.footer-card-center .footer-links, .footer-card-center .backlinks { justify-content: center; }
 
 /* ---------- Floating Button ---------- */
 .btn-back-to-game {

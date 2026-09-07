@@ -26,6 +26,23 @@
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
   }
 
+  /* Keeps header dropdown popups (streak/favorites) fully on-screen on any
+     width — anchors below the button and clamps horizontally so it never
+     gets cut off, regardless of how the navbar wraps on small screens. */
+  function positionDropdown(btn, panel) {
+    if (!btn || !panel) return;
+    var margin = 10;
+    var rect = btn.getBoundingClientRect();
+    var panelWidth = Math.min(panel.offsetWidth || 280, window.innerWidth - margin * 2);
+    var left = rect.right - panelWidth;
+    left = Math.max(margin, Math.min(left, window.innerWidth - panelWidth - margin));
+    panel.style.position = 'fixed';
+    panel.style.left = left + 'px';
+    panel.style.right = 'auto';
+    panel.style.top = (rect.bottom + margin) + 'px';
+    panel.style.width = panelWidth + 'px';
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initTheme();
     initSidebar();
@@ -311,8 +328,12 @@
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
       var isHidden = panel.classList.contains('hidden');
+      if (isHidden) positionDropdown(btn, panel);
       panel.classList.toggle('hidden', !isHidden);
       btn.setAttribute('aria-expanded', String(isHidden));
+    });
+    window.addEventListener('resize', function () {
+      if (!panel.classList.contains('hidden')) positionDropdown(btn, panel);
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) closePanel();
@@ -404,8 +425,12 @@
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
       var isHidden = panel.classList.contains('hidden');
+      if (isHidden) positionDropdown(btn, panel);
       panel.classList.toggle('hidden', !isHidden);
       btn.setAttribute('aria-expanded', String(isHidden));
+    });
+    window.addEventListener('resize', function () {
+      if (!panel.classList.contains('hidden')) positionDropdown(btn, panel);
     });
     document.addEventListener('click', function (e) {
       if (!panel.contains(e.target) && e.target !== btn) closePanel();

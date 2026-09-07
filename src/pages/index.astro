@@ -3,11 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import GameGrid from '../components/GameGrid.astro';
 import RecentlyPlayedRow from '../components/RecentlyPlayedRow.astro';
 import FavoritesRow from '../components/FavoritesRow.astro';
-import { getAllGames, getFeaturedGame, getCategories } from '../lib/games.js';
+import { getAllGames, getFeaturedGame } from '../lib/games.js';
 
 const games = getAllGames();
 const featured = getFeaturedGame();
-const categories = getCategories();
 
 const title = 'KawaiiPlay - Cute & Fun Free Online Games';
 const description = 'Play the best cute and kawaii online games for free! Arcade, puzzles, dress-up, and action games playable directly in your browser.';
@@ -77,13 +76,6 @@ const jsonLd = {
         </a>
       </div>
     </section>
-
-    <!-- ================= CATEGORY PILLS ================= -->
-    <div class="category-pills">
-      {categories.map((cat) => (
-        <a href={`/category/${cat.slug}/`} class="category-pill">{cat.name} <span style="opacity:0.6;">({cat.count})</span></a>
-      ))}
-    </div>
 
     <FavoritesRow />
     <RecentlyPlayedRow />
