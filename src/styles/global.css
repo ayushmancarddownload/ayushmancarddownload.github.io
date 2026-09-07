@@ -189,8 +189,8 @@ html.dark .fav-panel-item:hover { background: #1e293b; }
 .nav-right { order: 3; }
 .nav-utility { display: flex; align-items: center; gap: 0.5rem; order: 4; }
 
-/* Mobile: streak + favorites drop to their own row so they never overflow the
-   screen, and the search box collapses to an icon that opens a search row below. */
+/* Mobile: streak + favorites are hidden entirely (PC/tablet only), and the
+   search box collapses to an icon that opens a search row below. */
 @media (max-width: 640px) {
   .nav-content { flex-wrap: wrap; }
 
@@ -206,12 +206,7 @@ html.dark .fav-panel-item:hover { background: #1e293b; }
 
   .nav-right { order: 3; flex-shrink: 0; }
 
-  .nav-utility {
-    order: 4;
-    flex: 1 1 100%;
-    justify-content: flex-end;
-    margin-top: 0.6rem;
-  }
+  .nav-utility { display: none; }
 }
 
 /* ---------- Sidebar ---------- */
