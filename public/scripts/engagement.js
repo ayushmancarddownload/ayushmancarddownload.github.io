@@ -47,6 +47,7 @@
     initTheme();
     initSidebar();
     initSearch();
+    initSearchToggle();
     initLoadMore();
     initHoverVideos();
     initBackToGame();
@@ -120,6 +121,21 @@
       if (emptyMsg) emptyMsg.style.display = visible === 0 ? 'block' : 'none';
       var loadMoreBtn = document.querySelector('.btn-loadmore');
       if (loadMoreBtn) loadMoreBtn.style.display = q ? 'none' : '';
+    });
+  }
+
+  /* ---------------- Mobile search toggle (icon opens a search row below) ---------------- */
+  function initSearchToggle() {
+    var btn = document.getElementById('searchToggleBtn');
+    var wrapper = document.getElementById('searchWrapper');
+    var input = document.getElementById('siteSearch');
+    if (!btn || !wrapper) return;
+    btn.addEventListener('click', function () {
+      var isOpen = wrapper.classList.toggle('mobile-open');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      if (isOpen && input) {
+        setTimeout(function () { input.focus(); }, 50);
+      }
     });
   }
 
