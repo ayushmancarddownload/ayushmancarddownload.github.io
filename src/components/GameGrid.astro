@@ -1,50 +1,47 @@
 ---
-import GameCard from "./GameCard.astro";
-import type { Game } from "../lib/types";
+import GameCard from './GameCard.astro';
 
-interface Props {
-  games: Game[];
-  title?: string;
-  priorityFirst?: boolean;
+export interface Props {
+  games: any[];
+  title: string;
+  icon?: string;
+  id?: string;
+  initialVisible?: number; // how many cards render "open" before Load More
+  bigEvery?: number;       // every Nth card renders as a big card (0 = never)
 }
-const { games, title, priorityFirst = false } = Astro.props;
+
+const {
+  games,
+  title,
+  icon = '⭐',
+  id = 'games-grid',
+  initialVisible = 18,
+  bigEvery = 0,
+} = Astro.props;
 ---
-{title && <h2 class="section-title">{title}</h2>}
-<div class="game-grid">
-  {games.map((game, i) => (
-    <GameCard game={game} priority={priorityFirst && i === 0} />
-  ))}
-</div>
 
-<script>
-  // Preview videos only play on hover/focus (CrazyGames-style) — nothing
-  // autoplays just from scrolling a card into view. The clip's src is
-  // still only fetched the first time it's actually needed (on hover),
-  // so cards nobody hovers never download their preview.
-  function attachHoverPlay(root: Document | HTMLElement) {
-    root.querySelectorAll<HTMLElement>("[data-game-card]").forEach((card) => {
-      const video = card.querySelector<HTMLVideoElement>("video[data-preview-src]");
-      if (!video || card.dataset.hoverPlayReady) return;
-      card.dataset.hoverPlayReady = "1";
+<section id={`${id}-section`} class="games-section">
+  <div class="section-header">
+    <div class="section-title">
+      <span>{icon}</span>
+      <h2>{title}</h2>
+    </div>
+    <span class="count-badge">{games.length} Games</span>
+  </div>
 
-      function play() {
-        const src = video!.dataset.previewSrc;
-        if (src && !video!.src) video!.src = src;
-        video!.play().catch(() => {});
-        card.classList.add("is-playing");
-      }
-      function stop() {
-        video!.pause();
-        video!.currentTime = 0;
-        card.classList.remove("is-playing");
-      }
+  <div id="searchEmpty" class="search-empty">No games match your search 🥲 try another keyword.</div>
 
-      card.addEventListener("mouseenter", play);
-      card.addEventListener("mouseleave", stop);
-      card.addEventListener("focus", play);
-      card.addEventListener("blur", stop);
-    });
-  }
+  <div id={id} class="games-grid">
+    {games.map((game, i) => (
+      <GameCard game={game} big={bigEvery > 0 && (i + 1) % bigEvery === 0} hidden={i >= initialVisible} />
+    ))}
+  </div>
 
-  attachHoverPlay(document);
-</script>
+  {games.length > initialVisible && (
+    <div class="explore-wrapper">
+      <button class="btn-loadmore" data-target={id}>
+        <span>🎮</span> Load More Games
+      </button>
+    </div>
+  )}
+</section>

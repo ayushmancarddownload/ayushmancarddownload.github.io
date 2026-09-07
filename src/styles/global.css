@@ -1,420 +1,281 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   KawaiiPlay — Shared Global Stylesheet
+   Loaded once on every page (cached across the whole site) so
+   navigating between game/category pages costs ~0 extra CSS.
+   ============================================================ */
+
 :root {
-  /* Fresh dark theme: deep indigo base + violet -> cyan gradient accent */
-  --bg: #0b0c14;
-  --bg-elevated: #12141f;
-  --bg-card: #171a26;
-  --text: #f5f6fb;
-  --text-muted: #9296ab;
-  --accent: #8b5cf6;
-  --accent-2: #22d3ee;
-  --accent-3: #f472b6;
-  --gradient: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-  --glow: 0 8px 24px -8px rgba(139, 92, 246, 0.45);
-  --header-h: 60px;
-  --sidebar-w: 240px;
-  --radius: 14px;
-  --font: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --bg-color: #f8fafc;
+  --text-color: #1e293b;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --pink: #FF6584;
+  --hover-pink: #FF4772;
+  --purple: #8C7AE6;
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --muted: #64748b;
 }
 
-* { box-sizing: border-box; }
+html.dark {
+  --bg-color: #0B0F19;
+  --text-color: #f8fafc;
+  --card-bg: #151D30;
+  --border-color: #232E4A;
+  --nav-bg: rgba(21, 29, 48, 0.95);
+  --muted: #94a3b8;
+}
 
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font);
-  -webkit-font-smoothing: antialiased;
-  /* The off-canvas sidebar drawer sits at left:0 with a translateX(-100%)
-     to hide it — some mobile browsers still count that translated box
-     toward the page's scrollable width, which shows up as extra blank
-     space on the right that only appears once you scroll/swipe. Clipping
-     horizontal overflow at the root stops that without touching the
-     drawer's own open/close animation. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.2s, color 0.2s;
   overflow-x: hidden;
-  width: 100%;
 }
 
 img, video { max-width: 100%; display: block; }
 
-a { color: inherit; text-decoration: none; }
+.container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
+.hidden { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
 
-.container {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
-
-/* ---------- Header ---------- */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  height: var(--header-h);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: var(--bg-elevated);
-  border-bottom: 1px solid #23263380;
-  padding: 0 16px;
+/* ---------- Navbar ---------- */
+.top-navbar {
+  position: sticky; top: 0; z-index: 30;
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--border-color);
   backdrop-filter: blur(8px);
-  box-shadow: 0 2px 14px -6px rgba(0, 0, 0, 0.5);
+  min-height: 60px;
+  display: flex; align-items: center;
 }
-.logo {
-  font-weight: 800;
-  font-size: 1.3rem;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  flex-shrink: 0;
+.nav-content { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 0.75rem; flex-wrap: wrap; padding: 0.4rem 0; }
+.nav-left { display: flex; align-items: center; gap: 0.75rem; }
+.nav-right { display: flex; align-items: center; gap: 0.5rem; }
+.site-logo {
+  text-decoration: none; font-size: 1.4rem; font-weight: 900;
+  background: linear-gradient(to right, var(--pink), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  display: flex; align-items: center; gap: 0.35rem;
 }
-.logo span {
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.icon-btn {
+  background: #f1f5f9; border: 1px solid var(--border-color); color: var(--text-color);
+  padding: 0.5rem; border-radius: 0.85rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+html.dark .icon-btn { background: #1e293b; color: #cbd5e1; }
+.theme-btn {
+  display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.85rem;
+  border-radius: 0.85rem; background: #f1f5f9; border: 1px solid var(--border-color);
+  color: var(--text-color); font-size: 0.8rem; font-weight: 800; cursor: pointer;
+}
+html.dark .theme-btn { background: #1e293b; color: #facc15; }
+
+/* Streak badge */
+.streak-badge {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: linear-gradient(to right, rgba(255,101,132,0.15), rgba(140,122,230,0.15));
+  border: 1px solid var(--border-color); color: var(--text-color);
+  padding: 0.4rem 0.7rem; border-radius: 999px; font-size: 0.75rem; font-weight: 800;
+  white-space: nowrap;
 }
 
-/* Hamburger menu button — always visible. The sidebar is an overlay drawer
-   on every screen size now, opened/closed only via this button (or the
-   backdrop/Escape key), so content never gets pushed left/right by it. */
-.menu-toggle {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 0.15s ease;
+/* Search box */
+.search-wrapper { position: relative; flex: 1 1 220px; max-width: 420px; }
+.search-input {
+  width: 100%; padding: 0.55rem 0.9rem 0.55rem 2.1rem; border-radius: 0.85rem;
+  border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color);
+  font-family: inherit; font-size: 0.85rem; font-weight: 700;
 }
-.menu-toggle:hover { background: var(--bg-card); }
-.menu-toggle span {
-  display: block;
-  width: 100%;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--text);
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-body.sidebar-open .menu-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-body.sidebar-open .menu-toggle span:nth-child(2) { opacity: 0; }
-body.sidebar-open .menu-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.search-input:focus { outline: 2px solid var(--pink); }
+.search-icon { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); opacity: 0.5; pointer-events: none; }
+.search-empty { text-align: center; padding: 2rem 1rem; opacity: 0.7; font-weight: 700; display: none; }
 
-/* Dark backdrop behind the mobile drawer; click to close. */
-.sidebar-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 55;
-}
-body.sidebar-open .sidebar-backdrop { opacity: 1; pointer-events: auto; }
-.search-form {
-  flex: 1;
-  max-width: 520px;
-  display: flex;
-}
-.search-form input {
-  flex: 1;
-  background: var(--bg-card);
-  border: 1px solid #262a3a;
-  color: var(--text);
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  transition: border-color 0.15s ease;
-}
-.search-form input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18); }
-
-/* Still used by HeroBanner's "Play Now" and the 404 page's "Back to Home". */
-.btn {
-  padding: 8px 18px;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.btn-primary { background: var(--gradient); color: #0b0c14; }
-.btn-primary:hover { transform: translateY(-1px); box-shadow: var(--glow); }
-
-/* ---------- Layout: content always centered, sidebar is an overlay drawer ---------- */
-.layout {
-  display: block;
-  min-height: calc(100dvh - var(--header-h));
-}
-
-/* Sidebar is a fixed overlay drawer on EVERY screen size — it never takes up
-   its own column, so the homepage/game page content is always centered
-   instead of shifting left/right. Opened/closed only via the header's
-   menu button (see Header.astro script), the backdrop, or Escape. */
+/* ---------- Sidebar ---------- */
+.menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 40; }
 .sidebar {
-  position: fixed;
-  top: var(--header-h);
-  left: 0;
-  bottom: 0;
-  z-index: 60;
-  width: min(82vw, 280px);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background: var(--bg-elevated);
-  border-right: 1px solid #23263380;
-  padding: 16px 8px;
-  box-shadow: 12px 0 30px -10px rgba(0, 0, 0, 0.5);
-  transform: translateX(-100%);
-  transition: transform 0.25s ease;
+  position: fixed; top: 0; left: 0; width: 280px; max-width: 80vw; height: 100%;
+  background: var(--card-bg); border-right: 1px solid var(--border-color); z-index: 50;
+  transform: translateX(-100%); transition: transform 0.3s ease-out;
+  display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto;
 }
-body.sidebar-open .sidebar { transform: translateX(0); }
-body.sidebar-open { overflow: hidden; }
+.sidebar.open { transform: translateX(0); }
+.sidebar-header { padding: 1.2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); }
+.brand { display: flex; align-items: center; gap: 0.5rem; }
+.emoji-logo { font-size: 1.5rem; }
+.brand-name { font-weight: 900; color: var(--pink); font-size: 1.2rem; }
+.sidebar-nav { padding: 1rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.sidebar-nav-heading { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; opacity: 0.5; margin: 0.75rem 0 0.25rem 0.5rem; }
+.nav-item {
+  text-decoration: none; padding: 0.65rem 1rem; border-radius: 0.85rem;
+  color: var(--text-color); font-weight: 700; font-size: 0.9rem; transition: background 0.2s;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-item.active { background: rgba(255,101,132,0.12); color: var(--pink); }
+.nav-item:hover { background: rgba(0,0,0,0.05); }
+html.dark .nav-item:hover { background: rgba(255,255,255,0.05); }
+.nav-item .nav-count { font-size: 0.7rem; opacity: 0.5; font-weight: 800; }
+.sidebar-footer { padding: 1rem; text-align: center; font-size: 0.75rem; opacity: 0.6; border-top: 1px solid var(--border-color); }
+.sidebar-footer a { color: inherit; }
 
-.sidebar-title {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  padding: 8px 12px;
+/* ---------- Breadcrumbs ---------- */
+.breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; font-size: 0.8rem; font-weight: 700; opacity: 0.75; margin-bottom: 1rem; }
+.breadcrumbs a { color: inherit; text-decoration: none; }
+.breadcrumbs a:hover { color: var(--pink); }
+.breadcrumbs .sep { opacity: 0.4; }
+
+/* ---------- Category pills ---------- */
+.category-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.75rem; }
+.category-pill {
+  text-decoration: none; font-size: 0.78rem; font-weight: 800; padding: 0.4rem 0.9rem;
+  border-radius: 999px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color);
+  transition: transform 0.15s, border-color 0.15s;
 }
-.sidebar-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  border-radius: 8px;
-  color: var(--text);
-  font-size: 0.9rem;
-  white-space: normal;
-  flex-shrink: 0;
-  transition: background 0.15s ease, color 0.15s ease;
+.category-pill:hover { border-color: var(--pink); color: var(--pink); transform: translateY(-2px); }
+.category-pill.active { background: linear-gradient(to right, var(--pink), var(--purple)); color: #fff; border-color: transparent; }
+
+/* ---------- Featured Game Hero ---------- */
+.main-content { padding: 1.5rem 1rem; }
+.featured-section { display: flex; flex-direction: column; align-items: center; }
+.game-screen-box {
+  width: 100%; max-width: 800px; background: #0B0F19; border-radius: 1.5rem; overflow: hidden;
+  border: 3px solid var(--border-color); box-shadow: 0 20px 40px rgba(0,0,0,0.4); position: relative;
 }
-.sidebar-link:hover { background: var(--bg-card); }
-.sidebar-link[aria-current="page"] {
-  background: var(--bg-card);
-  color: var(--accent-2);
-  box-shadow: inset 3px 0 0 var(--accent-2);
+.aspect-video-box { position: relative; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; }
+.hero-cover {
+  position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #1b1433 0%, #0e1322 50%, #1a0f1d 100%);
+  cursor: pointer; overflow: hidden;
+}
+.hero-glow-blob1 { position: absolute; top: -20%; left: -10%; width: 250px; height: 250px; background: rgba(255,101,132,0.25); border-radius: 50%; filter: blur(50px); }
+.hero-glow-blob2 { position: absolute; bottom: -20%; right: -10%; width: 250px; height: 250px; background: rgba(140,122,230,0.25); border-radius: 50%; filter: blur(50px); }
+.hero-content { position: relative; z-index: 10; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; }
+.hero-icon-box {
+  width: 50px; height: 50px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+.badge-featured { background: var(--pink); color: white; font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.75rem; border-radius: 999px; }
+.hero-title { color: #ffffff; font-size: clamp(1.2rem, 4vw, 2.2rem); font-weight: 900; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+.hero-desc { color: #cbd5e1; max-width: 520px; font-size: 0.85rem; font-weight: 600; }
+.btn-play-hero {
+  margin-top: 0.5rem; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.8rem;
+  background: linear-gradient(to right, var(--pink), var(--purple)); color: #ffffff; font-weight: 900; font-size: 1rem;
+  border: none; border-radius: 1rem; cursor: pointer; box-shadow: 0 10px 25px rgba(255,101,132,0.4); transition: transform 0.2s;
+}
+.btn-play-hero:hover { transform: scale(1.05); }
+.game-iframe { width: 100%; height: 100%; border: none; }
+.fullscreen-row { margin-top: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; flex-wrap: wrap; }
+.btn-fullscreen, .btn-favorite {
+  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1.2rem;
+  background: linear-gradient(to right, var(--purple), var(--pink)); color: white; font-weight: 800;
+  font-size: 0.8rem; border: none; border-radius: 0.85rem; cursor: pointer;
+}
+.btn-favorite { background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); }
+.btn-favorite.is-favorite { background: var(--pink); color: white; border-color: var(--pink); }
+.session-timer {
+  display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; font-weight: 800;
+  padding: 0.5rem 0.9rem; border-radius: 0.85rem; background: var(--card-bg); border: 1px solid var(--border-color); opacity: 0.85;
 }
 
-.main { padding: 20px 16px 60px; }
+/* ---------- Games Grid ---------- */
+.games-section { margin-top: 2.5rem; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+.section-title { display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem; font-weight: 900; }
+.count-badge { font-size: 0.75rem; font-weight: 800; background: var(--card-bg); border: 1px solid var(--border-color); padding: 0.25rem 0.75rem; border-radius: 999px; }
 
-/* Homepage's main game player: capped width + auto margins so it reads as
-   a smaller, centered stage instead of a full-bleed iframe edge-to-edge. */
-.home-player {
-  max-width: 860px;
-  margin: 0 auto 10px;
-}
+.games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+@media (min-width: 640px) { .games-grid { grid-template-columns: repeat(3, 1fr); gap: 1rem; } }
+@media (min-width: 1024px) { .games-grid { grid-template-columns: repeat(6, 1fr); } }
 
-/* ---------- Game grid & cards ---------- */
-.section-title {
-  font-size: 1.15rem;
-  font-weight: 800;
-  margin: 26px 0 12px;
-  letter-spacing: -0.01em;
-}
-.game-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 14px;
-}
 .game-card {
-  border-radius: var(--radius);
-  overflow: visible;
-  background: transparent;
-  position: relative;
-  display: block;
+  position: relative; border-radius: 1rem; overflow: hidden; border: 2px solid var(--border-color);
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s; background-color: #0B0F19;
+  text-decoration: none; display: block;
 }
-.game-card .thumb-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3; /* reserves space -> prevents layout shift (CLS) */
-  overflow: hidden;
-  border-radius: var(--radius);
-  background: linear-gradient(160deg, #1c2032 0%, #10121c 100%);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-/* Thumbnail/preview video now fills the entire card edge-to-edge instead
-   of sitting as a small centered inset frame. */
-.thumb-media {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: #0d0f18;
-}
-.thumb-media img, .thumb-media video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-/* Fallback for thumbnails used outside GameCard (e.g. the game page's
-   "More Games" sidebar list) that aren't wrapped in .thumb-media. */
-.thumb-wrap > img, .thumb-wrap > video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.game-card video { opacity: 0; transition: opacity 0.25s ease; }
-.game-card.is-playing video,
-.game-card:hover video,
-.game-card:focus-visible video { opacity: 1; }
+.game-card:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); border-color: var(--pink); }
+.small-card { aspect-ratio: 16 / 11; }
+.big-card { grid-column: span 2; aspect-ratio: 16 / 9; }
+@media (min-width: 640px) { .big-card { grid-column: span 3; } }
+@media (min-width: 1024px) { .big-card { grid-column: span 3; } }
 
-/* Hover/focus: lift the card + glow ring — transform/box-shadow only,
-   so this is GPU-accelerated and never triggers layout (cheap for CWV). */
-.game-card:hover .thumb-wrap,
-.game-card:focus-visible .thumb-wrap {
-  transform: translateY(-4px) scale(1.03);
-  box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.55), 0 0 0 2px var(--accent-2) inset;
+.card-badge { position: absolute; top: 0.6rem; left: 0.6rem; z-index: 10; background: var(--pink); color: white; font-size: 0.65rem; font-weight: 900; padding: 0.2rem 0.55rem; border-radius: 999px; }
+.card-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.55; }
+.card-center-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; transition: transform 0.3s; text-shadow: 0 2px 12px rgba(0,0,0,0.6); }
+.big-icon { font-size: 2.75rem; }
+.game-card:hover .card-center-icon { transform: scale(1.15); }
+.hover-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.game-card:hover .hover-video { opacity: 1; }
+.card-fav-btn {
+  position: absolute; top: 0.5rem; right: 0.5rem; z-index: 11; width: 28px; height: 28px; border-radius: 999px;
+  background: rgba(0,0,0,0.45); border: none; color: #fff; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.85rem;
+}
+.card-fav-btn.is-favorite { color: var(--pink); background: rgba(255,255,255,0.9); }
+.card-bottom-info { position: absolute; bottom: 0; inset-inline: 0; padding: 0.75rem; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); display: flex; align-items: center; justify-content: space-between; z-index: 10; }
+.card-bottom-info.compact { padding: 0.45rem 0.6rem; }
+.card-title-big { display: block; color: white; font-weight: 900; font-size: 1rem; }
+.card-category { display: block; color: #cbd5e1; font-size: 0.75rem; }
+.card-title-small { color: white; font-weight: 800; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+.btn-card-play { background: linear-gradient(to right, var(--pink), var(--purple)); color: white; font-size: 0.75rem; font-weight: 900; padding: 0.35rem 0.75rem; border-radius: 0.6rem; }
+.btn-card-play-sm { background: var(--pink); color: white; font-size: 0.6rem; font-weight: 900; padding: 0.15rem 0.45rem; border-radius: 999px; }
+
+.card-hidden { display: none !important; }
+.explore-wrapper { margin-top: 2rem; text-align: center; }
+.btn-explore, .btn-loadmore {
+  display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.8rem;
+  background: linear-gradient(to right, var(--pink), var(--purple)); color: white; font-weight: 900; font-size: 1rem;
+  border-radius: 999px; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(255,101,132,0.3);
 }
 
-/* Title/meta "popup" — hidden by default, appears only on hover/focus as a
-   gradient caption bar pinned to the bottom of the thumbnail. Pure CSS
-   opacity+transform transition, no JS, no extra requests. */
-.card-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 18px 10px 8px;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0) 100%);
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.18s ease, transform 0.18s ease;
-  pointer-events: none;
-}
-.game-card:hover .card-overlay,
-.game-card:focus-visible .card-overlay {
-  opacity: 1;
-  transform: translateY(0);
-}
-.card-title {
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.card-meta {
-  margin: 2px 0 0;
-  font-size: 0.72rem;
-  color: var(--accent-2);
-}
+/* ---------- Recently Played / Favorites chip row ---------- */
+.chip-row { display: flex; gap: 0.6rem; overflow-x: auto; padding-bottom: 0.4rem; scrollbar-width: thin; }
+.chip-card { flex: 0 0 auto; width: 120px; text-decoration: none; color: var(--text-color); }
+.chip-thumb { width: 120px; height: 90px; border-radius: 0.75rem; object-fit: cover; border: 2px solid var(--border-color); background: var(--card-bg); }
+.chip-title { display: block; margin-top: 0.35rem; font-size: 0.72rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.empty-note { font-size: 0.8rem; opacity: 0.6; font-weight: 700; padding: 0.5rem 0; }
 
-/* Still used by the game-detail "More Games" list and search results,
-   where the title is meant to always be visible (list rows, not thumbnail
-   grid tiles). */
-.game-title {
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-top: 6px;
-  padding: 0 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.game-meta {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  padding: 0 2px;
-}
+/* ---------- Rating stars ---------- */
+.rating-row { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.75rem; }
+.rating-stars { display: flex; gap: 0.15rem; cursor: pointer; }
+.rating-star { font-size: 1.35rem; color: var(--border-color); background: none; border: none; cursor: pointer; line-height: 1; padding: 0; }
+.rating-star.filled { color: #facc15; }
+.rating-label { font-size: 0.78rem; font-weight: 700; opacity: 0.7; }
 
-/* ---------- Hero (featured / first-visible section = LCP element) ---------- */
-.hero-card {
-  position: relative;
-  border-radius: 18px;
-  overflow: hidden;
-  aspect-ratio: 21 / 9;
-  box-shadow: var(--glow);
-}
-.hero-card img { width: 100%; height: 100%; object-fit: cover; }
-.hero-card .hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.05) 65%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 24px;
-}
-.hero-card h1 { margin: 0 0 6px; font-size: 1.7rem; letter-spacing: -0.02em; }
+/* ---------- Content / policy pages ---------- */
+.content-page { max-width: 820px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+.content-page h1 { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 900; margin-bottom: 0.5rem; }
+.content-page .updated-note { font-size: 0.8rem; opacity: 0.6; font-weight: 700; margin-bottom: 1.75rem; }
+.content-page h2 { font-size: 1.15rem; font-weight: 900; margin: 1.75rem 0 0.6rem; }
+.content-page p { line-height: 1.7; margin-bottom: 0.9rem; opacity: 0.9; }
+.content-page ul { margin: 0 0 1rem 1.25rem; line-height: 1.7; opacity: 0.9; }
+.content-page a { color: var(--pink); font-weight: 700; }
 
-/* ---------- Game play page ---------- */
-.player-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: #000;
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--glow);
-}
-.player-wrap iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-/* .player-cover / .play-now-btn styling now lives scoped inside
-   GamePlayer.astro, since that component owns the play overlay markup. */
+/* ---------- Footer ---------- */
+.site-footer { margin-top: 4rem; border-top: 1px solid var(--border-color); background: var(--card-bg); padding: 2rem 0; }
+.footer-card { background: rgba(0,0,0,0.03); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem; margin-bottom: 1.5rem; }
+html.dark .footer-card { background: rgba(0,0,0,0.3); }
+.footer-card h3 { font-size: 0.7rem; font-weight: 900; letter-spacing: 1px; opacity: 0.6; margin-bottom: 0.5rem; }
+.backlinks, .footer-links { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; font-size: 0.85rem; font-weight: 700; }
+.backlinks a, .footer-links a { color: inherit; text-decoration: none; }
+.backlinks a:hover, .footer-links a:hover { color: var(--pink); }
+.footer-bottom { text-align: center; font-size: 0.75rem; opacity: 0.6; }
 
-.game-detail-layout {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 20px;
-  margin-top: 16px;
+/* ---------- Floating Button ---------- */
+.btn-back-to-game {
+  position: fixed; bottom: 1.25rem; right: 1.25rem; z-index: 50; display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.6rem 1.2rem; background: linear-gradient(to right, var(--pink), var(--purple)); color: white; font-size: 0.8rem;
+  font-weight: 800; border-radius: 999px; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 10px 25px rgba(255,101,132,0.4);
+  cursor: pointer; transition: opacity 0.3s, transform 0.3s;
 }
-.related-rail {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-footer.site-footer {
-  border-top: 1px solid #23263380;
-  padding: 24px 16px;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  text-align: center;
-}
-
-/* ---------- Responsive breakpoints ---------- */
-@media (max-width: 1024px) {
-  .game-detail-layout { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 640px) {
-  .logo { font-size: 1.05rem; }
-  .search-form { max-width: none; }
-  .sidebar { width: min(85vw, 280px); }
-  .game-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
-  .hero-card { aspect-ratio: 4 / 3; }
-  .hero-card h1 { font-size: 1.2rem; }
-  /* No hover on touch devices — always show the caption so titles are
-     still readable/tappable on mobile. */
-  .card-overlay { opacity: 1; transform: none; background: linear-gradient(0deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0) 100%); }
-  .game-card:hover .thumb-wrap, .game-card:focus-visible .thumb-wrap { transform: none; }
-}
-
-@media (max-width: 400px) {
-  .game-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .game-card .thumb-wrap, .card-overlay, .btn-primary, .play-btn span {
-    transition: none !important;
-  }
-}
+.hidden-floating { opacity: 0; pointer-events: none; transform: translateY(15px); }
+.bounce-icon { animation: bounce 1s infinite alternate; }
+@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-4px); } }
