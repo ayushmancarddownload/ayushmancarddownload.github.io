@@ -25,6 +25,10 @@ const blog = defineCollection({
     tags: z.array(z.string()).default([]),
     lang: z.string().default('en'), // use 'hi' for Hindi posts
     isFeatured: z.boolean().default(false),
+    // Shown first in the "Trending" lists. Set true on the posts you want to push.
+    popular: z.boolean().default(false),
+    // Optional FAQ -> shown at the end of the post and emitted as FAQPage schema.
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
     draft: z.boolean().default(false),
   }),
 });

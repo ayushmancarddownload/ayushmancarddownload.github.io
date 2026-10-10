@@ -1,6 +1,8 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ReadingProgress from '../components/ReadingProgress.astro';
+import PostEnhancements from '../components/PostEnhancements.astro';
 import { slugifyCategory } from '../utils/slugify';
 
 export interface Props {
@@ -29,13 +31,18 @@ const { title, description, ogImage, category, canonicalPath, lang, publishedTim
 >
   <slot name="head" slot="head" />
 
+  <ReadingProgress />
+  <PostEnhancements />
+
   <div class="container-page py-8">
     <Breadcrumbs items={[{ label: 'Blog', href: '/blog/' }, { label: category, href: `/blog/category/${slugifyCategory(category)}/` }, { label: title }]} />
   </div>
 
-  <article class="container-page pb-16">
+  <!-- data-pagefind-body: only blog posts are added to the search index -->
+  <article class="container-page pb-16" data-pagefind-body>
     <div class="mx-auto max-w-3xl">
       <slot name="header" />
+      <slot name="before-content" />
       <div class="prose prose-orange lg:prose-lg mx-auto max-w-none">
         <slot />
       </div>

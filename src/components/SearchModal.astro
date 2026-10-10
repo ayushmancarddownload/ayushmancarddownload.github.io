@@ -1,0 +1,92 @@
+---
+// Site search powered by Pagefind (static, no server).
+// `npm run build` creates /pagefind/ inside dist/. The UI is loaded lazily the first time
+// the modal opens, so it costs nothing on page load. (In `npm run dev` there is no index yet —
+// run `npm run build && npm run preview` to try it.)
+---
+
+<div id="search-modal" class="fixed inset-0 z-[70] hidden" role="dialog" aria-modal="true" aria-label="Search articles">
+  <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50"></div>
+  <div class="relative mx-auto mt-12 w-[94%] max-w-2xl rounded-lg border border-orange-100 bg-white p-4 shadow-2xl sm:mt-20">
+    <div class="mb-2 flex items-center justify-between">
+      <span class="font-serif text-lg font-semibold text-slate-900">Search articles</span>
+      <button id="search-close" type="button" class="flex h-10 w-10 items-center justify-center rounded-md text-slate-600 hover:bg-orange-100" aria-label="Close search">
+        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <div id="search-root" class="max-h-[70vh] overflow-y-auto"></div>
+    <p id="search-error" class="hidden text-sm text-slate-500">
+      Search index not found. It is created during <code>npm run build</code> — try the live site or run <code>npm run preview</code>.
+    </p>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('search-modal');
+  const root = document.getElementById('search-root');
+  const errorEl = document.getElementById('search-error');
+  let loader: Promise<void> | null = null;
+  let lastFocus: HTMLElement | null = null;
+
+  function loadPagefind(): Promise<void> {
+    if (loader) return loader;
+    loader = new Promise<void>((resolve, reject) => {
+      const css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = '/pagefind/pagefind-ui.css';
+      document.head.appendChild(css);
+
+      const js = document.createElement('script');
+      js.src = '/pagefind/pagefind-ui.js';
+      js.onload = () => {
+        const UI = (window as any).PagefindUI;
+        if (!UI) return reject(new Error('PagefindUI missing'));
+        new UI({
+          element: '#search-root',
+          showImages: false,
+          showSubResults: true,
+          excerptLength: 22,
+          translations: { placeholder: 'Search articles…', zero_results: 'No results for [SEARCH_TERM]' },
+        });
+        resolve();
+      };
+      js.onerror = () => reject(new Error('pagefind not found'));
+      document.head.appendChild(js);
+    });
+    loader.catch(() => {
+      loader = null;
+      errorEl?.classList.remove('hidden');
+    });
+    return loader;
+  }
+
+  function openSearch() {
+    if (!modal) return;
+    lastFocus = document.activeElement as HTMLElement | null;
+    modal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+    loadPagefind().then(() => {
+      (root?.querySelector('input') as HTMLInputElement | null)?.focus();
+    });
+  }
+
+  function closeSearch() {
+    modal?.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+    lastFocus?.focus?.();
+  }
+
+  document.querySelectorAll('[data-search-open]').forEach((el) => el.addEventListener('click', openSearch));
+  document.getElementById('search-close')?.addEventListener('click', closeSearch);
+  document.getElementById('search-backdrop')?.addEventListener('click', closeSearch);
+
+  document.addEventListener('keydown', (e) => {
+    const t = e.target as HTMLElement | null;
+    const typing = !!t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+    if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeSearch();
+    else if ((e.key === '/' && !typing) || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k')) {
+      e.preventDefault();
+      openSearch();
+    }
+  });
+</script>

@@ -134,3 +134,34 @@ The `<Img />` component (`src/components/Img.astro`) then serves the right size 
 
 Other speed settings: fonts are self-hosted (no Google Fonts request) with the latin files preloaded, and CSS is inlined (no render-blocking stylesheet).
 Tip: OG/social images (`og-*`, `logo*`) are never resized; keep them around 1200x630 and under ~300 KB.
+
+---
+
+# New features (added later)
+
+| # | Feature | Where / how it works |
+|---|---------|----------------------|
+| 1 | Search (Pagefind) | Header magnifier, or press `/` or `Ctrl/Cmd+K`. Index is created by `npm run build` (`dist/pagefind`). Only blog posts are indexed. In `npm run dev` there is no index — test with `npm run build && npm run preview`. |
+| 3 | Table of Contents | `components/TableOfContents.astro` — built from `##` / `###` headings; shown when a post has 3+ headings. |
+| 4 | Reading progress bar | `components/ReadingProgress.astro` |
+| 5 | Cookie consent | `components/CookieConsent.astro` — choice saved in `localStorage`; footer link "Cookie settings" re-opens it. Listen with `window.addEventListener('consentchange', e => e.detail.granted)`. |
+| 6 | RSS | `/rss.xml` (latest 50 posts), auto-discovery `<link>` added to every page. |
+| 7 | Tag pages | `/tags/` and `/tag/<tag>/` (paginated, Hindi tags work). Tags with only 1 post are `noindex` and not in the sitemap (`MIN_POSTS_FOR_TAG_INDEX` in `utils/posts.ts`). Related posts now use shared tags first. |
+| 8 | Previous / Next post | `components/PostNav.astro` |
+| 9 | FAQ schema | Add `faq:` to a post's frontmatter (see `choosing-a-laptop.md`). Shows at the end of the post + `FAQPage` JSON-LD. |
+| 10 | IndexNow | Key file `public/<key>.txt`, key in `src/config.ts` (`INDEXNOW_KEY`). `scripts/indexnow.mjs` runs after each deploy (GitHub Actions job `indexnow`). Regenerate the key if you like — change both the file name/content and the config value. |
+| 11 | Trending posts | Home page + bottom of each post. Add `popular: true` to a post's frontmatter to push it up; otherwise featured → newest. (Real view-count based trending needs an analytics API, which a static site doesn't have.) |
+| 12 | Dark mode | Toggle in header; remembers choice, follows the phone/PC setting the first time. Colours are re-mapped in `styles/global.css` ("DARK MODE" section). |
+| 13 | Share buttons | WhatsApp, Telegram, Copy link — `components/ShareButtons.astro` |
+| 15 | Comments (Giscus) | Fill `GISCUS` in `src/config.ts` (get values from https://giscus.app). Empty = hidden. |
+| 16 | Code "Copy" button | `components/PostEnhancements.astro` |
+| 17 | Image zoom | Tap an image inside a post to enlarge (images wrapped in a link keep their link). |
+| 18 | Service worker | `public/sw.js` (registered on https only). HTML = network first, assets = cache first, `/offline/` page when offline. Change `VERSION` in `sw.js` to clear old caches. |
+| 19 | Analytics | Fill `ANALYTICS.cloudflareToken` (no cookies, loads immediately) and/or `ANALYTICS.ga4Id` (loads only after "Accept"). |
+| 20 | Broken link checker | `scripts/check-links.mjs`, runs at the end of `npm run build`. Missing **pages** fail the build; missing images/files only warn. `LINKCHECK_WARN_ONLY=1` to never fail. Run alone: `npm run check-links`. |
+
+Not added (on purpose, for later): AdSense ad slots and newsletter signup.
+
+**Build command is now:** `optimize-images → astro build → pagefind → check-links`. Pagefind is fetched with `npx` during the build, so `package-lock.json` did not need to change.
+
+**AdSense + EU/UK note:** the cookie banner is a simple custom one. For personalised ads to EEA/UK visitors Google requires a certified Consent Management Platform (use AdSense's own "Privacy & messaging" consent message when you turn ads on).

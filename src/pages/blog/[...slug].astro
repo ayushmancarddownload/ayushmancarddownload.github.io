@@ -3,6 +3,13 @@ import { getCollection, getEntry, render } from 'astro:content';
 import BlogLayout from '../../layouts/BlogLayout.astro';
 import Img from '../../components/Img.astro';
 import RelatedPostItem from '../../components/RelatedPostItem.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
+import PostNav from '../../components/PostNav.astro';
+import PopularPosts from '../../components/PopularPosts.astro';
+import TagList from '../../components/TagList.astro';
+import Comments from '../../components/Comments.astro';
+import { getPublishedPosts, getRelatedPosts, getPopularPosts, getAdjacentPosts } from '../../utils/posts';
 import { SITE, absUrl } from '../../config';
 import { slugifyCategory } from '../../utils/slugify';
 
@@ -21,10 +28,16 @@ const author = await getEntry(post.data.author);
 const words = post.body.split(/\s+/).length;
 const readTime = Math.max(1, Math.round(words / 200));
 
-const allPosts = await getCollection('blog', ({ data }) => !data.draft);
-const relatedPosts = allPosts
-  .filter((p) => p.slug !== post.slug && p.data.category === post.data.category)
-  .slice(0, 3);
+const allPosts = await getPublishedPosts(); // newest first
+// Related = shared tags first, then same category / language
+const relatedPosts = getRelatedPosts(post, allPosts, 3);
+const { newer, older } = getAdjacentPosts(post.slug, allPosts);
+const popularPosts = getPopularPosts(
+  allPosts.filter((p) => !relatedPosts.some((r) => r.slug === p.slug)),
+  4,
+  post.slug
+);
+const faqHeading = post.data.lang === 'hi' ? 'अक्सर पूछे जाने वाले सवाल' : 'Frequently Asked Questions';
 
 const formattedPubDate = post.data.pubDate.toLocaleDateString('en-US', {
   year: 'numeric',
@@ -72,6 +85,18 @@ const articleSchema = {
         '@id': postUrl,
       },
     },
+    ...(post.data.faq.length > 0
+      ? [
+          {
+            '@type': 'FAQPage',
+            mainEntity: post.data.faq.map((f) => ({
+              '@type': 'Question',
+              name: f.q,
+              acceptedAnswer: { '@type': 'Answer', text: f.a },
+            })),
+          },
+        ]
+      : []),
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
@@ -109,7 +134,7 @@ const articleSchema = {
     <h1 class="font-serif text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl">
       {post.data.title}
     </h1>
-    <div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500">
+    <div data-pagefind-ignore class="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500">
       {author && (
         <a href={`/author/${author.slug}/`} class="flex items-center gap-2 hover:text-orange-600">
           <Img src={author.data.avatar} alt={author.data.name} width={36} height={36} sizes="36px" class="h-9 w-9 rounded-full object-cover" />
@@ -139,11 +164,30 @@ const articleSchema = {
     />
   </div>
 
+  <TableOfContents slot="before-content" headings={headings} lang={post.data.lang} />
+
   <Content />
 
   <div slot="after-content">
+    {post.data.faq.length > 0 && (
+      <section id="faq" class="mt-12">
+        <h2 class="font-serif text-2xl font-semibold text-slate-900">{faqHeading}</h2>
+        <div class="mt-4 space-y-3">
+          {post.data.faq.map((f) => (
+            <div class="rounded-lg border border-orange-100 bg-white p-5">
+              <h3 class="font-serif text-lg font-semibold text-slate-900">{f.q}</h3>
+              <p class="mt-2 text-slate-600">{f.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <TagList tags={post.data.tags} />
+    <ShareButtons url={postUrl} title={post.data.title} />
+
     {author && (
-      <div class="mt-12 flex flex-col gap-4 rounded-lg border border-orange-100 bg-orange-50/50 p-6 sm:flex-row">
+      <div data-pagefind-ignore class="mt-12 flex flex-col gap-4 rounded-lg border border-orange-100 bg-orange-50/50 p-6 sm:flex-row">
         <Img src={author.data.avatar} alt={author.data.name} width={80} height={80} sizes="80px" class="h-20 w-20 shrink-0 rounded-full object-cover" />
         <div>
           <p class="text-xs font-semibold uppercase tracking-wide text-orange-600">Written by</p>
@@ -157,8 +201,10 @@ const articleSchema = {
       </div>
     )}
 
+    <PostNav older={older} newer={newer} />
+
     {relatedPosts.length > 0 && (
-      <div class="mt-12">
+      <div data-pagefind-ignore class="mt-12">
         <h2 class="mb-4 font-serif text-xl font-semibold text-slate-900">Related Articles</h2>
         <ul class="divide-y divide-orange-100 rounded-lg border border-orange-100 bg-white px-4 sm:px-5">
           {relatedPosts.map((related) => (
@@ -167,5 +213,8 @@ const articleSchema = {
         </ul>
       </div>
     )}
+
+    <PopularPosts posts={popularPosts} />
+    <Comments />
   </div>
 </BlogLayout>

@@ -1,0 +1,11 @@
+---
+// Cookie-less Cloudflare Web Analytics. Does nothing until ANALYTICS.cloudflareToken is set in src/config.ts.
+// (GA4 is handled by CookieConsent.astro — it only loads after the visitor accepts.)
+import { ANALYTICS } from '../config';
+---
+
+{
+  ANALYTICS.cloudflareToken && (
+    <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: ANALYTICS.cloudflareToken })} />
+  )
+}

@@ -1,5 +1,7 @@
 import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import { PAGE_SIZE } from '../config';
+import { slugifyTag } from './slugify';
 
 export async function getPublishedPosts() {
   return (await getCollection('blog', ({ data }) => !data.draft)).sort(
@@ -36,4 +38,61 @@ export function pageUrl(basePath: string, n: number): string {
 export function extraPagePaths(total: number, pageSize = PAGE_SIZE) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   return Array.from({ length: totalPages - 1 }, (_, i) => ({ params: { page: String(i + 2) } }));
+}
+
+type Post = CollectionEntry<'blog'>;
+
+/** Every tag -> { name, slug, posts } (case-insensitive merge). Sorted by post count. */
+export async function getTagIndex() {
+  const posts = await getPublishedPosts();
+  const map = new Map<string, { name: string; slug: string; posts: Post[] }>();
+  for (const post of posts) {
+    for (const raw of post.data.tags) {
+      const slug = slugifyTag(raw);
+      if (!slug) continue;
+      const entry = map.get(slug) ?? { name: raw, slug, posts: [] };
+      entry.posts.push(post);
+      map.set(slug, entry);
+    }
+  }
+  return [...map.values()].sort((a, b) => b.posts.length - a.posts.length || a.name.localeCompare(b.name));
+}
+
+/** Tag pages with fewer posts than this are noindex and left out of the sitemap (thin content). */
+export const MIN_POSTS_FOR_TAG_INDEX = 2;
+
+export const tagUrl = (slug: string) => `/tag/${slug}/`;
+
+/** Related posts: shared tags weigh most, same category and same language add a little. */
+export function getRelatedPosts(post: Post, all: Post[], limit = 3): Post[] {
+  const tags = new Set(post.data.tags.map(slugifyTag));
+  return all
+    .filter((p) => p.slug !== post.slug)
+    .map((p) => {
+      const shared = p.data.tags.filter((t) => tags.has(slugifyTag(t))).length;
+      const score = shared * 3 + (p.data.category === post.data.category ? 2 : 0) + (p.data.lang === post.data.lang ? 1 : 0);
+      return { p, score };
+    })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score || b.p.data.pubDate.valueOf() - a.p.data.pubDate.valueOf())
+    .slice(0, limit)
+    .map((x) => x.p);
+}
+
+/** Trending list: posts marked `popular: true` first, then featured, then newest. */
+export function getPopularPosts(all: Post[], limit = 5, excludeSlug?: string): Post[] {
+  const rank = (p: Post) => (p.data.popular ? 2 : 0) + (p.data.isFeatured ? 1 : 0);
+  return all
+    .filter((p) => p.slug !== excludeSlug)
+    .sort((a, b) => rank(b) - rank(a) || b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    .slice(0, limit);
+}
+
+/** Newer / older neighbours in publish order (`all` must be newest-first). */
+export function getAdjacentPosts(slug: string, all: Post[]) {
+  const i = all.findIndex((p) => p.slug === slug);
+  return {
+    newer: i > 0 ? all[i - 1] : undefined,
+    older: i >= 0 && i < all.length - 1 ? all[i + 1] : undefined,
+  };
 }

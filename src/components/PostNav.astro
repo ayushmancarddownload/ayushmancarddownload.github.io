@@ -1,0 +1,32 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+export interface Props {
+  older?: CollectionEntry<'blog'>;
+  newer?: CollectionEntry<'blog'>;
+}
+const { older, newer } = Astro.props;
+const card =
+  'group flex flex-col gap-1 rounded-lg border border-orange-100 bg-white p-4 transition-shadow hover:shadow-md';
+---
+
+{
+  (older || newer) && (
+    <nav aria-label="More posts" data-pagefind-ignore class="mt-12 grid gap-4 sm:grid-cols-2">
+      {older ? (
+        <a href={`/blog/${older.slug}/`} rel="prev" class={card}>
+          <span class="text-xs font-semibold uppercase tracking-wide text-orange-600">&larr; Previous post</span>
+          <span class="font-serif text-base font-semibold leading-snug text-slate-900 group-hover:text-orange-600">{older.data.title}</span>
+        </a>
+      ) : (
+        <span class="hidden sm:block" />
+      )}
+      {newer && (
+        <a href={`/blog/${newer.slug}/`} rel="next" class={`${card} sm:text-right`}>
+          <span class="text-xs font-semibold uppercase tracking-wide text-orange-600">Next post &rarr;</span>
+          <span class="font-serif text-base font-semibold leading-snug text-slate-900 group-hover:text-orange-600">{newer.data.title}</span>
+        </a>
+      )}
+    </nav>
+  )
+}

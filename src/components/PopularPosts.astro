@@ -1,0 +1,24 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import RelatedPostItem from './RelatedPostItem.astro';
+
+export interface Props {
+  posts: CollectionEntry<'blog'>[];
+  heading?: string;
+  class?: string;
+}
+const { posts, heading = 'Trending Now', class: className = 'mt-12' } = Astro.props;
+---
+
+{
+  posts.length > 0 && (
+    <section data-pagefind-ignore class={className}>
+      <h2 class="mb-4 font-serif text-xl font-semibold text-slate-900">
+        <span aria-hidden="true">🔥</span> {heading}
+      </h2>
+      <ul class="divide-y divide-orange-100 rounded-lg border border-orange-100 bg-white px-4 sm:px-5">
+        {posts.map((p) => <RelatedPostItem post={p} />)}
+      </ul>
+    </section>
+  )
+}

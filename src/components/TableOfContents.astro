@@ -1,0 +1,50 @@
+---
+export interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+  lang?: string;
+}
+const { headings, lang = 'en' } = Astro.props;
+// Only h2/h3 — h1 is the post title. Needs at least 3 entries to be worth showing.
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const label = lang === 'hi' ? 'इस पोस्ट में क्या है' : 'In this article';
+---
+
+{
+  items.length >= 3 && (
+    <nav aria-label={label} data-pagefind-ignore class="toc not-prose mb-8 rounded-lg border border-orange-100 bg-orange-50/50 p-4 sm:p-5">
+      <details open>
+        <summary class="cursor-pointer select-none font-serif text-lg font-semibold text-slate-900">{label}</summary>
+        <ol class="mt-3 space-y-1.5 text-[15px]">
+          {items.map((h) => (
+            <li class={h.depth === 3 ? 'ml-5' : ''}>
+              <a href={`#${h.slug}`} data-toc-link={h.slug} class="block rounded px-2 py-1 text-slate-600 hover:bg-orange-100 hover:text-orange-700">
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </details>
+    </nav>
+  )
+}
+
+<script>
+  // Highlight the section currently being read.
+  const links = new Map<string, HTMLElement>();
+  document.querySelectorAll<HTMLElement>('[data-toc-link]').forEach((a) => links.set(a.dataset.tocLink!, a));
+  if (links.size && 'IntersectionObserver' in window) {
+    const heads = [...links.keys()].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            links.forEach((a) => a.classList.remove('toc-active'));
+            links.get(e.target.id)?.classList.add('toc-active');
+          }
+        }
+      },
+      { rootMargin: '-80px 0px -70% 0px' }
+    );
+    heads.forEach((h) => io.observe(h));
+  }
+</script>

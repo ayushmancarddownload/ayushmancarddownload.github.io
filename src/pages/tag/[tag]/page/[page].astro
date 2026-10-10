@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import PostCard from '../../../../components/PostCard.astro';
+import Pagination from '../../../../components/Pagination.astro';
+import Breadcrumbs from '../../../../components/Breadcrumbs.astro';
+import { SITE, PAGE_SIZE } from '../../../../config';
+import { getTagIndex, paginate, pageUrl, tagUrl } from '../../../../utils/posts';
+
+export async function getStaticPaths() {
+  const tags = await getTagIndex();
+  return tags.flatMap((t) => {
+    const totalPages = Math.max(1, Math.ceil(t.posts.length / PAGE_SIZE));
+    return Array.from({ length: totalPages - 1 }, (_, i) => ({
+      params: { tag: t.slug, page: String(i + 2) },
+      props: { slug: t.slug },
+    }));
+  });
+}
+
+const { slug } = Astro.props;
+const all = await getTagIndex();
+const tag = all.find((t) => t.slug === slug)!;
+const basePath = tagUrl(slug);
+const { items: posts, page, totalPages } = paginate(tag.posts, Number(Astro.params.page));
+---
+
+<BaseLayout
+  title={`${tag.name} — Page ${page}`}
+  description={`Page ${page} of ${totalPages}: all ${SITE.name} articles tagged "${tag.name}".`}
+  canonicalPath={pageUrl(basePath, page)}
+  prevPath={pageUrl(basePath, page - 1)}
+  nextPath={page < totalPages ? pageUrl(basePath, page + 1) : undefined}
+>
+  <div class="container-page py-8">
+    <Breadcrumbs items={[{ label: 'Tags', href: '/tags/' }, { label: `#${tag.name}`, href: basePath }, { label: `Page ${page}` }]} />
+  </div>
+
+  <section class="container-page pb-16">
+    <h1 class="mb-2 font-serif text-3xl font-semibold text-slate-900 sm:text-4xl">#{tag.name}</h1>
+    <p class="mb-8 text-slate-600">Page {page} of {totalPages}</p>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post, i) => <PostCard post={post} priority={i === 0} />)}
+    </div>
+
+    <Pagination currentPage={page} totalPages={totalPages} basePath={basePath} />
+  </section>
+</BaseLayout>

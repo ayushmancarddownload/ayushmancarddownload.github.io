@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="You're offline" description="You are offline right now. Pages you opened earlier still work." noindex>
+  <section class="container-page py-24 text-center">
+    <p class="text-sm font-semibold uppercase tracking-wide text-orange-600">Offline</p>
+    <h1 class="mt-3 font-serif text-4xl font-semibold text-slate-900">You're offline</h1>
+    <p class="mx-auto mt-4 max-w-md text-slate-600">
+      This page isn't saved on your device yet. Reconnect to the internet and try again — articles you've already read still open without a connection.
+    </p>
+    <div class="mt-8">
+      <button type="button" onclick="location.reload()" class="btn-primary">Try again</button>
+    </div>
+  </section>
+</BaseLayout>

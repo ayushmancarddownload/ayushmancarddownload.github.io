@@ -1,0 +1,87 @@
+---
+// Two small reader features for post pages:
+//  1. "Copy" button on every code block
+//  2. Tap / click an image in the article to see it bigger (lightbox)
+---
+
+<script>
+  // ---------- 1. Code copy button ----------
+  document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre) => {
+    if (pre.parentElement?.classList.contains('code-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'code-wrap';
+    pre.parentNode?.insertBefore(wrap, pre);
+    wrap.appendChild(pre);
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'code-copy';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code to clipboard');
+    wrap.appendChild(btn);
+
+    btn.addEventListener('click', async () => {
+      const text = (pre.querySelector('code') ?? pre).textContent?.replace(/\n$/, '') ?? '';
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch {}
+        ta.remove();
+      }
+      btn.textContent = 'Copied!';
+      setTimeout(() => (btn.textContent = 'Copy'), 1800);
+    });
+  });
+
+  // ---------- 2. Image lightbox ----------
+  const prose = document.querySelector('.prose');
+  let overlay: HTMLDivElement | null = null;
+  let lastFocus: HTMLElement | null = null;
+
+  function closeLightbox() {
+    overlay?.remove();
+    overlay = null;
+    document.body.classList.remove('overflow-hidden');
+    lastFocus?.focus?.();
+  }
+
+  function openLightbox(img: HTMLImageElement) {
+    lastFocus = document.activeElement as HTMLElement | null;
+    overlay = document.createElement('div');
+    overlay.className = 'lightbox';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', img.alt || 'Image preview');
+
+    const big = document.createElement('img');
+    big.src = img.currentSrc || img.src;
+    big.alt = img.alt;
+
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'lightbox-close';
+    close.setAttribute('aria-label', 'Close image');
+    close.innerHTML = '&times;';
+
+    overlay.append(big, close);
+    overlay.addEventListener('click', closeLightbox);
+    document.body.appendChild(overlay);
+    document.body.classList.add('overflow-hidden');
+    close.focus();
+  }
+
+  prose?.addEventListener('click', (e) => {
+    const img = (e.target as HTMLElement).closest('img');
+    if (!img || img.closest('a')) return; // linked images keep their link
+    openLightbox(img as HTMLImageElement);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay) closeLightbox();
+  });
+</script>

@@ -1,0 +1,71 @@
+---
+import { ANALYTICS } from '../config';
+---
+
+<div
+  id="cookie-banner"
+  class="cookie-banner hidden"
+  role="dialog"
+  aria-live="polite"
+  aria-label="Cookie consent"
+  data-ga4={ANALYTICS.ga4Id}
+>
+  <p class="text-sm text-slate-700">
+    We use cookies to remember your preferences, measure traffic and — in future — show relevant ads. You can accept or decline;
+    see our <a href="/privacy-policy/" class="font-semibold text-orange-600 underline">Privacy Policy</a>.
+  </p>
+  <div class="flex shrink-0 gap-2">
+    <button id="cookie-decline" type="button" class="btn-secondary !min-h-[44px] !px-4 !py-2">Decline</button>
+    <button id="cookie-accept" type="button" class="btn-primary !min-h-[44px] !px-4 !py-2">Accept</button>
+  </div>
+</div>
+
+<script>
+  // Consent is stored as 'granted' | 'denied' in localStorage ("cookie-consent").
+  // Other code can listen for:  window.addEventListener('consentchange', e => e.detail.granted)
+  // or read:                     window.cookieConsent  ('granted' | 'denied' | undefined)
+  const banner = document.getElementById('cookie-banner');
+  const KEY = 'cookie-consent';
+  const w = window as any;
+
+  function read(): string | null {
+    try { return localStorage.getItem(KEY); } catch { return null; }
+  }
+
+  function loadGa4() {
+    const id = banner?.dataset.ga4;
+    if (!id || w.__ga4Loaded) return;
+    w.__ga4Loaded = true;
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
+    document.head.appendChild(s);
+    w.dataLayer = w.dataLayer || [];
+    w.gtag = function () { w.dataLayer.push(arguments); };
+    w.gtag('js', new Date());
+    w.gtag('config', id, { anonymize_ip: true });
+  }
+
+  function apply(value: string | null) {
+    w.cookieConsent = value ?? undefined;
+    if (value === 'granted') loadGa4();
+  }
+
+  function decide(value: 'granted' | 'denied') {
+    try { localStorage.setItem(KEY, value); } catch {}
+    banner?.classList.add('hidden');
+    apply(value);
+    window.dispatchEvent(new CustomEvent('consentchange', { detail: { granted: value === 'granted' } }));
+  }
+
+  const saved = read();
+  apply(saved);
+  if (!saved) banner?.classList.remove('hidden');
+
+  document.getElementById('cookie-accept')?.addEventListener('click', () => decide('granted'));
+  document.getElementById('cookie-decline')?.addEventListener('click', () => decide('denied'));
+  // Footer link "Cookie settings" re-opens the banner
+  document.querySelectorAll('[data-cookie-settings]').forEach((el) =>
+    el.addEventListener('click', () => banner?.classList.remove('hidden'))
+  );
+</script>

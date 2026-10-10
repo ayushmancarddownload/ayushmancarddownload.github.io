@@ -2,15 +2,18 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import Pagination from '../components/Pagination.astro';
+import PopularPosts from '../components/PopularPosts.astro';
 import { SITE, absUrl } from '../config';
 import { slugifyCategory } from '../utils/slugify';
-import { getHomeListing, paginate, pageUrl } from '../utils/posts';
+import { getHomeListing, paginate, pageUrl, getPopularPosts } from '../utils/posts';
 
 // Page 1 of the home feed. Pages 2..N live in src/pages/page/[page].astro
 const { all, featured, rest } = await getHomeListing();
 const { items: posts, page, totalPages } = paginate(rest, 1);
 
 const categories = [...new Set(all.map((p) => p.data.category))];
+// Trending list only makes sense once there are enough posts to choose from
+const trending = all.length >= 4 ? getPopularPosts(all, 5) : [];
 
 const title = `${SITE.name} — ${SITE.tagline}`;
 const description =
@@ -84,6 +87,8 @@ const siteSchema = {
       </section>
     )
   }
+
+  {trending.length > 0 && <PopularPosts posts={trending} class="container-page py-8" />}
 
   <section class="container-page py-8 pb-20">
     <div class="mb-6 flex items-center justify-between">

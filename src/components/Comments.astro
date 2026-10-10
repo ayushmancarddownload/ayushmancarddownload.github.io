@@ -1,0 +1,66 @@
+---
+// Giscus comments (GitHub Discussions). Shows nothing until you fill GISCUS in src/config.ts.
+// Loads only when the reader scrolls near it, and follows the dark / light toggle.
+import { GISCUS } from '../config';
+const enabled = Boolean(GISCUS.repo && GISCUS.repoId && GISCUS.categoryId);
+---
+
+{
+  enabled && (
+    <section data-pagefind-ignore id="comments" class="mt-14">
+      <h2 class="mb-4 font-serif text-xl font-semibold text-slate-900">Comments</h2>
+      <div
+        id="giscus-container"
+        class="min-h-[220px]"
+        data-repo={GISCUS.repo}
+        data-repo-id={GISCUS.repoId}
+        data-category={GISCUS.category}
+        data-category-id={GISCUS.categoryId}
+      />
+    </section>
+  )
+}
+
+<script>
+  const box = document.getElementById('giscus-container');
+  if (box) {
+    const theme = () => (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    const load = () => {
+      const s = document.createElement('script');
+      s.src = 'https://giscus.app/client.js';
+      s.async = true;
+      s.crossOrigin = 'anonymous';
+      const attrs: Record<string, string> = {
+        'data-repo': box.dataset.repo!,
+        'data-repo-id': box.dataset.repoId!,
+        'data-category': box.dataset.category!,
+        'data-category-id': box.dataset.categoryId!,
+        'data-mapping': 'pathname',
+        'data-strict': '0',
+        'data-reactions-enabled': '1',
+        'data-emit-metadata': '0',
+        'data-input-position': 'bottom',
+        'data-theme': theme(),
+        'data-lang': 'en',
+        'data-loading': 'lazy',
+      };
+      Object.entries(attrs).forEach(([k, v]) => s.setAttribute(k, v));
+      box.appendChild(s);
+    };
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          load();
+        }
+      }, { rootMargin: '400px' });
+      io.observe(box);
+    } else {
+      load();
+    }
+    window.addEventListener('themechange', () => {
+      const frame = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+      frame?.contentWindow?.postMessage({ giscus: { setConfig: { theme: theme() } } }, 'https://giscus.app');
+    });
+  }
+</script>

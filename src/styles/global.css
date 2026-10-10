@@ -94,3 +94,204 @@
 @media (prefers-reduced-motion: reduce) {
   .back-to-top { transition: none; }
 }
+
+/* =====================================================================
+   NEW FEATURES
+   ===================================================================== */
+
+/* ---- Headings jumped to from the Table of Contents sit below the sticky header ---- */
+.prose :where(h2, h3, h4) { scroll-margin-top: 5rem; }
+.toc-active { background: rgb(255 237 213 / 0.9); color: #c2410c; font-weight: 600; }
+
+/* ---- Reading progress bar ---- */
+.read-progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  z-index: 60;
+  background: #ea580c;
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* ---- Cookie banner ---- */
+.cookie-banner {
+  position: fixed;
+  left: 0.75rem; right: 0.75rem;
+  bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  z-index: 65;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #fed7aa;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  max-width: 44rem;
+  margin: 0 auto;
+}
+.cookie-banner.hidden { display: none; }
+@media (min-width: 640px) {
+  .cookie-banner { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+
+/* ---- Code copy button ---- */
+.code-wrap { position: relative; }
+.code-copy {
+  position: absolute;
+  top: 0.5rem; right: 0.5rem;
+  z-index: 2;
+  min-height: 32px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  color: #e2e8f0;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+.code-copy:hover, .code-copy:focus-visible { opacity: 1; background: #ea580c; }
+@media (hover: hover) {
+  .code-wrap .code-copy { opacity: 0; }
+  .code-wrap:hover .code-copy, .code-copy:focus-visible { opacity: 1; }
+}
+
+/* ---- Image lightbox ---- */
+.prose img:not(a img) { cursor: zoom-in; }
+.lightbox {
+  position: fixed; inset: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.88);
+  cursor: zoom-out;
+}
+.lightbox img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 0.5rem; }
+.lightbox-close {
+  position: absolute; top: 0.75rem; right: 0.75rem;
+  width: 44px; height: 44px;
+  font-size: 2rem; line-height: 1; color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  border: 0; border-radius: 9999px; cursor: pointer;
+}
+
+/* ---- Pagefind search UI colours (follows the theme) ---- */
+#search-root {
+  --pagefind-ui-scale: 0.95;
+  --pagefind-ui-primary: #ea580c;
+  --pagefind-ui-text: #334155;
+  --pagefind-ui-background: #ffffff;
+  --pagefind-ui-border: #fed7aa;
+  --pagefind-ui-tag: #fff7ed;
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: 8px;
+  --pagefind-ui-font: inherit;
+}
+
+/* =====================================================================
+   DARK MODE  (class="dark" on <html>, toggled by ThemeToggle)
+   The site was written with fixed light utility classes, so dark mode is
+   done by re-mapping those classes here instead of editing every page.
+   ===================================================================== */
+html.dark { color-scheme: dark; }
+
+.dark body,
+.dark .bg-stone-50 { background-color: #12100e; }
+.dark .bg-stone-50\/90 { background-color: rgb(18 16 14 / 0.9); }
+.dark .bg-white { background-color: #1c1917; }
+.dark .bg-orange-50,
+.dark .bg-orange-50\/50 { background-color: rgb(251 146 60 / 0.08); }
+.dark .bg-slate-100 { background-color: #292524; }
+.dark .bg-orange-50 { background-color: rgb(251 146 60 / 0.1); }
+
+/* hero gradient */
+.dark .from-orange-50\/60 {
+  --tw-gradient-from: rgb(124 45 18 / 0.28) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(124 45 18 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.dark .to-stone-50 { --tw-gradient-to: #12100e var(--tw-gradient-to-position); }
+
+/* text */
+.dark .text-slate-900 { color: #fafaf9; }
+.dark .text-slate-700 { color: #d6d3d1; }
+.dark .text-slate-600 { color: #b8b2ac; }
+.dark .text-slate-500 { color: #a39d97; }
+.dark .text-slate-400 { color: #8b857f; }
+.dark .text-orange-700 { color: #fdba74; }
+.dark .text-orange-600 { color: #fb923c; }
+.dark .hover\:text-orange-600:hover { color: #fb923c; }
+.dark .hover\:text-orange-700:hover { color: #fdba74; }
+.dark .text-white,
+.dark .\!text-white { color: #fff; }
+.dark .bg-orange-600,
+.dark .\!bg-orange-600 { background-color: #ea580c; }
+
+/* borders + dividers */
+.dark .border-orange-50 { border-color: rgb(251 146 60 / 0.1); }
+.dark .border-orange-100 { border-color: rgb(251 146 60 / 0.18); }
+.dark .border-orange-200 { border-color: rgb(251 146 60 / 0.3); }
+.dark .border-slate-200 { border-color: #44403c; }
+.dark .divide-orange-100 > :not([hidden]) ~ :not([hidden]) { border-color: rgb(251 146 60 / 0.18); }
+.dark .\!border-orange-600, .dark .border-orange-600 { border-color: #ea580c; }
+
+/* hovers */
+.dark .hover\:bg-orange-100:hover { background-color: rgb(251 146 60 / 0.16); }
+.dark .btn-secondary,
+.dark .pill { background-color: rgb(251 146 60 / 0.1); color: #fdba74; border-color: rgb(251 146 60 / 0.3); }
+.dark .btn-secondary:hover,
+.dark .pill:hover { background-color: rgb(251 146 60 / 0.2); }
+.dark .pill.\!bg-orange-600 { background-color: #ea580c; color: #fff; border-color: #ea580c; }
+.dark .toc-active { background: rgb(251 146 60 / 0.18); color: #fdba74; }
+
+/* form fields (contact page) */
+.dark input, .dark textarea { background-color: #1c1917; color: #e7e5e4; border-color: #44403c; }
+
+/* article typography */
+.dark .prose-orange {
+  --tw-prose-body: #d6d3d1;
+  --tw-prose-headings: #fafaf9;
+  --tw-prose-lead: #d6d3d1;
+  --tw-prose-links: #fb923c;
+  --tw-prose-bold: #fafaf9;
+  --tw-prose-counters: #a8a29e;
+  --tw-prose-bullets: #fb923c;
+  --tw-prose-hr: #44403c;
+  --tw-prose-quotes: #fafaf9;
+  --tw-prose-quote-borders: #9a3412;
+  --tw-prose-captions: #a8a29e;
+  --tw-prose-code: #fdba74;
+  --tw-prose-th-borders: #7c2d12;
+  --tw-prose-td-borders: #431407;
+}
+.dark .prose-orange a { border-bottom-color: #9a3412; }
+
+/* code blocks: Shiki dual theme (github-light / github-dark) */
+.dark .astro-code,
+.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+.dark .prose pre { background-color: #0d1117; }
+
+/* cookie banner, search, lightbox in dark */
+.dark .cookie-banner { background: #1c1917; border-color: rgb(251 146 60 / 0.3); }
+.dark #search-root {
+  --pagefind-ui-text: #e7e5e4;
+  --pagefind-ui-background: #1c1917;
+  --pagefind-ui-border: #44403c;
+  --pagefind-ui-tag: #292524;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .read-progress { transition: none; }
+}

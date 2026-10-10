@@ -9,6 +9,11 @@ category: "Technology"
 tags: ["laptops", "buying guide", "technology"]
 isFeatured: false
 draft: false
+faq:
+  - q: "How much RAM do I need in a laptop in 2026?"
+    a: "8GB is workable for basic tasks, but 16GB is the safer default for most people, especially if you keep many browser tabs open."
+  - q: "Do manufacturer battery estimates match real-world use?"
+    a: "Usually not. Expect real-world battery life to fall 20-30% short of the advertised number, so check independent reviews."
 ---
 
 Most laptop shopping guides lead with specs that sound impressive but rarely matter for everyday use. Here's what to actually check.
