@@ -1,0 +1,172 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { SITE, absUrl } from '../../config';
+import { slugifyCategory } from '../../utils/slugify';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const author = await getEntry(post.data.author);
+
+const words = post.body.split(/\s+/).length;
+const readTime = Math.max(1, Math.round(words / 200));
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const relatedPosts = allPosts
+  .filter((p) => p.slug !== post.slug && p.data.category === post.data.category)
+  .slice(0, 3);
+
+const formattedPubDate = post.data.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+const formattedUpdatedDate = post.data.updatedDate?.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const postUrl = absUrl(`/blog/${post.slug}/`);
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Article',
+      headline: post.data.title,
+      description: post.data.description,
+      image: [absUrl(post.data.coverImage)],
+      datePublished: post.data.pubDate.toISOString(),
+      dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+      inLanguage: post.data.lang,
+      articleSection: post.data.category,
+      keywords: post.data.tags.join(', '),
+      author: author
+        ? {
+            '@type': 'Person',
+            name: author.data.name,
+            url: absUrl(`/author/${author.slug}/`),
+          }
+        : undefined,
+      publisher: {
+        '@type': 'Organization',
+        name: SITE.name,
+        logo: {
+          '@type': 'ImageObject',
+          url: absUrl(SITE.logo),
+        },
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': postUrl,
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: absUrl('/') },
+        { '@type': 'ListItem', position: 2, name: 'Blog', item: absUrl('/blog/') },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: post.data.category,
+          item: absUrl(`/blog/category/${slugifyCategory(post.data.category)}/`),
+        },
+        { '@type': 'ListItem', position: 4, name: post.data.title, item: postUrl },
+      ],
+    },
+  ],
+};
+---
+
+<BlogLayout
+  title={post.data.title}
+  description={post.data.description}
+  ogImage={post.data.coverImage}
+  category={post.data.category}
+  canonicalPath={`/blog/${post.slug}/`}
+  lang={post.data.lang}
+  publishedTime={post.data.pubDate.toISOString()}
+  modifiedTime={(post.data.updatedDate ?? post.data.pubDate).toISOString()}
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  </Fragment>
+
+  <div slot="header" class="mb-8">
+    <span class="pill mb-4 !min-h-0 !py-1 text-xs">{post.data.category}</span>
+    <h1 class="font-serif text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl">
+      {post.data.title}
+    </h1>
+    <div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500">
+      {author && (
+        <a href={`/author/${author.slug}/`} class="flex items-center gap-2 hover:text-orange-600">
+          <img src={author.data.avatar} alt={author.data.name} class="h-9 w-9 rounded-full object-cover" />
+          <span>
+            <span class="block font-medium text-slate-700">{author.data.name}</span>
+            <span class="block text-xs text-slate-400">{author.data.role}</span>
+          </span>
+        </a>
+      )}
+      <span aria-hidden="true">&middot;</span>
+      <time datetime={post.data.pubDate.toISOString()}>Published {formattedPubDate}</time>
+      {formattedUpdatedDate && formattedUpdatedDate !== formattedPubDate && (
+        <>
+          <span aria-hidden="true">&middot;</span>
+          <span>Updated {formattedUpdatedDate}</span>
+        </>
+      )}
+      <span aria-hidden="true">&middot;</span>
+      <span>{readTime} min read</span>
+    </div>
+    <img
+      src={post.data.coverImage}
+      alt={post.data.coverAlt}
+      width="1200"
+      height="675"
+      fetchpriority="high"
+      decoding="async"
+      class="mt-6 aspect-video w-full rounded-lg object-cover"
+    />
+  </div>
+
+  <Content />
+
+  <div slot="after-content">
+    {author && (
+      <div class="mt-12 flex flex-col gap-4 rounded-lg border border-orange-100 bg-orange-50/50 p-6 sm:flex-row">
+        <img src={author.data.avatar} alt={author.data.name} class="h-20 w-20 shrink-0 rounded-full object-cover" />
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-orange-600">Written by</p>
+          <h3 class="mt-1 font-serif text-lg font-semibold text-slate-900">{author.data.name}</h3>
+          <p class="text-sm font-medium text-slate-500">{author.data.role}</p>
+          <p class="mt-2 text-sm text-slate-600">{author.data.bio}</p>
+          <a href={`/author/${author.slug}/`} class="mt-3 inline-block text-sm font-semibold text-orange-600 hover:text-orange-700">
+            View full profile &rarr;
+          </a>
+        </div>
+      </div>
+    )}
+
+    {relatedPosts.length > 0 && (
+      <div class="mt-12">
+        <h2 class="mb-6 font-serif text-2xl font-semibold text-slate-900">Related Articles</h2>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {relatedPosts.map((related) => (
+            <PostCard post={related} />
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</BlogLayout>

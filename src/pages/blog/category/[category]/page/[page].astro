@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../../../../layouts/BaseLayout.astro';
+import PostCard from '../../../../../components/PostCard.astro';
+import Pagination from '../../../../../components/Pagination.astro';
+import Breadcrumbs from '../../../../../components/Breadcrumbs.astro';
+import { SITE, PAGE_SIZE } from '../../../../../config';
+import { slugifyCategory } from '../../../../../utils/slugify';
+import { getPublishedPosts, paginate, pageUrl } from '../../../../../utils/posts';
+
+export async function getStaticPaths() {
+  const allPosts = await getPublishedPosts();
+  const categories = [...new Set(allPosts.map((p) => p.data.category))];
+
+  return categories.flatMap((category) => {
+    const count = allPosts.filter((p) => p.data.category === category).length;
+    const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
+    return Array.from({ length: totalPages - 1 }, (_, i) => ({
+      params: { category: slugifyCategory(category), page: String(i + 2) },
+      props: { category },
+    }));
+  });
+}
+
+const { category } = Astro.props;
+const allPosts = await getPublishedPosts();
+const categoryPosts = allPosts.filter((p) => p.data.category === category);
+const basePath = `/blog/category/${slugifyCategory(category)}/`;
+const { items: posts, page, totalPages } = paginate(categoryPosts, Number(Astro.params.page));
+---
+
+<BaseLayout
+  title={`${category} Articles — Page ${page}`}
+  description={`Page ${page} of ${totalPages}: all ${SITE.name} articles in the ${category} category.`}
+  canonicalPath={pageUrl(basePath, page)}
+  prevPath={pageUrl(basePath, page - 1)}
+  nextPath={page < totalPages ? pageUrl(basePath, page + 1) : undefined}
+>
+  <div class="container-page py-8">
+    <Breadcrumbs items={[{ label: 'Blog', href: '/blog/' }, { label: category, href: basePath }, { label: `Page ${page}` }]} />
+  </div>
+
+  <section class="container-page pb-16">
+    <h1 class="mb-2 font-serif text-3xl font-semibold text-slate-900 sm:text-4xl">{category}</h1>
+    <p class="mb-8 text-slate-600">Page {page} of {totalPages}</p>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+
+    <Pagination currentPage={page} totalPages={totalPages} basePath={basePath} />
+  </section>
+</BaseLayout>

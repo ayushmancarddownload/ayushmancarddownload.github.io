@@ -1,86 +1,102 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import GameGrid from '../components/GameGrid.astro';
-import RecentlyPlayedRow from '../components/RecentlyPlayedRow.astro';
-import FavoritesRow from '../components/FavoritesRow.astro';
-import { getAllGames, getFeaturedGame } from '../lib/games.js';
+import PostCard from '../components/PostCard.astro';
+import Pagination from '../components/Pagination.astro';
+import { SITE, absUrl } from '../config';
+import { slugifyCategory } from '../utils/slugify';
+import { getHomeListing, paginate, pageUrl } from '../utils/posts';
 
-const games = getAllGames();
-const featured = getFeaturedGame();
+// Page 1 of the home feed. Pages 2..N live in src/pages/page/[page].astro
+const { all, featured, rest } = await getHomeListing();
+const { items: posts, page, totalPages } = paginate(rest, 1);
 
-const title = 'KawaiiPlay - Cute & Fun Free Online Games';
-const description = 'Play the best cute and kawaii online games for free! Arcade, puzzles, dress-up, and action games playable directly in your browser.';
+const categories = [...new Set(all.map((p) => p.data.category))];
 
-const jsonLd = {
+const title = `${SITE.name} — ${SITE.tagline}`;
+const description =
+  'Fact-checked, editor-reviewed guides on personal finance, technology, and everyday decisions — written by named authors with real credentials.';
+
+const siteSchema = {
   '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'KawaiiPlay',
-  url: 'https://ubg2028.github.io/',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: 'https://ubg2028.github.io/?q={search_term_string}',
-    'query-input': 'required name=search_term_string',
-  },
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE.url}/#website`,
+      url: `${SITE.url}/`,
+      name: SITE.name,
+      description,
+      inLanguage: SITE.defaultLang,
+      publisher: { '@id': `${SITE.url}/#organization` },
+    },
+    {
+      '@type': 'Organization',
+      '@id': `${SITE.url}/#organization`,
+      name: SITE.name,
+      url: `${SITE.url}/`,
+      logo: { '@type': 'ImageObject', url: absUrl(SITE.logo) },
+    },
+  ],
 };
 ---
 
-<BaseLayout title={title} description={description} path="/" jsonLd={jsonLd}>
-  <main class="container main-content">
-    <!-- ================= FEATURED GAME SECTION ================= -->
-    <section class="featured-section">
-      <div id="gameScreenContainer" class="game-screen-box">
-        <div class="aspect-video-box">
-          <div id="gameCoverOverlay" class="hero-cover">
-            <div class="hero-glow-blob1"></div>
-            <div class="hero-glow-blob2"></div>
+<BaseLayout title={title} description={description} canonicalPath="/" nextPath={totalPages > 1 ? pageUrl('/', 2) : undefined}>
+  <script type="application/ld+json" set:html={JSON.stringify(siteSchema)} slot="head" />
 
-            <div class="hero-content">
-              <div class="hero-icon-box">{featured.icon}</div>
-              <span class="badge-featured">Featured Game</span>
-              <h1 class="hero-title">{featured.title}</h1>
-              <button id="playGameBtn" class="btn-play-hero">
-                <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                PLAY NOW
-              </button>
-            </div>
-          </div>
+  <section class="border-b border-orange-100 bg-gradient-to-b from-orange-50/60 to-stone-50">
+    <div class="container-page flex flex-col items-start gap-6 py-16 sm:py-20">
+      <span class="pill">Guides worth trusting</span>
+      <h1 class="max-w-2xl font-serif text-4xl font-semibold leading-tight text-slate-900 sm:text-5xl">
+        Practical answers to the questions you actually have.
+      </h1>
+      <p class="max-w-xl text-lg text-slate-600">
+        Every article here is written by a named author, reviewed by a second editor, and updated when the facts change. No filler, no guesswork.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="/blog/" class="btn-primary">Browse the blog</a>
+        <a href="/editorial-team/" class="btn-secondary">Meet the editorial team</a>
+      </div>
+    </div>
+  </section>
 
-          <iframe
-            id="gameIframe"
-            class="game-iframe hidden"
-            data-src={featured.url}
-            title={featured.title}
-            allow="fullscreen; autoplay; gamepad"
-            loading="lazy">
-          </iframe>
+  {
+    categories.length > 0 && (
+      <section class="container-page py-8">
+        <div class="flex flex-wrap gap-3">
+          {categories.map((cat) => (
+            <a href={`/blog/category/${slugifyCategory(cat)}/`} class="pill">
+              {cat}
+            </a>
+          ))}
         </div>
-      </div>
+      </section>
+    )
+  }
 
-      <!-- Hidden marker so "Continue Playing" can log the featured game too -->
-      <div
-        data-current-game
-        data-slug={featured.slug}
-        data-title={featured.title}
-        data-thumbnail={featured.thumbnail}
-        data-category={featured.category}
-        class="hidden"
-      ></div>
+  {
+    featured.length > 0 && (
+      <section class="container-page py-8">
+        <h2 class="mb-6 font-serif text-2xl font-semibold text-slate-900">Featured</h2>
+        <div class="grid gap-6 sm:grid-cols-2">
+          {featured.map((post) => (
+            <PostCard post={post} featured />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
-      <div class="fullscreen-row">
-        <button id="fullscreenBtn" class="btn-fullscreen">
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
-          Full Screen Mode
-        </button>
-        <a href={`/games/${featured.slug}/`} class="btn-fullscreen" style="background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); text-decoration:none;">
-          View Game Page →
-        </a>
-      </div>
-    </section>
+  <section class="container-page py-8 pb-20">
+    <div class="mb-6 flex items-center justify-between">
+      <h2 class="font-serif text-2xl font-semibold text-slate-900">Latest Articles</h2>
+      <a href="/blog/" class="text-sm font-semibold text-orange-600 hover:text-orange-700">View all &rarr;</a>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+    {posts.length === 0 && featured.length === 0 && (
+      <p class="text-slate-500">No articles published yet — check back soon.</p>
+    )}
 
-    <FavoritesRow />
-    <RecentlyPlayedRow />
-
-    <!-- ================= MORE GAMES SECTION ================= -->
-    <GameGrid games={games} title="More Fun Games" icon="⭐" id="more-games" initialVisible={18} />
-  </main>
+    <Pagination currentPage={page} totalPages={totalPages} basePath="/" />
+  </section>
 </BaseLayout>

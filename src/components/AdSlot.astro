@@ -1,0 +1,37 @@
+---
+// AdSense-compliant ad container.
+// - Clearly labeled "Advertisement" so ads are never confused with editorial content.
+// - Generous vertical margin so it never crowds text or navigation (avoids accidental clicks).
+// - Reserves a min-height to reduce layout shift while the ad script loads.
+export interface Props {
+  slotId: string; // Your AdSense ad unit slot ID
+  format?: 'auto' | 'fluid' | 'in-article';
+  className?: string;
+}
+
+const { slotId, format = 'auto', className = '' } = Astro.props;
+---
+
+<div class={`my-10 flex flex-col items-center gap-2 ${className}`}>
+  <span class="text-xs uppercase tracking-wide text-slate-400">Advertisement</span>
+  <div class="w-full min-h-[100px] overflow-hidden rounded-md bg-orange-50/50">
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+      data-ad-slot={slotId}
+      data-ad-format={format === 'in-article' ? 'fluid' : format}
+      data-ad-layout={format === 'in-article' ? 'in-article' : undefined}
+      data-full-width-responsive="true"
+    ></ins>
+  </div>
+</div>
+
+<script define:vars={{ slotId }}>
+  try {
+    (window.adsbygoogle = window.adsbygoogle || []).push({});
+  } catch (e) {
+    // Ad blocked or script unavailable — fail silently, layout already reserves space.
+    console.debug('AdSlot', slotId, 'failed to initialize', e);
+  }
+</script>

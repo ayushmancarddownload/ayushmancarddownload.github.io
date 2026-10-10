@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+---
+
+<BaseLayout
+  title="Terms of Service"
+  description="Terms and conditions for using The Orange Desk website and its content."
+>
+  <div class="container-page py-8">
+    <Breadcrumbs items={[{ label: 'Terms' }]} />
+  </div>
+
+  <section class="container-page pb-16">
+    <div class="prose prose-orange lg:prose-lg mx-auto max-w-3xl">
+      <h1>Terms of Service</h1>
+      <p><em>Last updated: February 2026</em></p>
+
+      <p>
+        By accessing and using postbnao.com (the "Site"), you agree to be bound by these Terms of
+        Service. If you do not agree with any part of these terms, please do not use the Site.
+      </p>
+
+      <h2>Use of content</h2>
+      <p>
+        All articles, images, and other content on this Site are the property of The Orange Desk unless
+        otherwise credited, and are protected by copyright law. You may share links to our content and quote
+        brief excerpts with proper attribution and a link back to the original article. Reproducing full
+        articles without written permission is not permitted.
+      </p>
+
+      <h2>No professional advice</h2>
+      <p>
+        Content on this Site is provided for general informational purposes only and does not constitute
+        financial, legal, medical, or other professional advice. Always consult a qualified professional
+        before making decisions based on information found here. See our full <a href="/disclaimer/">disclaimer</a>.
+      </p>
+
+      <h2>User conduct</h2>
+      <p>
+        When submitting comments or contact form messages, you agree not to post unlawful, abusive,
+        defamatory, or infringing content.
+      </p>
+
+      <h2>Third-party links</h2>
+      <p>
+        Our Site may contain links to third-party websites. We are not responsible for the content, accuracy,
+        or practices of external sites.
+      </p>
+
+      <h2>Limitation of liability</h2>
+      <p>
+        The Orange Desk is not liable for any damages arising from your use of, or inability to use, this
+        Site or its content, to the fullest extent permitted by law.
+      </p>
+
+      <h2>Changes to these terms</h2>
+      <p>
+        We may revise these Terms of Service at any time. Continued use of the Site after changes are posted
+        constitutes acceptance of the revised terms.
+      </p>
+
+      <h2>Governing law</h2>
+      <p>
+        These terms are governed by the laws of India, without regard to conflict of law principles.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Questions about these terms can be sent to <a href="mailto:hello@postbnao.com">hello@postbnao.com</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

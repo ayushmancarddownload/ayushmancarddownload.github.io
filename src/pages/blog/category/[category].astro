@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import Pagination from '../../../components/Pagination.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { SITE } from '../../../config';
+import { slugifyCategory } from '../../../utils/slugify';
+import { getPublishedPosts, paginate, pageUrl } from '../../../utils/posts';
+
+export async function getStaticPaths() {
+  const allPosts = await getPublishedPosts();
+  const categories = [...new Set(allPosts.map((p) => p.data.category))];
+
+  return categories.map((category) => ({
+    params: { category: slugifyCategory(category) },
+    props: { category },
+  }));
+}
+
+// Category page 1. Pages 2..N live in blog/category/[category]/page/[page].astro
+const { category } = Astro.props;
+
+const allPosts = await getPublishedPosts();
+const categories = [...new Set(allPosts.map((p) => p.data.category))];
+const categoryPosts = allPosts.filter((p) => p.data.category === category);
+const basePath = `/blog/category/${slugifyCategory(category)}/`;
+const { items: posts, page, totalPages } = paginate(categoryPosts, 1);
+---
+
+<BaseLayout
+  title={`${category} Articles`}
+  description={`Browse all ${SITE.name} articles in the ${category} category.`}
+  canonicalPath={basePath}
+  nextPath={totalPages > 1 ? pageUrl(basePath, 2) : undefined}
+>
+  <div class="container-page py-8">
+    <Breadcrumbs items={[{ label: 'Blog', href: '/blog/' }, { label: category }]} />
+  </div>
+
+  <section class="container-page pb-16">
+    <h1 class="mb-2 font-serif text-3xl font-semibold text-slate-900 sm:text-4xl">{category}</h1>
+    <p class="mb-8 max-w-2xl text-slate-600">Every article we've published in this category, newest first.</p>
+
+    <div class="mb-8 flex flex-wrap gap-3">
+      <a href="/blog/" class="pill">All</a>
+      {
+        categories.map((cat) => (
+          <a
+            href={`/blog/category/${slugifyCategory(cat)}/`}
+            class={`pill ${cat === category ? '!bg-orange-600 !text-white !border-orange-600' : ''}`}
+          >
+            {cat}
+          </a>
+        ))
+      }
+    </div>
+
+    {
+      posts.length > 0 ? (
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <p class="text-slate-500">No articles found in this category yet.</p>
+      )
+    }
+
+    <Pagination currentPage={page} totalPages={totalPages} basePath={basePath} />
+  </section>
+</BaseLayout>

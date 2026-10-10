@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import Pagination from '../../../components/Pagination.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { SITE } from '../../../config';
+import { getPublishedPosts, paginate, pageUrl, extraPagePaths } from '../../../utils/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return extraPagePaths(posts.length);
+}
+
+const allPosts = await getPublishedPosts();
+const { items: posts, page, totalPages } = paginate(allPosts, Number(Astro.params.page));
+---
+
+<BaseLayout
+  title={`Blog Archive — Page ${page}`}
+  description={`Page ${page} of ${totalPages} of the ${SITE.name} blog archive, newest articles first.`}
+  canonicalPath={pageUrl('/blog/', page)}
+  prevPath={pageUrl('/blog/', page - 1)}
+  nextPath={page < totalPages ? pageUrl('/blog/', page + 1) : undefined}
+>
+  <div class="container-page py-8">
+    <Breadcrumbs items={[{ label: 'Blog', href: '/blog/' }, { label: `Page ${page}` }]} />
+  </div>
+
+  <section class="container-page pb-16">
+    <h1 class="mb-2 font-serif text-3xl font-semibold text-slate-900 sm:text-4xl">Blog Archive</h1>
+    <p class="mb-8 text-slate-600">Page {page} of {totalPages}</p>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+
+    <Pagination currentPage={page} totalPages={totalPages} basePath="/blog/" />
+  </section>
+</BaseLayout>

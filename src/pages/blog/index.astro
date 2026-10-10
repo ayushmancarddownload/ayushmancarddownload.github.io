@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { SITE } from '../../config';
+import { slugifyCategory } from '../../utils/slugify';
+import { getPublishedPosts, paginate, pageUrl } from '../../utils/posts';
+
+// Archive page 1. Pages 2..N live in src/pages/blog/page/[page].astro
+const allPosts = await getPublishedPosts();
+const { items: posts, page, totalPages } = paginate(allPosts, 1);
+const categories = [...new Set(allPosts.map((p) => p.data.category))];
+---
+
+<BaseLayout
+  title="Blog Archive"
+  description={`Browse every article on ${SITE.name}, filterable by category — personal finance, technology, and practical everyday guides.`}
+  canonicalPath="/blog/"
+  nextPath={totalPages > 1 ? pageUrl('/blog/', 2) : undefined}
+>
+  <div class="container-page py-8">
+    <Breadcrumbs items={[{ label: 'Blog' }]} />
+  </div>
+
+  <section class="container-page pb-16">
+    <h1 class="mb-2 font-serif text-3xl font-semibold text-slate-900 sm:text-4xl">Blog Archive</h1>
+    <p class="mb-8 max-w-2xl text-slate-600">Every article we've published, newest first.</p>
+
+    <div class="mb-8 flex flex-wrap gap-3">
+      <a href="/blog/" class="pill !bg-orange-600 !text-white !border-orange-600">All</a>
+      {
+        categories.map((cat) => (
+          <a href={`/blog/category/${slugifyCategory(cat)}/`} class="pill">
+            {cat}
+          </a>
+        ))
+      }
+    </div>
+
+    {
+      posts.length > 0 ? (
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <p class="text-slate-500">No articles published yet.</p>
+      )
+    }
+
+    <Pagination currentPage={page} totalPages={totalPages} basePath="/blog/" />
+  </section>
+</BaseLayout>

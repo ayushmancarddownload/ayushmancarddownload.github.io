@@ -1,12 +1,24 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
-import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  integrations: [tailwind(), sitemap()],
-  site: 'https://ubg2028.github.io',
+  site: 'https://postbnao.com',
+  // Every URL (canonical, sitemap, internal links, pagination) uses a trailing slash,
+  // matching how static hosts serve /folder/index.html.
+  trailingSlash: 'always',
   compressHTML: true,
   build: {
     inlineStylesheets: 'auto',
+  },
+  integrations: [
+    tailwind({
+      applyBaseStyles: false,
+    }),
+  ],
+  markdown: {
+    shikiConfig: {
+      theme: 'github-light',
+      wrap: true,
+    },
   },
 });

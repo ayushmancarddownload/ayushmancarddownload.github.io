@@ -1,0 +1,55 @@
+---
+import { pageUrl } from '../utils/posts';
+
+export interface Props {
+  currentPage: number;
+  totalPages: number;
+  basePath: string; // e.g. "/", "/blog/", "/blog/category/technology/"
+}
+
+const { currentPage, totalPages, basePath } = Astro.props;
+
+// 1 … 4 5 [6] 7 8 … 20
+const pages: (number | '…')[] = [];
+for (let i = 1; i <= totalPages; i++) {
+  if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 1) pages.push(i);
+  else if (pages[pages.length - 1] !== '…') pages.push('…');
+}
+
+const base = 'inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border px-3 text-sm font-semibold transition-colors';
+const idle = 'border-orange-200 bg-white text-orange-700 hover:bg-orange-100';
+const active = 'border-orange-600 bg-orange-600 text-white';
+const disabled = 'cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400';
+---
+
+{
+  totalPages > 1 && (
+    <nav aria-label="Pagination" class="mt-12 flex flex-wrap items-center justify-center gap-2">
+      {currentPage > 1 ? (
+        <a href={pageUrl(basePath, currentPage - 1)} rel="prev" class={`${base} ${idle}`}>
+          &larr; Previous
+        </a>
+      ) : (
+        <span class={`${base} ${disabled}`} aria-disabled="true">&larr; Previous</span>
+      )}
+
+      {pages.map((p) =>
+        p === '…' ? (
+          <span class="px-1 text-slate-400" aria-hidden="true">…</span>
+        ) : p === currentPage ? (
+          <span class={`${base} ${active}`} aria-current="page">{p}</span>
+        ) : (
+          <a href={pageUrl(basePath, p)} class={`${base} ${idle}`} aria-label={`Page ${p}`}>{p}</a>
+        )
+      )}
+
+      {currentPage < totalPages ? (
+        <a href={pageUrl(basePath, currentPage + 1)} rel="next" class={`${base} ${idle}`}>
+          Next &rarr;
+        </a>
+      ) : (
+        <span class={`${base} ${disabled}`} aria-disabled="true">Next &rarr;</span>
+      )}
+    </nav>
+  )
+}

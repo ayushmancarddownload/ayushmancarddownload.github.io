@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { getHomeListing, paginate, pageUrl, extraPagePaths } from '../../utils/posts';
+
+// Home feed, pages 2..N  →  /page/2/, /page/3/ ...
+export async function getStaticPaths() {
+  const { rest } = await getHomeListing();
+  return extraPagePaths(rest.length);
+}
+
+const { rest } = await getHomeListing();
+const { items: posts, page, totalPages } = paginate(rest, Number(Astro.params.page));
+---
+
+<BaseLayout
+  title={`Latest Articles — Page ${page}`}
+  description={`Older articles, page ${page} of ${totalPages}. Browse practical guides on money, technology, and everyday decisions.`}
+  canonicalPath={pageUrl('/', page)}
+  prevPath={pageUrl('/', page - 1)}
+  nextPath={page < totalPages ? pageUrl('/', page + 1) : undefined}
+>
+  <div class="container-page py-8">
+    <Breadcrumbs items={[{ label: `Page ${page}` }]} />
+  </div>
+
+  <section class="container-page pb-20">
+    <h1 class="mb-2 font-serif text-3xl font-semibold text-slate-900 sm:text-4xl">Latest Articles</h1>
+    <p class="mb-8 text-slate-600">Page {page} of {totalPages}</p>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+
+    <Pagination currentPage={page} totalPages={totalPages} basePath="/" />
+  </section>
+</BaseLayout>

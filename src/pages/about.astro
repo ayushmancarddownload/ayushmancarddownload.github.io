@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+---
+
+<BaseLayout
+  title="About Us"
+  description="Learn about The Orange Desk's mission, publishing standards, and the team behind our fact-checked guides on money, technology, and everyday decisions."
+>
+  <div class="container-page py-8">
+    <Breadcrumbs items={[{ label: 'About' }]} />
+  </div>
+
+  <section class="container-page pb-16">
+    <div class="prose prose-orange lg:prose-lg mx-auto max-w-3xl">
+      <h1>About The Orange Desk</h1>
+      <p>
+        The Orange Desk was founded in 2024 with one goal: to publish guides on money, technology, and everyday
+        decisions that readers can actually trust, written by people who put their name on the work.
+      </p>
+
+      <h2>Our mission</h2>
+      <p>
+        Search results are crowded with content written to rank rather than to help. We built The Orange Desk
+        as the opposite: every article starts from a real question a reader is trying to answer, and we don't
+        publish it until we're confident the answer holds up.
+      </p>
+
+      <h2>How we're different</h2>
+      <ul>
+        <li>Every article has a named author with a visible bio and credentials.</li>
+        <li>Every piece is reviewed by a second editor before it goes live.</li>
+        <li>We date every article and update it when the underlying facts change.</li>
+        <li>We disclose our editorial process in full on our <a href="/editorial-policy/">editorial policy page</a>.</li>
+      </ul>
+
+      <h2>Who we are</h2>
+      <p>
+        We're a small, independent publishing team. You can meet every writer, editor, and fact-checker on our
+        <a href="/editorial-team/">editorial team page</a>.
+      </p>
+
+      <h2>Where we're based</h2>
+      <p>
+        The Orange Desk is operated from Mumbai, Maharashtra, India. You can reach us any time through our
+        <a href="/contact/">contact page</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,230 +1,276 @@
 ---
 import '../styles/global.css';
-import { getCategories, slugify } from '../lib/games.js';
+import { SITE, absUrl } from '../config';
 
 export interface Props {
   title: string;
   description: string;
-  path?: string;          // e.g. "/games/cyber-kitty/"
   ogImage?: string;
-  jsonLd?: Record<string, any> | Record<string, any>[];
-  activeCategorySlug?: string;
-  showSearch?: boolean;
+  canonicalPath?: string;
+  lang?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  prevPath?: string;
+  nextPath?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
 }
 
 const {
   title,
   description,
-  path = '/',
-  ogImage = 'https://picsum.photos/seed/kawaiiplay/1200/630',
-  jsonLd,
-  activeCategorySlug = '',
-  showSearch = true,
+  ogImage = SITE.defaultOgImage,
+  canonicalPath,
+  lang = SITE.defaultLang,
+  ogType = 'website',
+  noindex = false,
+  prevPath,
+  nextPath,
+  publishedTime,
+  modifiedTime,
 } = Astro.props;
 
-const site = 'https://ubg2028.github.io';
-const canonical = new URL(path, site).toString();
-const categories = getCategories();
-const jsonLdList = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
+const siteName = SITE.name;
+// Canonical always points at the production domain, never a preview/github.io URL.
+const canonicalURL = absUrl(canonicalPath ?? Astro.url.pathname);
+const ogImageURL = absUrl(ogImage);
+const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
+const ogLocale = lang === 'hi' ? 'hi_IN' : 'en_IN';
+
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/blog/', label: 'Blog' },
+  { href: '/editorial-team/', label: 'Editorial Team' },
+  { href: '/about/', label: 'About' },
+  { href: '/contact/', label: 'Contact' },
+];
 ---
 
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+    {prevPath && <link rel="prev" href={absUrl(prevPath)} />}
+    {nextPath && <link rel="next" href={absUrl(nextPath)} />}
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#ea580c" />
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
+    />
 
-  <title>{title}</title>
-  <meta name="description" content={description} />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href={canonical} />
-  <meta name="theme-color" content="#0B0F19" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
 
-  <!-- Open Graph / Twitter -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content={description} />
-  <meta property="og:url" content={canonical} />
-  <meta property="og:image" content={ogImage} />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={title} />
-  <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content={ogImage} />
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content={ogLocale} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
 
-  <!-- Perf: warm up connections to the domains we actually fetch from -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://picsum.photos" />
-  <link rel="dns-prefetch" href="https://videos.crazygames.com" />
-  <link rel="dns-prefetch" href="https://commondatastorage.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" /></noscript>
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
 
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="sitemap" href="/sitemap-index.xml" />
+    <!-- Fonts loaded non-render-blocking: preload, then swap the stylesheet in
+         once fetched, so the page paints immediately with a fallback font. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap"
+      />
+    </noscript>
 
-  {jsonLdList.map((block) => (
-    <script type="application/ld+json" set:html={JSON.stringify(block)} />
-  ))}
+    <slot name="head" />
+  </head>
+  <body class="flex min-h-screen flex-col bg-stone-50 font-sans text-slate-700">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-orange-600 focus:px-4 focus:py-2 focus:text-white"
+    >
+      Skip to content
+    </a>
 
-  <!-- Instant Dark Mode Script (No White Flash) -->
-  <script is:inline>
-    if (localStorage.getItem('theme') === 'light') {
-      document.documentElement.classList.remove('dark');
-    } else {
-      document.documentElement.classList.add('dark');
-    }
-  </script>
-</head>
-
-<body>
-  <!-- ================= SIDEBAR MENU ================= -->
-  <div id="menuOverlay" class="menu-overlay hidden"></div>
-
-  <aside id="sidebar" class="sidebar">
-    <div>
-      <div class="sidebar-header">
-        <div class="brand">
-          <span class="emoji-logo">🎀</span>
-          <span class="brand-name">KawaiiPlay</span>
-        </div>
-        <button id="closeMenuBtn" aria-label="Close Menu" class="icon-btn">
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-
-      <nav class="sidebar-nav">
-        <a href="/" class={`nav-item ${activeCategorySlug === '' && path === '/' ? 'active' : ''}`}>🔥 Home</a>
-        <a href="/favorites/" class={`nav-item ${path.startsWith('/favorites') ? 'active' : ''}`}>💗 My Favorites</a>
-        <p class="sidebar-nav-heading">Categories</p>
-        {categories.map((cat) => (
-          <a href={`/category/${cat.slug}/`} class={`nav-item ${activeCategorySlug === cat.slug ? 'active' : ''}`}>
-            <span>{cat.name}</span>
-            <span class="nav-count">{cat.count}</span>
-          </a>
-        ))}
-      </nav>
-    </div>
-    <div class="sidebar-footer">
-      <p>© 2026 KawaiiPlay Zone</p>
-      <p><a href="/privacy-policy/">Privacy</a> · <a href="/terms-of-service/">Terms</a> · <a href="/contact-us/">Contact</a></p>
-    </div>
-  </aside>
-
-  <!-- ================= TOP NAVBAR ================= -->
-  <header class="top-navbar">
-    <div class="container nav-content">
-      <div class="nav-left">
-        <button id="openMenuBtn" aria-label="Open Menu" class="icon-btn">
-          <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-        </button>
-        <a href="/" class="site-logo">
-          <span>🐱</span> KawaiiPlay
+    <header class="sticky top-0 z-40 border-b border-orange-100 bg-stone-50/90 backdrop-blur">
+      <div class="container-page flex h-16 items-center justify-between">
+        <a href="/" class="flex items-center gap-2 text-slate-900">
+          <span class="flex h-9 w-9 items-center justify-center rounded-md bg-orange-600 font-serif text-lg font-semibold text-white">
+            OD
+          </span>
+          <span class="font-serif text-xl font-semibold">{siteName}</span>
         </a>
-      </div>
 
-      {showSearch && (
-        <div id="searchWrapper" class="search-wrapper">
-          <span class="search-icon" aria-hidden="true">🔎</span>
-          <input id="siteSearch" class="search-input" type="search" placeholder="Search games..." aria-label="Search games" />
-        </div>
-      )}
+        <nav class="hidden items-center gap-1 md:flex" aria-label="Primary">
+          {
+            navLinks.map((link) => (
+              <a
+                href={link.href}
+                class="rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-orange-100 hover:text-orange-700"
+              >
+                {link.label}
+              </a>
+            ))
+          }
+        </nav>
 
-      <div class="nav-right">
-        {showSearch && (
-          <button id="searchToggleBtn" aria-label="Toggle Search" aria-haspopup="true" aria-expanded="false" class="icon-btn search-toggle-btn" type="button">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path stroke-linecap="round" d="M21 21l-4.3-4.3"></path></svg>
-          </button>
-        )}
-        <button id="themeToggleBtn" aria-label="Toggle Theme" class="theme-btn">
-          <svg id="moonIcon" class="hidden" width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-          <svg id="sunIcon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-          <span id="themeText" class="hidden sm:inline">Dark Mode</span>
+        <button
+          id="menu-toggle"
+          type="button"
+          class="flex h-12 w-12 items-center justify-center rounded-md text-slate-700 hover:bg-orange-100 md:hidden"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="mobile-drawer"
+        >
+          <svg id="icon-open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
+    </header>
 
-      <div class="nav-utility">
-        <div class="streak-wrapper">
-          <button id="streakBadge" class="streak-badge" type="button" aria-haspopup="true" aria-expanded="false">🔥 …</button>
-          <div id="streakPanel" class="streak-panel hidden">
-            <p class="streak-panel-title">Your play streak</p>
-            <p id="streakPanelCount" class="streak-panel-count">🔥 0-day streak</p>
-            <div id="streakPanelDays" class="streak-days"></div>
-            <p class="streak-panel-note">Play any game once a day to keep your streak alive.</p>
-            <p class="streak-panel-bookmark">💡 Press <kbd>Ctrl</kbd> + <kbd>D</kbd> to bookmark us!</p>
-          </div>
+    <!-- Mobile drawer -->
+    <div id="drawer-overlay" class="fixed inset-0 z-30 hidden bg-slate-900/40 md:hidden"></div>
+    <aside
+      id="mobile-drawer"
+      class="fixed right-0 top-0 z-40 h-full w-72 max-w-[85%] translate-x-full transform bg-stone-50 shadow-xl transition-transform duration-300 ease-in-out md:hidden"
+      aria-hidden="true"
+    >
+      <div class="flex h-16 items-center justify-between border-b border-orange-100 px-4">
+        <span class="font-serif text-lg font-semibold text-slate-900">Menu</span>
+        <button
+          id="drawer-close"
+          type="button"
+          class="flex h-12 w-12 items-center justify-center rounded-md text-slate-700 hover:bg-orange-100"
+          aria-label="Close menu"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <nav class="flex flex-col gap-1 p-4" aria-label="Mobile">
+        {
+          navLinks.map((link) => (
+            <a
+              href={link.href}
+              class="flex min-h-[48px] items-center rounded-md px-3 text-base font-medium text-slate-700 hover:bg-orange-100 hover:text-orange-700"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+    </aside>
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <footer class="border-t border-orange-100 bg-white">
+      <div class="container-page grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <a href="/" class="flex items-center gap-2 text-slate-900">
+            <span class="flex h-8 w-8 items-center justify-center rounded-md bg-orange-600 font-serif text-sm font-semibold text-white">OD</span>
+            <span class="font-serif text-lg font-semibold">{siteName}</span>
+          </a>
+          <p class="mt-3 text-sm text-slate-500">
+            Practical, fact-checked guides on money, technology, and everyday decisions — written by named editors and reviewed before publishing.
+          </p>
         </div>
-        <div class="fav-wrapper">
-          <button id="headerFavBtn" class="header-fav-btn" type="button" aria-haspopup="true" aria-expanded="false" data-tooltip="Favourites">
-            <span id="headerFavIcon">🤍</span>
-            <span id="headerFavCount" class="fav-count hidden">0</span>
-          </button>
-          <div id="favPanel" class="fav-panel hidden">
-            <p class="fav-panel-title">💗 Your Favorites</p>
-            <p id="favPanelEmpty" class="empty-note">Tap the 🤍 on any game to save it here.</p>
-            <div id="favPanelList" class="fav-panel-list"></div>
-            <a href="/favorites/" class="fav-panel-viewall">View all favorites →</a>
-          </div>
+
+        <div>
+          <h3 class="font-serif text-sm font-semibold uppercase tracking-wide text-slate-900">Explore</h3>
+          <ul class="mt-3 space-y-2 text-sm">
+            <li><a href="/blog/" class="text-slate-600 hover:text-orange-600">Blog Archive</a></li>
+            <li><a href="/editorial-team/" class="text-slate-600 hover:text-orange-600">Editorial Team</a></li>
+            <li><a href="/about/" class="text-slate-600 hover:text-orange-600">About Us</a></li>
+            <li><a href="/contact/" class="text-slate-600 hover:text-orange-600">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-serif text-sm font-semibold uppercase tracking-wide text-slate-900">Policies</h3>
+          <ul class="mt-3 space-y-2 text-sm">
+            <li><a href="/editorial-policy/" class="text-slate-600 hover:text-orange-600">Editorial Policy</a></li>
+            <li><a href="/privacy-policy/" class="text-slate-600 hover:text-orange-600">Privacy Policy</a></li>
+            <li><a href="/terms/" class="text-slate-600 hover:text-orange-600">Terms of Service</a></li>
+            <li><a href="/disclaimer/" class="text-slate-600 hover:text-orange-600">Disclaimer</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-serif text-sm font-semibold uppercase tracking-wide text-slate-900">Contact</h3>
+          <ul class="mt-3 space-y-2 text-sm text-slate-600">
+            <li>{SITE.email}</li>
+            <li>Mumbai, Maharashtra, India</li>
+          </ul>
         </div>
       </div>
-    </div>
-  </header>
-
-  <!-- ================= PAGE CONTENT ================= -->
-  <slot />
-
-  <!-- ================= PARTNER NETWORKS (in body, not footer) ================= -->
-  <section class="partner-section">
-    <div class="container">
-      <div class="footer-card footer-card-center">
-        <h3>OUR PARTNER NETWORKS & BACKLINKS</h3>
-        <div class="backlinks">
-          <a href="https://example.com/crazy-games" target="_blank" rel="noopener dofollow">CrazyGames Portal</a>
-          <a href="https://example.com/poki-clone" target="_blank" rel="noopener dofollow">Poki Free Games</a>
-          <a href="https://example.com/html5-arcade" target="_blank" rel="noopener dofollow">HTML5 Game Hub</a>
-          <a href="https://example.com/unblocked-games" target="_blank" rel="noopener dofollow">Unblocked Games 76</a>
-        </div>
+      <div class="border-t border-orange-100 py-6">
+        <p class="container-page text-center text-xs text-slate-500">
+          &copy; {new Date().getFullYear()} {siteName}. All rights reserved.
+        </p>
       </div>
-    </div>
-  </section>
+    </footer>
 
-  <!-- ================= FOOTER ================= -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-card">
-        <h3>BROWSE CATEGORIES</h3>
-        <div class="footer-links">
-          {categories.slice(0, 10).map((cat) => (
-            <a href={`/category/${cat.slug}/`}>{cat.name}</a>
-          ))}
-        </div>
-      </div>
-      <div class="footer-card footer-card-center">
-        <h3>SITE INFO</h3>
-        <div class="footer-links">
-          <a href="/about-us/">About Us</a>
-          <a href="/contact-us/">Contact Us</a>
-          <a href="/privacy-policy/">Privacy Policy</a>
-          <a href="/terms-of-service/">Terms of Service</a>
-          <a href="/cookie-policy/">Cookie Policy</a>
-          <a href="/disclaimer/">Disclaimer</a>
-          <a href="/dmca/">DMCA</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <span>🐱 KawaiiPlay © 2026. Fast & Cute Gaming Experience.</span>
-      </div>
-    </div>
-  </footer>
+    <script>
+      const menuToggle = document.getElementById('menu-toggle');
+      const drawer = document.getElementById('mobile-drawer');
+      const overlay = document.getElementById('drawer-overlay');
+      const drawerClose = document.getElementById('drawer-close');
+      const iconOpen = document.getElementById('icon-open');
+      const iconClose = document.getElementById('icon-close');
 
-  <!-- ================= FLOATING BACK TO GAME BUTTON ================= -->
-  <button id="backToGameBtn" aria-label="Back to Game" class="btn-back-to-game hidden-floating">
-    <svg class="bounce-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-    </svg>
-    <span>Back to Game</span>
-  </button>
+      function openDrawer() {
+        drawer?.classList.remove('translate-x-full');
+        drawer?.setAttribute('aria-hidden', 'false');
+        overlay?.classList.remove('hidden');
+        menuToggle?.setAttribute('aria-expanded', 'true');
+        iconOpen?.classList.add('hidden');
+        iconClose?.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+      }
 
-  <script src="/scripts/engagement.js" defer></script>
-</body>
+      function closeDrawer() {
+        drawer?.classList.add('translate-x-full');
+        drawer?.setAttribute('aria-hidden', 'true');
+        overlay?.classList.add('hidden');
+        menuToggle?.setAttribute('aria-expanded', 'false');
+        iconOpen?.classList.remove('hidden');
+        iconClose?.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      }
+
+      menuToggle?.addEventListener('click', () => {
+        const isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
+        isOpen ? closeDrawer() : openDrawer();
+      });
+      drawerClose?.addEventListener('click', closeDrawer);
+      overlay?.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeDrawer();
+      });
+    </script>
+  </body>
 </html>

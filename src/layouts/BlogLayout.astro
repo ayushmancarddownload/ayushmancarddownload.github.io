@@ -1,0 +1,45 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { slugifyCategory } from '../utils/slugify';
+
+export interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  category: string;
+  canonicalPath?: string;
+  lang?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+}
+
+const { title, description, ogImage, category, canonicalPath, lang, publishedTime, modifiedTime } = Astro.props;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  canonicalPath={canonicalPath}
+  lang={lang}
+  ogType="article"
+  publishedTime={publishedTime}
+  modifiedTime={modifiedTime}
+>
+  <slot name="head" slot="head" />
+
+  <div class="container-page py-8">
+    <Breadcrumbs items={[{ label: 'Blog', href: '/blog/' }, { label: category, href: `/blog/category/${slugifyCategory(category)}/` }, { label: title }]} />
+  </div>
+
+  <article class="container-page pb-16">
+    <div class="mx-auto max-w-3xl">
+      <slot name="header" />
+      <div class="prose prose-orange lg:prose-lg mx-auto max-w-none">
+        <slot />
+      </div>
+      <slot name="after-content" />
+    </div>
+  </article>
+</BaseLayout>

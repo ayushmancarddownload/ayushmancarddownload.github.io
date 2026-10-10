@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+---
+
+<BaseLayout
+  title="Editorial Policy"
+  description="How The Orange Desk researches, fact-checks, and corrects its articles, including our policy on AI-assisted content."
+>
+  <div class="container-page py-8">
+    <Breadcrumbs items={[{ label: 'Editorial Policy' }]} />
+  </div>
+
+  <section class="container-page pb-16">
+    <div class="prose prose-orange lg:prose-lg mx-auto max-w-3xl">
+      <h1>Editorial Policy</h1>
+      <p><em>Last updated: February 2026</em></p>
+
+      <h2>Our editorial standards</h2>
+      <p>
+        Every article published on The Orange Desk is written by a named author and reviewed by a second
+        editor before it goes live. We prioritize accuracy and usefulness over speed or search volume.
+      </p>
+
+      <h2>Fact-checking process</h2>
+      <ul>
+        <li>Every statistic and factual claim is checked against a primary or authoritative source.</li>
+        <li>Sources are cited or linked wherever a claim relies on external data.</li>
+        <li>A second team member reviews the draft independently before publication.</li>
+        <li>Articles covering financial or technical topics are reviewed for accuracy at least once a year.</li>
+      </ul>
+
+      <h2>Our policy on AI-assisted content</h2>
+      <p>
+        We may use AI tools to assist with research organization, grammar checking, or first-draft structure.
+        No article is published without substantive review, fact-checking, and editing by a named human
+        author. AI tools are never used as the sole source of factual claims, and we do not publish
+        AI-generated content without meaningful human oversight and verification.
+      </p>
+
+      <h2>Corrections process</h2>
+      <p>
+        If you believe an article contains an error, please contact us at
+        <a href="mailto:corrections@postbnao.com">corrections@postbnao.com</a> with the
+        article title and a description of the issue. We review every correction request and, where a change
+        is warranted, update the article and note the update date at the top of the piece. Significant
+        corrections are noted within the article itself.
+      </p>
+
+      <h2>Advertising and editorial independence</h2>
+      <p>
+        Advertisements on this site are served through Google AdSense and are clearly labeled as
+        advertisements. Advertisers have no influence over our editorial content, recommendations, or
+        ratings. See our <a href="/disclaimer/">disclaimer</a> for more on affiliate relationships.
+      </p>
+
+      <h2>Questions</h2>
+      <p>
+        For anything not covered here, reach out through our <a href="/contact/">contact page</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
