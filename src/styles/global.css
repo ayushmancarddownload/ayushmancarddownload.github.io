@@ -28,3 +28,37 @@
     @apply mx-auto max-w-6xl px-4 sm:px-6 lg:px-8;
   }
 }
+
+/* ---- Post content: ASCII diagrams / code blocks must fit any screen ---- */
+.prose {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+.prose pre {
+  /* keep the diagram exactly as written (no wrapping); the script below shrinks the font to fit */
+  white-space: pre !important;
+  word-wrap: normal !important;
+  overflow-wrap: normal !important;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto; /* fallback: scroll only if even the smallest font can't fit */
+  -webkit-overflow-scrolling: touch;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  line-height: 1.5;
+  tab-size: 2;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans Mono', 'Noto Sans Devanagari', 'Mukta', monospace;
+}
+.prose pre code {
+  white-space: pre !important;
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  padding: 0;
+}
+/* wide tables and images never push the page sideways */
+.prose table { display: block; max-width: 100%; overflow-x: auto; }
+.prose img { max-width: 100%; height: auto; }

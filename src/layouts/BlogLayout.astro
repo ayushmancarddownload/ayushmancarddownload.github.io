@@ -43,3 +43,40 @@ const { title, description, ogImage, category, canonicalPath, lang, publishedTim
     </div>
   </article>
 </BaseLayout>
+
+<script>
+  // Auto-fit: shrink the font of each code/ASCII block until it fits the post width.
+  // Runs on load, when fonts finish loading, and on resize/rotate.
+  const MIN_FONT = 7; // px; below this we fall back to horizontal scroll
+
+  function fitBlock(pre: HTMLElement) {
+    pre.style.fontSize = '';
+    const cs = getComputedStyle(pre);
+    const base = parseFloat(cs.fontSize);
+    const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+    let size = base;
+    for (let i = 0; i < 4; i++) {
+      const avail = pre.clientWidth - padX;
+      const need = pre.scrollWidth - padX;
+      if (need <= avail + 0.5 || size <= MIN_FONT) break;
+      size = Math.max(MIN_FONT, size * (avail / need) * 0.995);
+      pre.style.fontSize = size + 'px';
+    }
+  }
+
+  function fitAll() {
+    document.querySelectorAll<HTMLElement>('.prose pre').forEach(fitBlock);
+  }
+
+  let t: number | undefined;
+  const schedule = () => {
+    clearTimeout(t);
+    t = window.setTimeout(fitAll, 120);
+  };
+
+  fitAll();
+  window.addEventListener('load', fitAll);
+  window.addEventListener('resize', schedule);
+  window.addEventListener('orientationchange', schedule);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+</script>
