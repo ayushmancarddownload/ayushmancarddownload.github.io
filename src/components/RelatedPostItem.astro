@@ -16,17 +16,40 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
 });
 ---
 
-<li class="py-4">
-  <h3 class="font-serif text-base font-semibold leading-snug text-slate-900 sm:text-lg">
-    <a href={`/blog/${post.slug}/`} class="hover:text-orange-600">{post.data.title}</a>
-  </h3>
-  <p class="mt-1 text-xs text-slate-500 sm:text-sm">
-    {author && (
-      <>
-        <a href={`/author/${author.slug}/`} class="font-medium text-slate-700 hover:text-orange-600">{author.data.name}</a>
-        <span aria-hidden="true"> &middot; </span>
-      </>
-    )}
-    <time datetime={post.data.pubDate.toISOString()}>{formattedDate}</time>
-  </p>
+<li class="flex gap-4 py-4">
+  <a href={`/blog/${post.slug}/`} class="block shrink-0 overflow-hidden rounded-md" tabindex="-1" aria-hidden="true">
+    <img
+      src={post.data.coverImage}
+      alt={post.data.coverAlt}
+      width="160"
+      height="112"
+      loading="lazy"
+      decoding="async"
+      class="h-20 w-28 object-cover sm:h-24 sm:w-36"
+    />
+  </a>
+  <div class="flex min-w-0 flex-1 flex-col justify-between gap-2">
+    <h3 class="font-serif text-base font-semibold leading-snug text-slate-900 sm:text-lg">
+      <a href={`/blog/${post.slug}/`} class="hover:text-orange-600">{post.data.title}</a>
+    </h3>
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500 sm:text-sm">
+      {author && (
+        <>
+          <a href={`/author/${author.slug}/`} class="flex items-center gap-2 hover:text-orange-600">
+            <img
+              src={author.data.avatar}
+              alt={author.data.name}
+              width="24"
+              height="24"
+              loading="lazy"
+              class="h-6 w-6 rounded-full object-cover"
+            />
+            <span class="font-medium text-slate-700">{author.data.name}</span>
+          </a>
+          <span aria-hidden="true">&middot;</span>
+        </>
+      )}
+      <time datetime={post.data.pubDate.toISOString()}>{formattedDate}</time>
+    </div>
+  </div>
 </li>
