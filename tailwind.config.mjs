@@ -9,8 +9,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        serif: ['"Lora"', 'ui-serif', 'Georgia', 'serif'],
+        sans: ['"Inter Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['"Lora Variable"', 'ui-serif', 'Georgia', 'serif'],
       },
       typography: (theme) => ({
         orange: {

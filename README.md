@@ -121,3 +121,16 @@ Every page has a self-referencing canonical plus `rel="prev"` / `rel="next"`, an
 - Per-post `lang` frontmatter (`lang: "hi"` for Hindi posts) sets `<html lang>` and `og:locale`.
 - `404.astro` is `noindex`.
 - Add your own cover images under `public/images/posts/` and author photos under `public/images/authors/` — they are referenced by the posts but not shipped.
+
+## Images & speed (Core Web Vitals)
+
+You can keep adding normal JPG/PNG/WebP images (any size) under `public/images/` — e.g. `public/images/posts/my-post.jpg` and reference them in the post frontmatter as before.
+
+On every `npm run build` (also on GitHub Actions) `scripts/optimize-images.mjs`:
+- creates small WebP versions (480 / 800 / 1200px; avatars 96 / 224px) in `public/images/_opt/` (auto-generated, git-ignored),
+- writes `src/data/image-manifest.json` (sizes + placeholder colour).
+
+The `<Img />` component (`src/components/Img.astro`) then serves the right size per device with `srcset`, lazy loading, fixed width/height (no layout shift) and a colour placeholder. Only the first card / the post cover image loads eagerly with high priority (LCP). Use `<Img />` instead of `<img>` for any new image.
+
+Other speed settings: fonts are self-hosted (no Google Fonts request) with the latin files preloaded, and CSS is inlined (no render-blocking stylesheet).
+Tip: OG/social images (`og-*`, `logo*`) are never resized; keep them around 1200x630 and under ~300 KB.

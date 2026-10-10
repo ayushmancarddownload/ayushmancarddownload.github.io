@@ -77,8 +77,8 @@ const siteSchema = {
       <section class="container-page py-8">
         <h2 class="mb-6 font-serif text-2xl font-semibold text-slate-900">Featured</h2>
         <div class="grid gap-6 sm:grid-cols-2">
-          {featured.map((post) => (
-            <PostCard post={post} featured />
+          {featured.map((post, i) => (
+            <PostCard post={post} featured priority={i === 0} />
           ))}
         </div>
       </section>
@@ -91,7 +91,7 @@ const siteSchema = {
       <a href="/blog/" class="text-sm font-semibold text-orange-600 hover:text-orange-700">View all &rarr;</a>
     </div>
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {posts.map((post) => <PostCard post={post} />)}
+      {posts.map((post, i) => <PostCard post={post} priority={featured.length === 0 && i === 0} />)}
     </div>
     {posts.length === 0 && featured.length === 0 && (
       <p class="text-slate-500">No articles published yet — check back soon.</p>

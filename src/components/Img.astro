@@ -1,0 +1,45 @@
+---
+// Responsive, lazy, layout-shift-free image. Use for every <img> in the site.
+// Pass the normal path (e.g. "/images/posts/foo.jpg"); WebP srcset variants made by
+// scripts/optimize-images.mjs are used automatically. Anything else falls back to a plain <img>.
+import manifest from '../data/image-manifest.json';
+
+export interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  sizes?: string;
+  priority?: boolean; // true for the main above-the-fold (LCP) image only
+  class?: string;
+}
+
+const { src, alt, width, height, sizes = '100vw', priority = false, class: className } = Astro.props;
+
+const m = (manifest as Record<string, { w: number; h: number; c: string; v: number[]; d: string }>)[src];
+
+let w = width;
+let h = height;
+if (m) {
+  const biggest = m.v[m.v.length - 1];
+  w = width ?? biggest;
+  h = height ?? Math.round((w * m.h) / m.w);
+}
+
+const srcset = m ? m.v.map((v) => `${m.d}-${v}.webp ${v}w`).join(', ') : undefined;
+const fallback = m ? `${m.d}-${m.v[Math.min(1, m.v.length - 1)]}.webp` : src;
+---
+
+<img
+  src={fallback}
+  srcset={srcset}
+  sizes={m ? sizes : undefined}
+  alt={alt}
+  width={w}
+  height={h}
+  loading={priority ? 'eager' : 'lazy'}
+  fetchpriority={priority ? 'high' : undefined}
+  decoding="async"
+  class={className}
+  style={m ? `background-color:${m.c}` : undefined}
+/>

@@ -1,6 +1,11 @@
 ---
 import '../styles/global.css';
 import { SITE, absUrl } from '../config';
+// Self-hosted variable fonts (no Google Fonts request, no extra DNS/TLS round trips).
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/lora/wght.css';
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import loraLatin from '@fontsource-variable/lora/files/lora-latin-wght-normal.woff2?url';
 
 export interface Props {
   title: string;
@@ -82,22 +87,8 @@ const navLinks = [
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageURL} />
 
-    <!-- Fonts loaded non-render-blocking: preload, then swap the stylesheet in
-         once fetched, so the page paints immediately with a fallback font. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap"
-      />
-    </noscript>
+    <link rel="preload" as="font" type="font/woff2" href={interLatin} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={loraLatin} crossorigin />
 
     <slot name="head" />
   </head>

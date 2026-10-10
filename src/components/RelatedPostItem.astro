@@ -1,6 +1,7 @@
 ---
 import { getEntry } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import Img from './Img.astro';
 
 export interface Props {
   post: CollectionEntry<'blog'>;
@@ -18,13 +19,10 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
 
 <li class="flex gap-4 py-4">
   <a href={`/blog/${post.slug}/`} class="block shrink-0 overflow-hidden rounded-md" tabindex="-1" aria-hidden="true">
-    <img
+    <Img
       src={post.data.coverImage}
       alt={post.data.coverAlt}
-      width="160"
-      height="112"
-      loading="lazy"
-      decoding="async"
+      sizes="(min-width:640px) 144px, 112px"
       class="h-20 w-28 object-cover sm:h-24 sm:w-36"
     />
   </a>
@@ -36,14 +34,7 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
       {author && (
         <>
           <a href={`/author/${author.slug}/`} class="flex items-center gap-2 hover:text-orange-600">
-            <img
-              src={author.data.avatar}
-              alt={author.data.name}
-              width="24"
-              height="24"
-              loading="lazy"
-              class="h-6 w-6 rounded-full object-cover"
-            />
+            <Img src={author.data.avatar} alt={author.data.name} width={24} height={24} sizes="24px" class="h-6 w-6 rounded-full object-cover" />
             <span class="font-medium text-slate-700">{author.data.name}</span>
           </a>
           <span aria-hidden="true">&middot;</span>

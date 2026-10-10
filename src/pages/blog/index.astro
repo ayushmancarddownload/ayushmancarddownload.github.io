@@ -41,8 +41,8 @@ const categories = [...new Set(allPosts.map((p) => p.data.category))];
     {
       posts.length > 0 ? (
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
-            <PostCard post={post} />
+          {posts.map((post, i) => (
+            <PostCard post={post} priority={i === 0} />
           ))}
         </div>
       ) : (

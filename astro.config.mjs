@@ -8,7 +8,7 @@ export default defineConfig({
   trailingSlash: 'always',
   compressHTML: true,
   build: {
-    inlineStylesheets: 'auto',
+    inlineStylesheets: 'always',
   },
   integrations: [
     tailwind({

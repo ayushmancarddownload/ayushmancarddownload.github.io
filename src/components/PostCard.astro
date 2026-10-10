@@ -1,13 +1,15 @@
 ---
 import { getEntry } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import Img from './Img.astro';
 
 export interface Props {
   post: CollectionEntry<'blog'>;
   featured?: boolean;
+  priority?: boolean;
 }
 
-const { post, featured = false } = Astro.props;
+const { post, featured = false, priority = false } = Astro.props;
 const author = await getEntry(post.data.author);
 
 const words = post.body.split(/\s+/).length;
@@ -22,13 +24,11 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
 
 <article class={`group flex flex-col overflow-hidden rounded-lg border border-orange-100 bg-white transition-shadow hover:shadow-md ${featured ? 'sm:col-span-2 sm:flex-row' : ''}`}>
   <a href={`/blog/${post.slug}/`} class={`block overflow-hidden ${featured ? 'sm:w-1/2' : ''}`}>
-    <img
+    <Img
       src={post.data.coverImage}
       alt={post.data.coverAlt}
-      width="640"
-      height="384"
-      loading="lazy"
-      decoding="async"
+      sizes={featured ? '(min-width:1024px) 560px, (min-width:640px) 50vw, 100vw' : '(min-width:1024px) 360px, (min-width:640px) 50vw, 100vw'}
+      priority={priority}
       class={`h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105 ${featured ? 'sm:h-full' : ''}`}
     />
   </a>
@@ -43,7 +43,7 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
     <div class="mt-auto flex items-center gap-3 border-t border-orange-50 pt-4 text-sm text-slate-500">
       {author && (
         <a href={`/author/${author.slug}/`} class="flex items-center gap-2 hover:text-orange-600">
-          <img src={author.data.avatar} alt={author.data.name} class="h-8 w-8 rounded-full object-cover" loading="lazy" />
+          <Img src={author.data.avatar} alt={author.data.name} width={32} height={32} sizes="32px" class="h-8 w-8 rounded-full object-cover" />
           <span class="font-medium text-slate-700">{author.data.name}</span>
         </a>
       )}

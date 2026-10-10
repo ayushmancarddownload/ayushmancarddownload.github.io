@@ -44,7 +44,7 @@ const { items: posts, page, totalPages } = paginate(categoryPosts, Number(Astro.
     <p class="mb-8 text-slate-600">Page {page} of {totalPages}</p>
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {posts.map((post) => <PostCard post={post} />)}
+      {posts.map((post, i) => <PostCard post={post} priority={i === 0} />)}
     </div>
 
     <Pagination currentPage={page} totalPages={totalPages} basePath={basePath} />
