@@ -1,16 +1,12 @@
 ---
 name: "John Doe"
-role: "Senior Editor"
-bio: "John has spent over a decade covering personal finance and consumer technology, writing for regional newspapers before moving to independent publishing. He holds a certificate in financial journalism and personally tests every tool he recommends before it's published."
+role: "Content Editor"
+bio: "John covers personal finance and everyday consumer tech. With around 3 years of experience writing practical guides and product reviews, he focuses on clear, honest advice and personally tests the apps and tools he writes about."
 avatar: "/images/authors/john-doe.jpg"
 qualifications:
-  - "10+ years in financial and consumer journalism"
-  - "Certificate in Financial Journalism, Poynter Institute"
-  - "Former staff writer, Regional Business Weekly"
-social:
-  twitter: "https://twitter.com/johndoe"
-  linkedin: "https://linkedin.com/in/johndoe"
-  email: "john@postbnao.com"
+  - "3+ years of experience in tech and finance writing"
+  - "Background in consumer product testing and research"
+  - "Former contributor to digital publications"
 ---
 
-John Doe is a senior editor who joined the team to raise the editorial bar on every piece we publish. Outside of writing, he mentors junior reporters on sourcing and fact-checking practices.
+John Doe is an editor who works closely with our team to keep articles simple, accurate, and genuinely helpful. When he isn't editing, he spends his time trying out new budgeting tools and everyday tech gadgets to see what actually works in real life.
