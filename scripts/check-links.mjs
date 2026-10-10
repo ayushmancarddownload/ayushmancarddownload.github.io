@@ -50,6 +50,7 @@ function idsOf(file) {
 
 const errors = [];
 const warnings = [];
+const missingAssets = new Map(); // file -> number of references
 
 for (const file of htmlFiles) {
   const html = readFileSync(file, 'utf8');
@@ -83,12 +84,16 @@ for (const file of htmlFiles) {
     const pathPart = beforeHash.split('?')[0];
 
     let target;
-    if (!pathPart) target = join(DIST, pageUrl === '/' ? 'index.html' : join(pageUrl, 'index.html')); // "#section" on this page
+    if (!pathPart) target = file; // "#section" on this same page (also fixes 404.html, which isn't <dir>/index.html)
     else if (pathPart.startsWith('/')) target = resolveTarget(pathPart);
     else target = resolveTarget(posix.resolve(pageUrl.endsWith('/') ? pageUrl : posix.dirname(pageUrl) + '/', pathPart));
 
     if (!target || !existsSync(target)) {
-      (kind === 'page' ? errors : warnings).push(`${where}  ->  ${raw}  (${kind === 'page' ? 'page not found' : 'file not found'})`);
+      if (kind === 'page') errors.push(`${where}  ->  ${raw}  (page not found)`);
+      else {
+        const k = safeDecode(pathPart);
+        missingAssets.set(k, (missingAssets.get(k) ?? 0) + 1);
+      }
       continue;
     }
     if (hash && kind === 'page' && extname(target) === '.html' && !idsOf(target).has(safeDecode(hash))) {
@@ -98,6 +103,10 @@ for (const file of htmlFiles) {
 }
 
 const uniq = (a) => [...new Set(a)];
+if (missingAssets.size) {
+  console.log(`\n${missingAssets.size} missing file(s) (images etc. — warning only, upload them to public/):`);
+  [...missingAssets].forEach(([f, n]) => console.log(`  ! ${f}  (used ${n}x)`));
+}
 console.log(`check-links: scanned ${htmlFiles.length} pages`);
 if (warnings.length) {
   console.log(`\n${uniq(warnings).length} warning(s):`);
