@@ -158,10 +158,9 @@ Tip: OG/social images (`og-*`, `logo*`) are never resized; keep them around 1200
 | 17 | Image zoom | Tap an image inside a post to enlarge (images wrapped in a link keep their link). |
 | 18 | Service worker | `public/sw.js` (registered on https only). HTML = network first, assets = cache first, `/offline/` page when offline. Change `VERSION` in `sw.js` to clear old caches. |
 | 19 | Analytics | Fill `ANALYTICS.cloudflareToken` (no cookies, loads immediately) and/or `ANALYTICS.ga4Id` (loads only after "Accept"). |
-| 20 | Broken link checker | `scripts/check-links.mjs`, runs at the end of `npm run build`. Missing **pages** fail the build; missing images/files only warn. `LINKCHECK_WARN_ONLY=1` to never fail. Run alone: `npm run check-links`. |
 
 Not added (on purpose, for later): AdSense ad slots and newsletter signup.
 
-**Build command is now:** `optimize-images → astro build → pagefind → check-links`. Pagefind is fetched with `npx` during the build, so `package-lock.json` did not need to change.
+**Build command is now:** `optimize-images → astro build → pagefind`. Pagefind is fetched with `npx` during the build, so `package-lock.json` did not need to change.
 
 **AdSense + EU/UK note:** the cookie banner is a simple custom one. For personalised ads to EEA/UK visitors Google requires a certified Consent Management Platform (use AdSense's own "Privacy & messaging" consent message when you turn ads on).
