@@ -12,7 +12,7 @@ const authors = defineCollection({
       twitter: z.string().url().optional(),
       linkedin: z.string().url().optional(),
       email: z.string().email().optional(),
-    }),
+    }).optional(),
   }),
 });
 
