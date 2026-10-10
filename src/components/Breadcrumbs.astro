@@ -8,7 +8,7 @@ export interface Props {
   items: Crumb[];
 }
 
-const { items } = Astro.props;
+const { items = [] } = Astro.props;
 ---
 
 <nav aria-label="Breadcrumb" class="text-sm">
