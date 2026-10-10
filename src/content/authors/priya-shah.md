@@ -7,9 +7,6 @@ qualifications:
   - "B.A. in Economics"
   - "3 years as an editorial fact-checker"
   - "Former research assistant, university economics department"
-social:
-  linkedin: "https://linkedin.com/in/priyashah"
-  email: "priya@postbnao.com"
 ---
 
 Priya leads our fact-checking process, cross-referencing every figure against primary sources before an article goes live.

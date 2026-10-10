@@ -3,7 +3,7 @@ title: "छूटे हुए मौकों का अफसोस कैस�
 description: "क्या आप अतीत के फैसलों को लेकर परेशान हैं? जानिए छूटे हुए मौकों का अफसोस कैसे दूर करें और अपनी जिंदगी में नया आत्मविश्वास कैसे लाएं।"
 pubDate: 2026-09-05
 updatedDate: 2026-09-05
-author: "john-doe"
+author: "the-od-team"
 coverImage: "/images/posts/chute-hue-mauke-ka-afsos.jpg"
 coverAlt: "एक शांत कमरे में मेज पर रखी खुली डायरी जिस पर सुबह की किरणें पड़ रही हैं"
 category: "Personal Development"

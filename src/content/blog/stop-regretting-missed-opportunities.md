@@ -3,7 +3,7 @@ title: "How to Stop Regretting Missed Opportunities: The Complete Guide"
 description: "Discover how to stop regretting missed opportunities by overcoming hindsight bias, honoring past limits, and building authentic courage for your next move."
 pubDate: 2026-09-05
 updatedDate: 2026-09-15
-author: "john-doe"
+author: "the-od-team"
 coverImage: "/images/posts/stop-regretting-missed-opportunities.jpg"
 coverAlt: "A clean wooden desk with a notebook, pen, and an open window looking out at morning light"
 category: "Personal Development"

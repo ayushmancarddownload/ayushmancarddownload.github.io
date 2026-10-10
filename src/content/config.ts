@@ -8,11 +8,6 @@ const authors = defineCollection({
     bio: z.string(),
     avatar: z.string(),
     qualifications: z.array(z.string()).optional(),
-    social: z.object({
-      twitter: z.string().url().optional(),
-      linkedin: z.string().url().optional(),
-      email: z.string().email().optional(),
-    }),
   }),
 });
 

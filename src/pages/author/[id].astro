@@ -28,7 +28,6 @@ const personSchema = {
   description: author.data.bio,
   image: absUrl(author.data.avatar),
   url: absUrl(`/author/${author.slug}/`),
-  sameAs: [author.data.social.twitter, author.data.social.linkedin].filter(Boolean),
 };
 ---
 
@@ -50,17 +49,6 @@ const personSchema = {
       <div>
         <h1 class="font-serif text-3xl font-semibold text-slate-900">{author.data.name}</h1>
         <p class="mt-1 font-medium text-orange-600">{author.data.role}</p>
-        <div class="mt-3 flex gap-4 text-sm text-slate-500">
-          {author.data.social.twitter && (
-            <a href={author.data.social.twitter} class="hover:text-orange-600" rel="noopener noreferrer" target="_blank">Twitter</a>
-          )}
-          {author.data.social.linkedin && (
-            <a href={author.data.social.linkedin} class="hover:text-orange-600" rel="noopener noreferrer" target="_blank">LinkedIn</a>
-          )}
-          {author.data.social.email && (
-            <a href={`mailto:${author.data.social.email}`} class="hover:text-orange-600">Email</a>
-          )}
-        </div>
       </div>
     </div>
 

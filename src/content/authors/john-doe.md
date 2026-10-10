@@ -7,10 +7,6 @@ qualifications:
   - "10+ years in financial and consumer journalism"
   - "Certificate in Financial Journalism, Poynter Institute"
   - "Former staff writer, Regional Business Weekly"
-social:
-  twitter: "https://twitter.com/johndoe"
-  linkedin: "https://linkedin.com/in/johndoe"
-  email: "john@postbnao.com"
 ---
 
 John Doe is a senior editor who joined the team to raise the editorial bar on every piece we publish. Outside of writing, he mentors junior reporters on sourcing and fact-checking practices.

@@ -4,7 +4,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AuthorCard from '../components/AuthorCard.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 
-const authors = await getCollection('authors');
+const authors = (await getCollection('authors')).sort(
+  (a, b) => Number(b.slug === 'the-od-team') - Number(a.slug === 'the-od-team')
+);
 ---
 
 <BaseLayout
