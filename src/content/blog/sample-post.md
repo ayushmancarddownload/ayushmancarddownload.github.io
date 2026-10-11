@@ -10,7 +10,6 @@ category: "Personal Finance"
 tags: ["budgeting", "money management", "beginners"]
 isFeatured: true
 draft: false
-linkKeywords: ["monthly budget", "first budget", "build a budget", "budgeting basics"]
 ---
 
 Building a budget sounds simple until you actually sit down and try to make the numbers match your life. This guide walks through a method that holds up past the first week.

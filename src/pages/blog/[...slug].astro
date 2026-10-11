@@ -37,6 +37,9 @@ const popularPosts = getPopularPosts(
   4,
   post.slug
 );
+// Every other post gets a link from this one: whatever isn't already shown above (related / next-prev / trending) goes here.
+const shownSlugs = new Set([post.slug, older?.slug, newer?.slug, ...relatedPosts.map((p) => p.slug), ...popularPosts.map((p) => p.slug)]);
+const morePosts = allPosts.filter((p) => !shownSlugs.has(p.slug)).slice(0, 12);
 const faqHeading = post.data.lang === 'hi' ? 'अक्सर पूछे जाने वाले सवाल' : 'Frequently Asked Questions';
 
 const formattedPubDate = post.data.pubDate.toLocaleDateString('en-US', {
@@ -215,6 +218,7 @@ const articleSchema = {
     )}
 
     <PopularPosts posts={popularPosts} />
+    <PopularPosts posts={morePosts} heading="More articles" icon="" />
     <Comments />
   </div>
 </BlogLayout>

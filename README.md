@@ -164,20 +164,3 @@ Not added (on purpose, for later): AdSense ad slots and newsletter signup.
 **Build command is now:** `optimize-images → astro build → pagefind`. Pagefind is fetched with `npx` during the build, so `package-lock.json` did not need to change.
 
 **AdSense + EU/UK note:** the cookie banner is a simple custom one. For personalised ads to EEA/UK visitors Google requires a certified Consent Management Platform (use AdSense's own "Privacy & messaging" consent message when you turn ads on).
-
----
-
-# Automatic internal linking
-
-`src/plugins/rehype-auto-internal-links.mjs` (enabled in `astro.config.mjs`) links posts to each other **automatically on every build**. It only turns words that are *already in a sentence* into a link — it never adds "Read also: <title>" lines and it never edits your `.md` files. When you publish a new post, older posts that already mention its topic get linked to it, and the new post gets linked to older ones.
-
-**What a post can be linked with** (best first): `linkKeywords` in its frontmatter → its title → the first bold phrases of its intro → its tags (only multi-word or 7+ letter tags).
-
-```yaml
-linkKeywords: ["monthly budget", "first budget", "build a budget"]   # short, natural phrases
-noAutoLink: true      # optional: this post is neither linked from nor to
-```
-
-**Rules:** max 4 auto-links per post · 1 link per paragraph · 1 link per target post · never inside headings, bold, code, images or existing links · never to itself · only posts of the same `lang` · drafts ignored.
-
-**Tip:** for every new post add 3-5 `linkKeywords` — phrases other articles would naturally use ("choose a laptop", not "click here"). Change the limit with `maxLinks` in `astro.config.mjs`.

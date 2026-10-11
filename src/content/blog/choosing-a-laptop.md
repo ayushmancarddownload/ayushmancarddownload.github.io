@@ -9,7 +9,6 @@ category: "Technology"
 tags: ["laptops", "buying guide", "technology"]
 isFeatured: false
 draft: false
-linkKeywords: ["choose a laptop", "buying a laptop", "laptop buying guide", "how much RAM"]
 faq:
   - q: "How much RAM do I need in a laptop in 2026?"
     a: "8GB is workable for basic tasks, but 16GB is the safer default for most people, especially if you keep many browser tabs open."
