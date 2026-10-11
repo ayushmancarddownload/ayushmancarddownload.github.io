@@ -6,7 +6,6 @@ author: "the-od-team"
 coverImage: "/images/posts/rethinking-government-jobs-cover.jpg"
 coverAlt: "An empty administrative office desk juxtaposed against modern enterprise"
 category: "Career Strategy"
-tags: ["Career Planning", "UPSC", "Indian Economy", "Personal Finance"]
 isFeatured: false
 draft: false
 faq:

@@ -7,7 +7,6 @@ author: "john-doe"
 coverImage: "/images/posts/budget-guide-cover.jpg"
 coverAlt: "A notebook and calculator on a wooden desk next to a cup of coffee"
 category: "Personal Finance"
-tags: ["budgeting", "money management", "beginners"]
 isFeatured: true
 draft: false
 ---

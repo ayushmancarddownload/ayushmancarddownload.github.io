@@ -6,7 +6,6 @@ author: "priya-shah"
 coverImage: "/images/posts/career-clarity-mansabdari-trap.jpg"
 coverAlt: "An architectural blueprint alongside old legal books and a fountain pen representing compounding professional capital"
 category: "Career Strategy"
-tags: ["career planning", "generational wealth", "professional development", "education", "lifestyle design"]
 isFeatured: true
 draft: false
 faq:

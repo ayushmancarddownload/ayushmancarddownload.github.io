@@ -6,7 +6,6 @@ author: "the-od-team"
 coverImage: "/images/posts/save-one-crore-blueprint-cover.jpg"
 coverAlt: "Financial chart illustrating middle class capital preservation and compounding"
 category: "Personal Finance"
-tags: ["wealth building", "personal finance", "education ROI", "financial independence"]
 isFeatured: false
 draft: false
 faq:

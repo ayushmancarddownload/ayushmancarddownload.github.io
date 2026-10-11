@@ -6,7 +6,6 @@ author: "priya-shah"
 coverImage: "/images/posts/laptop-guide-cover.jpg"
 coverAlt: "An open laptop on a desk with a notebook beside it"
 category: "Technology"
-tags: ["laptops", "buying guide", "technology"]
 isFeatured: false
 draft: false
 faq:

@@ -7,7 +7,6 @@ import TableOfContents from '../../components/TableOfContents.astro';
 import ShareButtons from '../../components/ShareButtons.astro';
 import PostNav from '../../components/PostNav.astro';
 import PopularPosts from '../../components/PopularPosts.astro';
-import TagList from '../../components/TagList.astro';
 import Comments from '../../components/Comments.astro';
 import { getPublishedPosts, getRelatedPosts, getPopularPosts, getAdjacentPosts } from '../../utils/posts';
 import { SITE, absUrl } from '../../config';
@@ -29,7 +28,7 @@ const words = post.body.split(/\s+/).length;
 const readTime = Math.max(1, Math.round(words / 200));
 
 const allPosts = await getPublishedPosts(); // newest first
-// Related = shared tags first, then same category / language
+// Related = same category first, then same language
 const relatedPosts = getRelatedPosts(post, allPosts, 3);
 const { newer, older } = getAdjacentPosts(post.slug, allPosts);
 const popularPosts = getPopularPosts(
@@ -67,7 +66,6 @@ const articleSchema = {
       dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
       inLanguage: post.data.lang,
       articleSection: post.data.category,
-      keywords: post.data.tags.join(', '),
       author: author
         ? {
             '@type': 'Person',
@@ -186,7 +184,6 @@ const articleSchema = {
       </section>
     )}
 
-    <TagList tags={post.data.tags} />
     <ShareButtons url={postUrl} title={post.data.title} />
 
     {author && (

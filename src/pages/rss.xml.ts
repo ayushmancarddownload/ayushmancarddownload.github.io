@@ -12,7 +12,7 @@ export const GET: APIRoute = async () => {
   const items = posts
     .map((p) => {
       const url = absUrl(`/blog/${p.slug}/`);
-      const cats = [p.data.category, ...p.data.tags].map((c) => `      <category>${esc(c)}</category>`).join('\n');
+      const cats = [p.data.category].map((c) => `      <category>${esc(c)}</category>`).join('\n');
       return `    <item>
       <title>${esc(p.data.title)}</title>
       <link>${url}</link>

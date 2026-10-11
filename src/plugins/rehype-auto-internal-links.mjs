@@ -10,7 +10,6 @@
  *   1. `linkKeywords: [...]` in that post's frontmatter   <- most reliable, add short natural phrases here
  *   2. its title (and the part of the title before ":" "|" "—")
  *   3. the first **bold** phrases in its intro (usually the focus keyword)
- *   4. its tags (only multi-word or 7+ letter tags, so "tech" / "tips" never match everywhere)
  *
  * Safety rules (so it never looks spammy):
  *   - at most MAX_LINKS auto-links per post, 1 link per paragraph, 1 link per target post
@@ -96,9 +95,6 @@ function loadTargets() {
       add(String(fm.title).split(/\s*[:|—–]\s*/)[0], 3);
     }
     [...body.slice(0, 1500).matchAll(/\*\*([^*\n]{4,70})\*\*/g)].slice(0, 2).forEach((m) => add(m[1], 3));
-    (Array.isArray(fm.tags) ? fm.tags : []).forEach((t) => {
-      if (/\s/.test(t) || len(t) >= 7) add(t, 1);
-    });
 
     if (!phrases.size) continue;
     targets.push({

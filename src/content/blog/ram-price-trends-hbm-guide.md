@@ -8,7 +8,6 @@ coverImage: "/images/posts/ram-price-trends-hbm-guide.jpg"
 coverAlt: "High-performance DDR5 memory modules and advanced semiconductor wafer chips illuminated under blue and gold laboratory lighting"
 category: "Hardware & Technology"
 lang: "en"
-tags: ["hardware", "pc building", "ram", "semiconductors", "artificial intelligence", "tech economics"]
 isFeatured: true
 draft: false
 ---

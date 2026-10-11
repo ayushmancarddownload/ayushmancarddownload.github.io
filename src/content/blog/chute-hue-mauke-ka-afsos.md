@@ -8,7 +8,6 @@ coverImage: "/images/posts/chute-hue-mauke-ka-afsos.jpg"
 coverAlt: "एक शांत कमरे में मेज पर रखी खुली डायरी जिस पर सुबह की किरणें पड़ रही हैं"
 category: "Personal Development"
 lang: "hi"
-tags: ["mindset", "decision making", "career", "mental health"]
 isFeatured: false
 draft: false
 ---

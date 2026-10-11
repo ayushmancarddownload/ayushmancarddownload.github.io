@@ -6,7 +6,6 @@ author: "the-od-team"
 coverImage: "/images/posts/real-estate-valuation-guide-cover.jpg"
 coverAlt: "Architectural blueprint and financial charts depicting property valuation"
 category: "Real Estate Investing"
-tags: ["real estate", "property valuation", "investing", "RERA analysis"]
 isFeatured: false
 draft: false
 faq:

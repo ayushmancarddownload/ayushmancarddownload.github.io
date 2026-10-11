@@ -6,7 +6,6 @@ author: "john-doe"
 coverImage: "/images/posts/male-midlife-crisis-guide-cover.jpg"
 coverAlt: "A mature man standing thoughtfully against a city skyline at sunset"
 category: "Personal Development"
-tags: ["midlife-crisis", "men-mental-health", "family-dynamics", "financial-resilience"]
 isFeatured: false
 draft: false
 faq:

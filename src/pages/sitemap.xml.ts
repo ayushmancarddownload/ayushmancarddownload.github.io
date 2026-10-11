@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { PAGE_SIZE, absUrl } from '../config';
 import { slugifyCategory } from '../utils/slugify';
-import { getHomeListing, getPublishedPosts, getTagIndex, pageUrl, tagUrl, MIN_POSTS_FOR_TAG_INDEX } from '../utils/posts';
+import { getHomeListing, getPublishedPosts, pageUrl } from '../utils/posts';
 
 type Entry = { loc: string; lastmod?: string };
 
@@ -30,14 +30,6 @@ export const GET: APIRoute = async () => {
     const base = `/blog/category/${slugifyCategory(cat)}/`;
     const lastmod = day(inCat[0].data.updatedDate ?? inCat[0].data.pubDate);
     for (let i = 1; i <= totalPagesFor(inCat.length); i++) entries.push({ loc: pageUrl(base, i), lastmod });
-  }
-
-  // Tags index + tag pages (thin tags are noindex, so they stay out of the sitemap)
-  entries.push({ loc: '/tags/', lastmod: latest });
-  for (const t of await getTagIndex()) {
-    if (t.posts.length < MIN_POSTS_FOR_TAG_INDEX) continue;
-    const lastmod = day(t.posts[0].data.updatedDate ?? t.posts[0].data.pubDate);
-    for (let i = 1; i <= totalPagesFor(t.posts.length); i++) entries.push({ loc: pageUrl(tagUrl(t.slug), i), lastmod });
   }
 
   // Posts

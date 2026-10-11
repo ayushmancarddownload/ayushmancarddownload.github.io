@@ -7,7 +7,6 @@ author: "the-od-team"
 coverImage: "/images/posts/stop-regretting-missed-opportunities.jpg"
 coverAlt: "A clean wooden desk with a notebook, pen, and an open window looking out at morning light"
 category: "Personal Development"
-tags: ["mindset", "decision making", "growth", "career"]
 isFeatured: false
 draft: false
 ---

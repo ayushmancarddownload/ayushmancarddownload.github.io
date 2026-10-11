@@ -23,7 +23,6 @@ Act as an expert content strategist and long-form writer. Convert the provided t
    coverImage: "/images/posts/[relevant-slug]-cover.jpg"
    coverAlt: "[Short description of the image]"
    category: "[Relevant Category]"
-   tags: ["tag1", "tag2", "tag3", "tag4"]
    isFeatured: false
    draft: false
    faq:
