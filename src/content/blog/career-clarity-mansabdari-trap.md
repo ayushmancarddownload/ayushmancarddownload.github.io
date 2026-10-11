@@ -1,6 +1,6 @@
 ---
-title: "The Mansabdari Trap: Why Your Career Needs Generational Compounding, Not Just Prestige"
-description: "A deep dive into why prestigious non-transferable jobs force each generation to restart from zero, and how choosing an inheritable professional ecosystem builds true long-term leverage."
+title: "The Mansabdari Trap: Why Your Career Needs Leverage"
+description: "Why non-transferable jobs force each generation to restart from zero, and how inheritable careers build compounding long-term family wealth."
 pubDate: 2026-03-30
 author: "priya-shah"
 coverImage: "/images/posts/career-clarity-mansabdari-trap.jpg"
