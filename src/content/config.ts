@@ -27,6 +27,10 @@ const blog = defineCollection({
     isFeatured: z.boolean().default(false),
     // Shown first in the "Trending" lists. Set true on the posts you want to push.
     popular: z.boolean().default(false),
+    // Phrases other posts can auto-link to this post with (short, natural, as people would write them in a sentence).
+    linkKeywords: z.array(z.string()).default([]),
+    // true = this post is neither auto-linked FROM nor TO.
+    noAutoLink: z.boolean().default(false),
     // Optional FAQ -> shown at the end of the post and emitted as FAQPage schema.
     faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
     draft: z.boolean().default(false),

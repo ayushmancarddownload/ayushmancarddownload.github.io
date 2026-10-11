@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
+import rehypeAutoInternalLinks from './src/plugins/rehype-auto-internal-links.mjs';
 
 export default defineConfig({
   site: 'https://postbnao.com',
@@ -16,6 +17,8 @@ export default defineConfig({
     }),
   ],
   markdown: {
+    // Automatic internal links between posts (see src/plugins/rehype-auto-internal-links.mjs)
+    rehypePlugins: [[rehypeAutoInternalLinks, { maxLinks: 4 }]],
     shikiConfig: {
       // Light + dark code colours; global.css switches between them with the .dark class.
       themes: { light: 'github-light', dark: 'github-dark' },
