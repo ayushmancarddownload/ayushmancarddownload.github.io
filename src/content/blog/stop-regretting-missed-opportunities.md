@@ -4,7 +4,7 @@ description: "Discover how to stop regretting missed opportunities by overcoming
 pubDate: 2026-09-05
 updatedDate: 2026-09-15
 author: "the-od-team"
-coverImage: "/images/posts/stop-regretting-missed-opportunities.jpg"
+coverImage: "/images/posts/stop-regretting-missed-opportunitie.jpg"
 coverAlt: "A clean wooden desk with a notebook, pen, and an open window looking out at morning light"
 category: "Personal Development"
 isFeatured: false
