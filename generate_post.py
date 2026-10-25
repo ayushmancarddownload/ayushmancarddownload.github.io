@@ -16,21 +16,43 @@ def get_video_id(url):
         return url.strip()
     return None
 
-# 2. Transcript extract karna
+# 2. Transcript extract karna (New v1.2+ & v0.6+ Compatible)
 def extract_transcript(video_id):
     print(f"Fetching transcript for Video ID: {video_id}...")
+    
+    # Naye YouTubeTranscriptApi v1.x ke liye
     try:
-        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+        api = YouTubeTranscriptApi()
         try:
-            transcript = transcript_list.find_transcript(['hi', 'en', 'en-IN'])
-        except:
-            transcript = next(iter(transcript_list))
-        
-        data = transcript.fetch()
-        return " ".join([item['text'] for item in data])
+            fetched = api.fetch(video_id, languages=['hi', 'en', 'en-IN'])
+        except Exception:
+            fetched = api.fetch(video_id)
+            
+        text_parts = []
+        for item in fetched:
+            if hasattr(item, 'text'):
+                text_parts.append(item.text)
+            elif isinstance(item, dict) and 'text' in item:
+                text_parts.append(item['text'])
+            else:
+                text_parts.append(str(item))
+        if text_parts:
+            return " ".join(text_parts)
     except Exception as e:
-        print(f"Transcript Error: {e}")
-        return None
+        print(f"New API method notice: {e}")
+
+    # Fallback to older static get_transcript
+    try:
+        if hasattr(YouTubeTranscriptApi, 'get_transcript'):
+            try:
+                data = YouTubeTranscriptApi.get_transcript(video_id, languages=['hi', 'en', 'en-IN'])
+            except Exception:
+                data = YouTubeTranscriptApi.get_transcript(video_id)
+            return " ".join([item['text'] for item in data])
+    except Exception as e:
+        print(f"Legacy method notice: {e}")
+
+    return None
 
 # 3. Clean Markdown Output
 def clean_markdown_output(text):
@@ -58,6 +80,8 @@ if not transcript_text:
     print("Error: Could not extract transcript.")
     sys.exit(1)
 
+print(f"Transcript fetched successfully ({len(transcript_text)} characters)!")
+
 # 4. Thumbnail Download for Astro Image Optimizer
 img_folder = "public/images/posts"
 os.makedirs(img_folder, exist_ok=True)
@@ -68,8 +92,7 @@ try:
     thumb_url = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
     urllib.request.urlretrieve(thumb_url, img_path)
     print(f"Thumbnail saved to {img_path}")
-except Exception as e:
-    # fallback to hqdefault agar maxres na ho
+except Exception:
     thumb_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
     urllib.request.urlretrieve(thumb_url, img_path)
 
@@ -80,35 +103,38 @@ client = genai.Client(api_key=api_key)
 today_date = datetime.now().strftime('%Y-%m-%d')
 
 prompt = f"""
-You are an expert editorial writer. Write a comprehensive Markdown blog post based on this transcript:
+You are an expert editorial blog writer.
+Analyze this YouTube video transcript thoroughly and generate a comprehensive, highly engaging, long-form Markdown article.
+
+Transcript:
 ---
 {transcript_text}
 ---
 
-STRICT ASTRO SCHEMA REQUIREMENTS:
-1. title: MAXIMUM 60 CHARACTERS (Strictly under 70 chars).
-2. description: MAXIMUM 150 CHARACTERS (Strictly under 160 chars).
-3. Do NOT include markdown code fences around the response. Start directly with ---.
+CRITICAL ASTRO SCHEMA REQUIREMENTS:
+1. title: MAXIMUM 60 CHARACTERS (Strictly less than 70 chars).
+2. description: MAXIMUM 140 CHARACTERS (Strictly less than 160 chars).
+3. Do NOT wrap output in triple backticks (```markdown).
 
-Output MUST start with this EXACT Frontmatter:
+Start directly with this EXACT Frontmatter:
 
 ---
-title: "Write Punchy Title Under 60 Chars"
-description: "Write concise summary strictly under 150 characters long."
+title: "Punchy Title Under 60 Chars"
+description: "Short engaging summary under 140 characters."
 pubDate: {today_date}
 author: "priya-shah"
 coverImage: "{cover_image_path}"
-coverAlt: "Insightful illustration representing the core topic of the video"
+coverAlt: "Insightful illustration representing the video core topic"
 category: "Life Strategy"
 isFeatured: false
 draft: false
 faq:
-  - q: "Key insight from this discussion?"
-    a: "Clear, insightful explanation in one or two sentences."
-  - q: "What is the practical takeaway?"
-    a: "Actionable advice based on the video context."
-  - q: "Who should apply this advice?"
-    a: "Target audience and practical implementation."
+  - q: "What is the key takeaway from this discussion?"
+    a: "Clear, direct, and actionable explanation in one sentence."
+  - q: "Why is this advice important for modern relationships?"
+    a: "Contextual explanation based on the speaker's core points."
+  - q: "What should one avoid doing in this situation?"
+    a: "Specific mistake to avoid as emphasized in the video."
 ---
 
 (Write the complete, well-structured long-form article below the frontmatter with H2, H3 headings, key takeaways, and conclusions)
@@ -132,4 +158,4 @@ full_path = os.path.join(blog_folder, file_name)
 with open(full_path, "w", encoding="utf-8") as f:
     f.write(final_content)
 
-print(f"Article successfully created at: {full_path}")
+print(f"Post successfully created at: {full_path}")
