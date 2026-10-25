@@ -1,11 +1,12 @@
 import os
 import sys
 import re
+import urllib.request
 from datetime import datetime
 from youtube_transcript_api import YouTubeTranscriptApi
 from google import genai
 
-# 1. YouTube Video ID nikalne ka function
+# 1. YouTube Video ID nikalna
 def get_video_id(url):
     pattern = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
     match = re.search(pattern, url)
@@ -15,7 +16,7 @@ def get_video_id(url):
         return url.strip()
     return None
 
-# 2. Transcript extract karne ka function
+# 2. Transcript extract karna
 def extract_transcript(video_id):
     print(f"Fetching transcript for Video ID: {video_id}...")
     try:
@@ -31,10 +32,9 @@ def extract_transcript(video_id):
         print(f"Transcript Error: {e}")
         return None
 
-# 3. Text cleaning function (Taaki Astro build na toote)
+# 3. Clean Markdown Output
 def clean_markdown_output(text):
     text = text.strip()
-    # Agar Gemini ne ```markdown ya ``` se wrap kiya hai toh use hatayein
     if text.startswith("```"):
         text = re.sub(r"^```[a-zA-Z]*\n", "", text)
         text = re.sub(r"\n```$", "", text)
@@ -58,52 +58,63 @@ if not transcript_text:
     print("Error: Could not extract transcript.")
     sys.exit(1)
 
-print(f"Transcript fetched successfully ({len(transcript_text)} characters)!")
+# 4. Thumbnail Download for Astro Image Optimizer
+img_folder = "public/images/posts"
+os.makedirs(img_folder, exist_ok=True)
+img_filename = f"yt-{video_id}.jpg"
+img_path = os.path.join(img_folder, img_filename)
 
-# 4. Strict Astro Schema Prompt
+try:
+    thumb_url = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
+    urllib.request.urlretrieve(thumb_url, img_path)
+    print(f"Thumbnail saved to {img_path}")
+except Exception as e:
+    # fallback to hqdefault agar maxres na ho
+    thumb_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+    urllib.request.urlretrieve(thumb_url, img_path)
+
+cover_image_path = f"/images/posts/{img_filename}"
+
+# 5. Strict Schema Prompt
 client = genai.Client(api_key=api_key)
 today_date = datetime.now().strftime('%Y-%m-%d')
 
 prompt = f"""
-You are an expert technical and editorial blog writer.
-Analyze this YouTube video transcript thoroughly and generate a comprehensive, highly engaging, long-form Markdown article.
-
-Transcript:
+You are an expert editorial writer. Write a comprehensive Markdown blog post based on this transcript:
 ---
 {transcript_text}
 ---
 
-CRITICAL REQUIREMENT:
-The output MUST strictly begin with this EXACT YAML Frontmatter format (all fields are required for the Astro schema to build):
+STRICT ASTRO SCHEMA REQUIREMENTS:
+1. title: MAXIMUM 60 CHARACTERS (Strictly under 70 chars).
+2. description: MAXIMUM 150 CHARACTERS (Strictly under 160 chars).
+3. Do NOT include markdown code fences around the response. Start directly with ---.
+
+Output MUST start with this EXACT Frontmatter:
 
 ---
-title: "A powerful, catchy headline directly derived from the core thesis"
-description: "A compelling 2-sentence meta description summarizing the post."
+title: "Write Punchy Title Under 60 Chars"
+description: "Write concise summary strictly under 150 characters long."
 pubDate: {today_date}
-author: "admin"
-coverImage: "https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
-coverAlt: "Descriptive alt text for the cover image"
+author: "priya-shah"
+coverImage: "{cover_image_path}"
+coverAlt: "Insightful illustration representing the core topic of the video"
 category: "Life Strategy"
 isFeatured: false
 draft: false
 faq:
-  - q: "Relevant Question 1 based on the video?"
-    a: "Clear, insightful answer 1."
-  - q: "Relevant Question 2 based on the video?"
-    a: "Clear, insightful answer 2."
-  - q: "Relevant Question 3 based on the video?"
-    a: "Clear, insightful answer 3."
+  - q: "Key insight from this discussion?"
+    a: "Clear, insightful explanation in one or two sentences."
+  - q: "What is the practical takeaway?"
+    a: "Actionable advice based on the video context."
+  - q: "Who should apply this advice?"
+    a: "Target audience and practical implementation."
 ---
 
-After the frontmatter, write the full, structured in-depth article in clean Markdown:
-1. Use an engaging H1 title.
-2. Introduction with the core hook.
-3. Multiple structured H2 and H3 sections with detailed explanations, bullet points, and key takeaways.
-4. Summary / Conclusion at the end.
-Do NOT enclose the entire output in triple backtick code blocks (```markdown). Return raw markdown directly starting with ---.
+(Write the complete, well-structured long-form article below the frontmatter with H2, H3 headings, key takeaways, and conclusions)
 """
 
-print("Sending transcript to Gemini...")
+print("Generating article with Gemini...")
 response = client.models.generate_content(
     model="gemini-3.8-flash",
     contents=prompt
@@ -111,15 +122,14 @@ response = client.models.generate_content(
 
 final_content = clean_markdown_output(response.text)
 
-# 5. File name slug banana aur save karna
-folder_path = "src/content/blog"
-os.makedirs(folder_path, exist_ok=True)
+# 6. Save Markdown Post
+blog_folder = "src/content/blog"
+os.makedirs(blog_folder, exist_ok=True)
 
-# Clean file slug
 file_name = f"post-{today_date}-{video_id}.md"
-full_path = os.path.join(folder_path, file_name)
+full_path = os.path.join(blog_folder, file_name)
 
 with open(full_path, "w", encoding="utf-8") as f:
     f.write(final_content)
 
-print(f"Post successfully created at: {full_path}")
+print(f"Article successfully created at: {full_path}")
