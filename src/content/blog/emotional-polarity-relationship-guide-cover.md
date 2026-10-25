@@ -3,7 +3,7 @@ title: "The Art of Emotional Groundedness: Why Explaining Fails"
 description: "Discover why over-explaining ruins attraction, how to handle emotional frame tests, and how to cultivate authentic masculine stability and mutual respect."
 pubDate: 2026-03-30
 author: "john-doe"
-coverImage: "/images/posts/emotional-groundedness-relationships-cover.jpg"
+coverImage: ""
 coverAlt: "A grounded couple communicating constructively with emotional stability and clarity"
 category: "Relationships"
 isFeatured: false
