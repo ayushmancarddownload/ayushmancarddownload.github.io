@@ -2,6 +2,7 @@
 import { getEntry } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import Img from './Img.astro';
+import { coverOf } from '../utils/cover';
 
 export interface Props {
   post: CollectionEntry<'blog'>;
@@ -25,7 +26,7 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
 <article class={`group flex flex-col overflow-hidden rounded-lg border border-orange-100 bg-white transition-shadow hover:shadow-md ${featured ? 'sm:col-span-2 sm:flex-row' : ''}`}>
   <a href={`/blog/${post.slug}/`} class={`block overflow-hidden ${featured ? 'sm:w-1/2' : ''}`}>
     <Img
-      src={post.data.coverImage}
+      src={coverOf(post)}
       alt={post.data.coverAlt}
       sizes={featured ? '(min-width:1024px) 560px, (min-width:640px) 50vw, 100vw' : '(min-width:1024px) 360px, (min-width:640px) 50vw, 100vw'}
       priority={priority}

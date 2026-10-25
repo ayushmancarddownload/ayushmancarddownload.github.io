@@ -22,7 +22,7 @@ const blog = defineCollection({
       pubDate: z.coerce.date().default(() => new Date()),
       updatedDate: z.coerce.date().optional(),
       author: reference('authors').default('the-od-team'),
-      coverImage: z.string().default('/images/og-default.png'),
+      coverImage: z.string().optional(), // leave out -> a cover is auto-generated from the title
       coverAlt: z.string().optional(),
       category: z.coerce.string().default('General'),
       lang: z.string().default('en'), // use 'hi' for Hindi posts

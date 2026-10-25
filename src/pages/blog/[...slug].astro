@@ -11,6 +11,7 @@ import Comments from '../../components/Comments.astro';
 import { getPublishedPosts, getRelatedPosts, getPopularPosts, getAdjacentPosts } from '../../utils/posts';
 import { SITE, absUrl } from '../../config';
 import { slugifyCategory } from '../../utils/slugify';
+import { coverOf, ogCoverOf } from '../../utils/cover';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -61,7 +62,7 @@ const articleSchema = {
       '@type': 'Article',
       headline: post.data.title,
       description: post.data.description,
-      image: [absUrl(post.data.coverImage)],
+      image: [absUrl(ogCoverOf(post))],
       datePublished: post.data.pubDate.toISOString(),
       dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
       inLanguage: post.data.lang,
@@ -119,7 +120,7 @@ const articleSchema = {
 <BlogLayout
   title={post.data.title}
   description={post.data.description}
-  ogImage={post.data.coverImage}
+  ogImage={ogCoverOf(post)}
   category={post.data.category}
   canonicalPath={`/blog/${post.slug}/`}
   lang={post.data.lang}
@@ -157,7 +158,7 @@ const articleSchema = {
       <span>{readTime} min read</span>
     </div>
     <Img
-      src={post.data.coverImage}
+      src={coverOf(post)}
       alt={post.data.coverAlt}
       sizes="(min-width:768px) 768px, 100vw"
       priority
