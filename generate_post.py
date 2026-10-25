@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 from datetime import datetime
 from google import genai
 from google.genai import types
@@ -31,30 +32,48 @@ tags: ["Tech", "Guide", "Update"]
 (Write the complete article in Markdown with headings H2, H3, bullet points, and key takeaways)
 """
 
-# 3. Google ne naye accounts ke liye Gemini 3.8 Flash recommend kiya hai
-models_to_try = ["gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.5-flash"]
+# 3. Available Models list
+models_to_try = [
+    "gemini-3.8-flash",
+    "gemini-3.7-flash",
+    "gemini-3.5-flash-lite",
+    "gemini-3.6-flash"
+]
 
 response = None
+
+# 4. Smart Retry Loop (503 aane par ruk kar dobara try karega)
 for model_name in models_to_try:
-    try:
-        print(f"Trying model: {model_name}...")
-        response = client.models.generate_content(
-            model=model_name,
-            contents=[
-                types.Part.from_uri(file_uri=youtube_url, mime_type="video/mp4"),
-                prompt
-            ]
-        )
-        print(f"Successfully generated article using {model_name}!")
+    if response:
         break
-    except Exception as e:
-        print(f"Warning: {model_name} failed ({e}), trying next model...")
+        
+    for attempt in range(1, 4):  # Har model ko 3 baar try karega
+        try:
+            print(f"Trying model: {model_name} (Attempt {attempt}/3)...")
+            response = client.models.generate_content(
+                model=model_name,
+                contents=[
+                    types.Part.from_uri(file_uri=youtube_url, mime_type="video/mp4"),
+                    prompt
+                ]
+            )
+            print(f"Successfully generated article using {model_name}!")
+            break
+        except Exception as e:
+            err_msg = str(e)
+            if "503" in err_msg:
+                wait_time = attempt * 12
+                print(f"Google server busy (503). Waiting {wait_time}s before retrying...")
+                time.sleep(wait_time)
+            else:
+                print(f"Failed with {model_name}: {err_msg}")
+                break
 
 if not response:
-    print("Error: Failed to generate content with available models.")
+    print("Error: Could not generate content after all retries.")
     sys.exit(1)
 
-# 4. Save to Astro Content folder
+# 5. Save to Astro Content folder
 folder_path = "src/content/blog"
 os.makedirs(folder_path, exist_ok=True)
 
