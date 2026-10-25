@@ -1,11 +1,10 @@
 name: Generate Astro Blog Post
 
 on:
-  workflow_dispatch:
-    inputs:
-      youtube_url:
-        description: 'Enter YouTube Video URL'
-        required: true
+  workflow_dispatch: # Actions tab se direct 1-click run karne ke liye
+  push:
+    paths:
+      - 'transcript.txt' # transcript.txt me save karte hi apne aap chalega
 
 permissions:
   contents: write
@@ -22,20 +21,20 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install Google GenAI
         run: |
-          pip install google-genai youtube-transcript-api
+          pip install google-genai
 
-      - name: Generate Post from YouTube Transcript
+      - name: Generate Post from Transcript
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          python generate_post.py "${{ github.event.inputs.youtube_url }}"
+          python generate_post.py
 
       - name: Commit and Push to Astro Blog
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "Add new blog post and thumbnail from YouTube transcript" || exit 0
+          git commit -m "Auto publish new post from transcript.txt" || exit 0
           git push
