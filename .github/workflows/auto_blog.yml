@@ -7,7 +7,6 @@ on:
         description: 'Enter YouTube Video URL'
         required: true
 
-# Repository me nayi post push karne ki permission
 permissions:
   contents: write
 
@@ -23,23 +22,20 @@ jobs:
         with:
           python-version: '3.10'
 
-      # Transcript aur Gemini ke packages install honge
       - name: Install Dependencies
         run: |
           pip install google-genai youtube-transcript-api
 
-      # Python script chalegi aur Astro format me .md banayegi
       - name: Generate Post from YouTube Transcript
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python generate_post.py "${{ github.event.inputs.youtube_url }}"
 
-      # Naye blog ko Astro repo me save (commit & push) karega
       - name: Commit and Push to Astro Blog
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/content/blog/
-          git commit -m "Add new blog post from YouTube transcript" || exit 0
+          git add .
+          git commit -m "Add new blog post and thumbnail from YouTube transcript" || exit 0
           git push
